@@ -8,7 +8,9 @@
 <meta id="viewport" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
 <meta name="format-detection" content="telephone=no">
 <title>请假条列表-重申</title>
-<link href="${basePath}/css/leave.css" rel="stylesheet" type="text/css" />
+<?php use yii\helpers\Html;?>
+<?=Html::cssFile('../css/leave.css')?>
+
 </head>
 <body>
 	

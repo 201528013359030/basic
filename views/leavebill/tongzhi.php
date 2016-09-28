@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,7 +8,7 @@
 <meta name="format-detection" content="telephone=no">
 <title>通知</title>
 <?php use yii\helpers\Html;?>
-<?=Html::cssFile('/basic/views/css/leave.css')?>
+<?=Html::cssFile('../css/leave.css')?>
 </head>
 <body>
 <div class="off-canvas-wrap" data-offcanvas>
@@ -23,13 +22,13 @@
 			<div class="content">
 				
 				<div class="conInfo">
-					<p>您好，我是<span class="fb">某某人</span>,需请假===天</span>
+					<p>您好，我是<span class="fb"><s:property value="#bill.username"/>-<s:property value="#bill.dep"/></span>,需请假<s:property value="#bill.day"/>天</span>
 					</p>
-					<p><mark class="fmak">startdate ~ enddate</mark></p>
-					<p>状态</p>
+					<p><mark class="fmak"><s:date name="#bill.leaveStartTime" format="YYYY-MM-dd HH:mm"/> ~ <s:date name="#bill.leaveEndTime" format="YYYY-MM-dd HH:mm"/></mark></p>
+					<p><s:property value="#bill.remark"/></p>
 					<br>
 					<br>
-					<span class="send_time">申请时间 </span>&nbsp;<span>某某人 发送</span>
+					<span class="send_time"><s:property value="#bill.applyTime"/></span>&nbsp;<span><s:property value="#bill.username"/>发送</span>
 				</div>
 				
 				
