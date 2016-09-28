@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-<?php use yii\helpers\Html;?>
 <head>
 <meta charset="utf-8">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -8,14 +7,14 @@
 <meta id="viewport" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
 <meta name="format-detection" content="telephone=no">
 <title>请假条列表-详细</title>
-
-<?=Html::cssFile('/basic/views/css/leave.css')?>
+<?php use yii\helpers\Html;?>
+<?=Html::cssFile('../css/leave.css')?>
 </head>
 <body>
 
 <div class="off-canvas-wrap" data-offcanvas>
 	<div class="inner-wrap">
-		
+		<form data-abide action="workflowAction_submitTaskByLeaveBillId.action?id=<s:property value="id" />" method="post">
 		<!--请假条内容部分-->
 		<div class="row">
 			
@@ -24,28 +23,29 @@
 			<div class="content">
 				
 				<div class="conInfo">
-					<p>您好，我是<span class="fb">王大伟 - 研发中心</span>,<span class="fb">明天同学结婚这里放的是请假事由</span>，需请<span class="fb">事假</span> <span class="fb">3天</span>
+					<p><s:property value="#bill.spuser"/>,您好:<br><br>我是<span class="fb"><s:property value="#bill.username"/>-<s:property value="#bill.dep"/></span>,<span class="fb"><s:property value="#bill.reason"/></span>，需请<span class="fb"><s:if test="#bill.leaveType==1">事假</s:if><s:elseif test="#bill.leaveType==2">病假</s:elseif><s:elseif test="#bill.leaveType==3">婚假</s:elseif><s:elseif test="#bill.leaveType==4">丧假</s:elseif><s:elseif test="#bill.leaveType==5">年假</s:elseif><s:else>其他</s:else></span> <span class="fb"><s:property value="#bill.day"/>天</span>
 					</p>
-					<p><mark class="fmak">2015-09-11 8:00 ~ 2015-09-11 8:00</mark></p>
-					<p>这里放的是工作安排以及后面的任务谁来完成。</p>
+					<p><mark class="fmak"><s:date name="#bill.leaveStartTime" format="YYYY-MM-dd HH:mm"/> ~ <s:date name="#bill.leaveEndTime" format="YYYY-MM-dd HH:mm"/></mark></p>
+					<p><s:property value="#bill.remark"/></p>
 					<p>请您审批</p>
 				</div>
-				
 				<!--这里是审批人提的意见-->
+				<s:if test="#bill.state==1">
 				<div class="conInfo">
-					<form data-abide>
+					
 						<div class="small-11">
 					      <div class="row">
 					        <div class="small-3 columns">
 					          <label for="right-label" class="right inline">意见</label>
 					        </div>
 					        <div class="small-9 columns">
-					          <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入您的批语"></textarea>
+					          <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入您的批语" name="comment"></textarea>
 					        </div>
 					      </div>
 					    </div>
-					</form>
+					
 				</div>
+				</s:if>
 				<!--end 这里是审批人提的意见-->
 				
 			</div>
@@ -59,36 +59,41 @@
 		<div class="row">
 			
 			<h3 class="freightTit">流程跟踪</h3>
-			<ul class="freightUl">			
-				<li class="mcurrent">
+			<ul class="freightUl">	
+				<s:if test="#list!=null && #list.size()>0">
+				<s:iterator value="#list">
+					<li class="mcurrent">
 					<span class="note"></span>				
-					<p>孙建伟&nbsp;已同意&nbsp;这里放的是工作安排以及后面的任务谁来完成</p>
-					<p class="date">2015-08-01 09:10</p>
-				</li>
+					<p><s:property value="fullMessage"/></p>
+					<p class="date"><s:date name="time" format="YYYY-MM-dd HH:mm"/></p>
+					</li>
+				</s:iterator>
+				</s:if>
+			
 				<li>
 					<span class="note"></span>				
 					<p>创建请假条</p>
-					<p class="date">2015-08-01 09:10</p>
+					<p class="date"><s:date name="#bill.applyTime" format="YYYY-MM-dd HH:mm"/></p>
 				</li>
-				
 			</ul>	
 			
 		</div>
 		<!--end 跟踪流程-->
 		
 		<div class="row">
+		<s:if test="#bill.state==1">
 	  		<div class="small-6 columns">	  			
-	  			<button type="submit" class="button disabled expand">同意</button>
+	  			<button type="submit" class="button expand" name="outcome" value="1">同意</button>
 	  		</div>
 	  		
 	  		<div class="small-6 columns">
-	  			<button type="reset" class="button secondary expand">拒绝</button>
+	  			<button type="submit" class="button secondary expand" name="outcome" value="0">拒绝</button>
 	  		</div>
+	  	</s:if>
 	  	</div>
 		
-		
+		</form>
 	</div>
 </div>
-
 </body>
 </html>
