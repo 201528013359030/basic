@@ -19,13 +19,13 @@
 </style>
 </head>
 <body>
-	
+
 <div class="off-canvas-wrap" data-offcanvas>
 	<div class="inner-wrap">
-		
+
 	<div class="row">
 		<form  data-abide action="http://localhost/basic/web/index.php?r=test/index"  method="get">
-		<!--  <input type="hidden" name="r" value="test/index"> -->
+		  <input type="hidden" name="r" value="leavebill/create">
 			<!--表单主体-->
 			<div class="form-group">
 				<div class="row">
@@ -78,10 +78,10 @@
 			        <!--这里需要把获取到的人名 放在 a里显示，也要放到hid input中显示-->
 		          <div class="small-9 columns timeBox">
 			          <a href="#" class="btn-link">请选择您的审批人</a>
-			          <input class="hid-input" value="" type="text" name="" required />
+			          <input class="hid-input" value="55" type="text" name="" required />
 			          <small class="error">请选择审批人</small>
 			        </div>
-			    </div>			    
+			    </div>
 				<div class="row">
 			        <div class="small-3 columns">
 			          <label for="right-label" class="center inline">通知人</label>
@@ -89,17 +89,17 @@
 		          <div class="small-9 columns timeBox">
 			          <!--这里需要把获取到的人名 放在 a里显示，也要放到hid input中显示-->
 			          <a href="#" class="btn-link">请选择工作相关人员</a>
-			          <input class="hid-input" value=""  type="text" name="" required />
+			          <input class="hid-input" value="44"  type="text" name="" required />
 			          <small class="error">请选择通知人</small>
 			        </div>
-			        
+
 			    </div>
 				<div class="row">
 			        <div class="small-3 columns">
 			          <label for="right-label" class="center inline">事由</label>
 			        </div>
 			        <div class="small-9 columns">
-			          <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入请假事由" required></textarea>	
+			          <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入请假事由" required></textarea>
 			          <small class="error">请输入请假事由</small>
 			        </div>
 			    </div>
@@ -111,21 +111,21 @@
 			        <div class="small-9 columns">
 			          <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入您请假后的工作安排"></textarea>
 			        </div>
-			    </div>			    
+			    </div>
 		    </div>
 		    <!--end 表单主体-->
-		    
-	  		<div class="small-6 columns">	  			
+
+	  		<div class="small-6 columns">
 	  			<button type="submit" class="button expand" >提交</button>
 	  		</div>
-	  		
+
 	  		<div class="small-6 columns">
 	  			<button type="reset" class="button secondary expand">取消</button>
 	  		</div>
-			  	
+
 		</form>
 	</div>
-	
+
 	</div>
 </div>
 
@@ -138,15 +138,15 @@
 -->
 <?=Html::jsFile("/basic/views/js/vendor/jquery.js")?>
 <?=Html::jsFile("/basic/views/js/foundation.min.js")?>
-<!--  
+<!--
 <script src="../js/vendor/jquery.js"></script>
 <script src="../js/foundation.min.js"></script>
 -->
 <script type="text/javascript">
-	
+
 $(document).foundation({
   abide : {
-   
+
     validators : {
         greatThan : function (el, required, parent) {
           var from  = document.getElementById(el.getAttribute(this.add_namespace('data-greatthan'))).value,
@@ -170,14 +170,14 @@ function showPageError(txt){
 	el.innerHTML = _html;
 }
 
-	
+
 </script>
 
 <!--时间控件部分-->
 <?=Html::cssFile("/basic/views/js/vendor/mobiscroll.mo.min.css")?>
 <?=Html::jsFile("/basic/views/js/vendor/mobiscroll.custom.min.js")?>
 
-<!-- 
+<!--
 <link href="../js/vendor/mobiscroll.mo.min.css" rel="stylesheet" type="text/css" />
 <script src="../js/vendor/mobiscroll.custom.min.js" type="text/javascript"></script>
  -->
@@ -186,8 +186,8 @@ function showPageError(txt){
         //alert("dat");
      	//初始化时间控件 使用的是 mobiscroll
         $(".datesel").mobiscroll().date();
-		
-		var currYear = (new Date()).getFullYear();  
+
+		var currYear = (new Date()).getFullYear();
 
       	//初始化日期控件
 		var opt = {
@@ -201,22 +201,22 @@ function showPageError(txt){
 			cancelText: '取消',//取消按钮名籍我
 			dateOrder: 'yyyymmdd', //面板中日期排列格式
 			dayText: '日', monthText: '月', yearText: '年', //面板中年月日文字
-			showNow: false,  
-       		nowText: "今",  
-        	startYear:currYear, //开始年份  
-        	endYear:currYear + 100, //结束年份  
+			showNow: false,
+       		nowText: "今",
+        	startYear:currYear, //开始年份
+        	endYear:currYear + 100, //结束年份
         	//endYear:2099 //结束年份
         	timeFormat: 'HH:ii',
 			timeWheels: 'HHii'
 		};
-        
+
 		$(".datesel").mobiscroll(opt);
-		
-		
+
+
     });
-    
-    
-    
-</script>	
+
+
+
+</script>
 </body>
 </html>

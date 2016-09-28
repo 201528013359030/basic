@@ -14,6 +14,9 @@ use app\models\Employee;
  * LeavebillController implements the CRUD actions for Leavebill model.
  */
 class LeavebillController extends Controller {
+
+	public $layout = 'false';
+
 	/**
 	 * @inheritdoc
 	 */
@@ -37,29 +40,94 @@ class LeavebillController extends Controller {
 	 */
 	public function actionIndex() {
 		$request = Yii::$app->request;
-
 		$customers = Employee::find ()->where ( [
-				'username' => 'admin'
-				//'username' => $request->queryParams['r']
-		] )->asArray()->all ();
-// 		foreach($customers as $x=>$x_value) {
-// 			echo "Key=" . $x . ", Value=" . $x_value;
-// 			echo "<br>";
-// 		}
-print_r($customers);
-//echo $customers[0]['id'];
+				// 'username'=> '3@15'
+				'username' => $request->queryParams ['uid']
+		] )->asArray ()->all ();
+
 		if ($customers) {
 
 			$searchModel = new LeavebillSearch ();
-			$dataProvider = $searchModel->search ( $request->queryParams );
+			// $dataProvider = $searchModel->search ( $request->queryParams )->asArray();
 
-			return $this->render ( 'index', [
-					'searchModel' => $searchModel,
-					'dataProvider' => $dataProvider
+			// 查询当前用户的请假信息---未同意
+			$dataDisagree = LeavebillSearch::find ()->where ( [
+					// 'username'=> '3@15'
+					'userid' => $request->queryParams ['uid'],
+					'state' => [1,3,4]
+			] )->orderBy('applyTime')->asArray ()->all ();
+
+			// 查询当前用户的请假信息---已同意
+			$dataAgree = LeavebillSearch::find ()->where ( [
+					// 'username'=> '3@15'
+					'userid' => $request->queryParams ['uid'],
+					'state' => '2'
+			] )->orderBy('applyTime')->orderBy('applyTime')->asArray ()->all ();
+
+			// 查询需要当前用户审批的请假信息--待审批
+			$dataDisapproval = LeavebillSearch::find ()->where ( [
+					// 'username'=> '3@15'
+					'approvalPerson' => $request->queryParams ['uid'],
+					'state' =>[1,4]
+			] )->orderBy('applyTime')->asArray ()->all ();
+
+			// 查询需要当前用户审批的请假信息--已审批
+			$dataApproval = LeavebillSearch::find ()->where ( [
+					// 'username'=> '3@15'
+					'approvalPerson' => $request->queryParams ['uid'],
+					'state' =>[2,3]
+			] )->orderBy('applyTime')->asArray ()->all ();
+
+			print_r ( $dataDisagree );echo "</br>";
+			print_r ( $dataAgree );echo "</br>";
+			print_r ( $dataDisapproval );echo "</br>";
+			print_r ( $dataApproval );
+
+
+			return $this->renderFile( '@app/views/leavebill/list.php', [
+			'$dataDisagree' => $dataDisagree,
+			'$dataAgree' => $dataAgree,
+			'$dataDisapproval'=>$dataDisapproval,
+			'$dataApproval'=>$dataApproval,
+			'uid'=>$request->queryParams ['uid']
 			] );
 		} else {
 			echo "用户不存在";
 		}
+	}
+
+	public function actionMore(){
+
+		$request = Yii::$app->request;
+
+		$searchModel = new LeavebillSearch ();
+
+		// 查询当前用户的请假信息-
+		$dataUserLeavebill = LeavebillSearch::find ()->where ( [
+
+				'userid' => $request->get('uid'),
+
+		] )->orderBy('applyTime')->asArray ()->all ();
+
+
+		// 查询需要当前用户审批的请假信息--已审批
+		$dataApproval = LeavebillSearch::find ()->where ( [
+				'approvalPerson' => $request->get('uid'),
+		] )->orderBy('applyTime')->asArray ()->all ();
+
+		// 			print_r ( $dataDisagree );echo "</br>";
+		// 			print_r ( $dataAgree );echo "</br>";
+		// 			print_r ( $dataDisapproval );echo "</br>";
+		// 			print_r ( $dataApproval );
+
+
+		return $this->renderFile( '@app/views/leavebill/list.php', [
+				'$approvalPerson' => $dataUserLeavebill,
+				'$dataApproval' => $dataApproval,
+				'uid'=>$request->get('uid')
+		] );
+
+
 	}
 	/**
 	 * Displays a single Leavebill model.
@@ -82,25 +150,44 @@ print_r($customers);
 	public function actionCreate() {
 		$model = new Leavebill ();
 
+// 		if ($model->load ( Yii::$app->request->get () ) && $model->save ()) {
+
+		if ( count(Yii::$app->request->get())>0) {
+
+			$request = Yii::$app->request;
+
+			$model->userid=$request->get ( 'userid', '0' );
+			$model->leaveType=$request->get ( 'leaveType', '0' );
+			$model->leaveStartTime=$request->get ( 'leaveStartTime', '0' );
+			$model->leaveEndTime=$request->get ( 'leaveEndTime', '0' );
+			$model->reason=$request->get ( 'reason', '0' );
+			$model->approvalPerson=$request->get ( 'approvalPerson', '0' );
+			$model->remark=$request->get ( 'remark', '0' );
+			$model->applyTime=$request->get ( 'applyTime', '0' );
+			$model->state=$request->get ( 'state', '0' );
+			$model->username=$request->get ( 'username', '0' );
+			$model->days=$request->get ( 'days', '0' );
+			$model->dep=$request->get ( 'dep', '0' );
+			$model->spuser=$request->get ( 'spuser', '0' );
+			$model->tzuser=$request->get ( 'tzuser', '0' );
+			$model->tongzhi=$request->get ( 'tongzhi', '0' );
+			$model->token=$request->get ( 'token', '0' );
+
+			$model->save ();
 
 
-		if ($model->load ( Yii::$app->request->post () ) && $model->save ()) {
 
-// 			echo $model->id;
-	//	print_r(Yii::$app->request->post( 1)) ;
-		return $this->redirect ( [
- 					'view',
-					'id' => $model->id
- 			] );
+			// echo $model->id;
+			// print_r(Yii::$app->request->post( 1)) ;
+// 			return $this->redirect ( [
+// 					'view',
+// 					'id' => $model->id
+// 			] );
 		} else {
 
-
-			$request=Yii::$app->request;
-
-
-			return $this->renderPartial( 'create', [
+			return $this->renderPartial ( 'create', [
 					'model' => $model,
-					'request'=>$request->get('ffff','e')
+					'request' => $request->get ( 'ffff', 'e' )
 			] );
 		}
 	}
