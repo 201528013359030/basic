@@ -19,7 +19,8 @@
 	<div class="inner-wrap">
 		<div class="row-button">
 <!-- 	  			<a href="leaveBillAction_input.action">创建请假条 </a> -->
-					<a href="">创建请假条</a>
+					<?= Html::tag('a', Html::encode("创建请假条"), ['href'=>'index.php?r=leavebill/create&uid='.$uid]) ?>
+<!-- 					<a href="">创建请假条</a> -->
 	  	</div>
 		<!--做好的 tab 切换两个内容-->
 		<ul class="tabs row" data-tab>
@@ -51,9 +52,9 @@
 <!-- 							<s:iterator value="#lb_list"> -->
 				<?php foreach ($dataApproval as $approval){?>
 <!-- 	  			<a href="leaveBillAction_viewTask.action?id=<s:property value="id"/>" class="listIteam"> -->
-					<a href="" class="listIteam">
-					
-						<?php if($approval["leaveType"]==1){ echo $approval['leaveType']?>
+<!-- 					<a href="" class="listIteam"> -->
+					<?=Html::beginTag('a',['class'=>'listIteam','uid'=>$uid,'href'=>'index.php?r=leavebill/content&uid='.$uid])?>
+						<?php if($approval["leaveType"]==1){ ?>
 <!-- 	  				<s:if test="leaveType==1"> -->
 	  					<i class="icon ic_shi">事</i>
 <!-- 	  				</s:if> -->
@@ -149,7 +150,8 @@
 								<?=Html::encode($approval['applyTime']) ?>
 	  					</span>
 	  				</p>
-	  				</a>
+<!-- 	  				</a> -->
+						<?=Html::endTag('a')?>
 <!-- 	  			</s:iterator> -->
 							<?php }?>
 						</div>
@@ -166,7 +168,8 @@
 <!-- 							<s:iterator value="#sp_list"> -->
 								<?php foreach ($approvalPerson as $person){?>
 <!-- 	  					<a href="leaveBillAction_viewTaskSp.action?id=<s:property value="id"/>" class="listIteam"> -->
-							<a href="" class="listIteam">
+<!-- 							<a href="" class="listIteam"> -->
+								<?=Html::beginTag('a',['class'=>'listIteam','uid'=>$uid,'href'=>'index.php?r=leavebill/content&uid='.$uid])?>
 				<?php if($person["leaveType"]==1){?>
 <!-- 	  				<s:if test="leaveType==1"> -->
 	  					<i class="icon ic_shi">事</i>
@@ -258,7 +261,8 @@
 					  				<?=Html::encode($person['applyTime']) ?>
 	  					</span>
 	  				</p>
-	  			</a>
+<!-- 	  			</a> -->
+							<?=Html::endTag('a')?>
 <!-- 	  				</s:iterator> -->
 						<?php }?>
 						</div>

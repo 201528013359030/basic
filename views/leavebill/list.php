@@ -14,19 +14,20 @@
 
 </head>
 <body>
-<?php
+<?php 
 //print_r( $dataDisagree);
 ?>
 
 <div class="off-canvas-wrap" data-offcanvas>
 	<div class="inner-wrap">
-
+		
 	  	<div class="row">
 	  	<div class="row-button">
-	  			<a href="index.php?r=leavebill/create&uid=".$uid>创建请假条 </a>
+	  			  <?= Html::tag('a', Html::encode("创建请假条"), ['href'=>'index.php?r=leavebill/create&uid='.$uid]) ?>
+<!-- 	  			<a href="leaveBillAction_input.action">创建请假条 </a> -->
 	  	</div>
 	  		<!--未处理状态-->
-
+	 
 <!-- 	  		<s:if test="#lb_list!=null && #lb_list.size()>0"> -->
 	  		<?php if(($dataDisagree!=null)&&(count($dataDisagree)>0)){?>
 	  		<div class="row-tab">进行中</div>
@@ -36,7 +37,9 @@
 	  			<!-- detail -->
 <!-- 	  			<a href="leaveBillAction_input.action">创建请假条 </a> -->
 <!-- 	  			<a href="leaveBillAction_viewTask.action?id=<s:property value="id"/>" class="listIteam"> -->
-				<a href="index.php?r=leavebill/detail&uid=".$uid class="listIteam" >
+<!-- 				<a href="index.php?r=leavebill/detail&uid=".$uid class="listIteam" > -->
+					<?=Html::beginTag('a',['class'=>'listIteam','uid'=>$uid,'href'=>'index.php?r=leavebill/content&uid='.$uid])?>
+
 	  			<?php if($disagree["leaveType"]==1){?>
 <!-- 	  				<s:if test="leaveType==1"> -->
 	  					<i class="icon ic_shi">事</i>
@@ -98,15 +101,16 @@
 							<?=Html::encode($disagree['applyTime']) ?>
 	  					</span>
 	  				</p>
-	  				</a>
+<!-- 	  				</a> -->
+						<?=Html::endTag('a')?>
 	  			</s:iterator>
 	  			<?php }?>
 	  			</div>
 	  		</s:if>
 	  		<?php }?>
-
-
-
+	  		
+	  		
+	  		
 <!-- 	  		<s:if test="#sp_list!=null && #sp_list.size()>0"> -->
 			<?php if(($dataDisapproval !=null)&&(count($dataDisapproval)>0)){?>
 	  		<div class="row-tab">待处理的审批</div>
@@ -114,7 +118,8 @@
 <!-- 	  			<s:iterator value="#sp_list"> -->
 					<?php foreach ($dataDisapproval as $disapproval){?>
 <!-- 	  				<a href="leaveBillAction_viewTaskSp.action?id=<s:property value="id"/>" class="listIteam"> -->
-					<a href="index.php?r=leavebill/detail&uid=".$uid class="listIteam" >
+<!-- 					<a href="" class="listIteam" > -->
+						<?=Html::beginTag('a',['class'=>'listIteam','uid'=>$uid,'href'=>'index.php?r=leavebill/content&uid='.$uid])?>
 					<?php if($disapproval['leaveType']==1){?>
 <!-- 	  				<s:if test="leaveType==1"> -->
 	  					<i class="icon ic_shi">事</i>
@@ -158,17 +163,18 @@
 								<?=Html::encode($disagree['applyTime']) ?>
 	  					</span>
 	  				</p>
-	  			</a>
+	  				<?=Html::endTag('a')?>
+<!-- 	  			</a> -->
 	  				<?php }?>
 <!-- 	  			</s:iterator> -->
 	  			</div>
 <!-- 	  		</s:if> -->
 	  			<?php }?>
-
+	  		
 	  		<!--end 未处理状态-->
-
+	  		
 	  		<div class="row-tab">&nbsp;</div>
-
+	  		
 	  		<div class="list-group">
 <!-- 	  			<s:if test="#list1!=null && #list1.size()>0"> -->
 				<?php if(($dataAgree!=null)&&(count($dataAgree)>0)){?>
@@ -177,7 +183,8 @@
 						<?php foreach ($dataAgree as $agree){?>
 	  					<!--a为要循环的内容包含 图标 状态请假日期 和请假人等-->
 <!-- 	  			<a href="leaveBillAction_viewTask.action?id=<s:property value="id"/>" class="listIteam"> -->
-					<a href=""  class="listIteam">
+<!-- 					<a href=""  class="listIteam"> -->
+						<?=Html::beginTag('a',['class'=>'listIteam','uid'=>$uid,'href'=>'index.php?r=leavebill/content&uid='.$uid])?>
 					<?php if($agree['leaveType']==1){?>
 <!-- 	  				<s:if test="leaveType==1"> -->
 	  					<i class="icon ic_shi">事</i>
@@ -257,7 +264,8 @@
 									<?=Html::encode($agree['applyTime']) ?>
 	  					</span>
 	  				</p>
-	  				</a>
+<!-- 	  				</a> -->
+								<?=Html::endTag('a')?>
 <!-- 	  				</s:iterator> -->
 					<?php }?>
 <!-- 	  			</s:if> -->
@@ -268,8 +276,8 @@
 	  				<?php foreach ($dataApproval as $approval){?>
 <!-- 	  				<s:iterator value="#list2"> -->
 <!-- 	  					<a href="leaveBillAction_viewTaskSp.action?id=<s:property value="id"/>" class="listIteam"> -->
-							<a href=""  class="listIteam">
-
+<!-- 							<a href=""  class="listIteam"> -->
+								<?=Html::beginTag('a',['class'=>'listIteam','uid'=>$uid,'href'=>'index.php?r=leavebill/content&uid='.$uid])?>
 					<?php if($approval['leaveType']==1){?>
 <!-- 	  				<s:if test="leaveType==1"> -->
 	  					<i class="icon ic_shi">事</i>
@@ -320,7 +328,7 @@
 											<?=Html::encode($approval['username']) ?>
 	  					</span>
 	  					<span class="fr status">
-
+	  					
 	  						<?php if($agree['state']==1){?>
 <!-- 	  						<s:if test="state==1"> -->
 	  							<em class="fc_sucess">审批中</em>
@@ -351,7 +359,7 @@
 <!-- 	  							<em class="fc_undo">已放弃</em> -->
 <!-- 	  						</s:elseif> -->
 
-
+	  					
 						</span>
 	  				</p>
 	  				<p class="info clearfix">
@@ -364,33 +372,35 @@
 								<?=Html::encode($approval['applyTime']) ?>
 	  					</span>
 	  				</p>
-	  			</a>
+<!-- 	  			</a> -->
+							<?=Html::endTag('a')?>
 <!-- 	  				</s:iterator> -->
 <!-- 	  			</s:if> -->
 					<?php }?>
 			<?php }?>
-	  		</div>
+	  		</div>	  		
 	  	</div>
 	  	<div class="row">
 	  		<div class="small-12 columns">
 <!-- 	  			<a href="leaveBillAction_more.action" class="button expand"> -->
-					<?php echo "index.php?r=leavebill/more&uid=".$uid?>
-					<?php echo $uid?>
-					<a href="index.php?r=leavebill/more&uid=".$uid class="button expand">
-	  				查看更多假条
-	  			</a>
+					<?php //echo "index.php?r=leavebill/more&uid=".$uid?>
+					<?php //echo $uid?>
+<!-- 					<a href="index.php?r=leavebill/more&uid=".$uid class="button expand"> -->
+						<?= Html::tag('a', Html::encode("查看更多假条"), ['href'=>'index.php?r=leavebill/more&uid='.$uid,'class'=>'button expand']) ?>
+<!-- 	  				查看更多假条 -->
+<!-- 	  			</a> -->
 	  		</div>
 	  	</div>
-
+	  	
 	</div>
 </div>
 
 
 
-
+	
 <!-- <div class="off-canvas-wrap" data-offcanvas> -->
 <!-- 	<div class="inner-wrap"> -->
-
+		
 <!-- 	  	<div class="row"> -->
 	  		<!--未处理状态-->
 <!-- 	  		<div class="row-tab">进行中</div> -->
@@ -419,9 +429,9 @@
 <!-- 	  					<span class="fr date">2015-09-11 16:00</span> -->
 <!-- 	  				</p> -->
 <!-- 	  			</a> -->
-
+	  			
 <!-- 	  		</div> -->
-
+	  		
 <!-- 	  		<div class="row-tab">待处理的审批</div> -->
 <!-- 	  		<div class="list-group"> -->
 <!-- 	  			<a href="javascript:void(0);" class="listIteam"> -->
@@ -438,13 +448,13 @@
 <!-- 	  			</a> -->
 <!-- 	  		</div> -->
 	  		<!--end 未处理状态-->
-
+	  		
 <!-- 	  		<div class="row-tab">&nbsp;</div> -->
-
+	  		
 <!-- 	  		<div class="list-group"> -->
-
+	  			
 <!-- 	  			<h3 class="listTit">本月</h3> -->
-
+	  			
 	  			<!--a为要循环的内容包含 图标 状态请假日期 和请假人等-->
 <!-- 	  			<a href="javascript:void(0);" class="listIteam"> -->
 <!-- 	  				<i class="icon ic_die">丧</i> -->
@@ -458,7 +468,7 @@
 <!-- 	  					<span class="fr date">2015-09-11 16:00</span> -->
 <!-- 	  				</p> -->
 <!-- 	  			</a> -->
-
+	  			
 <!-- 		  		<a href="javascript:void(0);" class="listIteam"> -->
 <!-- 	  				<i class="icon ic_year">年</i> -->
 <!-- 	  				<i class="ficon icon-angle-right"></i> -->
@@ -487,16 +497,16 @@
 <!-- 	  	</div> -->
 
 <!-- 	  	<div class="row"> -->
-
+	 
 <!-- 	  		<div class="small-12 columns"> -->
 <!-- 	  			<a href="javascript:void(0);" class="button expand" > -->
 <!-- 	  				查看更多假条 -->
 <!-- 	  			</a> -->
 <!-- 	  		</div> -->
 <!-- 	  	</div> -->
-
+	  	
 <!-- 	</div> -->
 <!-- </div> -->
-
+	
 </body>
 </html>

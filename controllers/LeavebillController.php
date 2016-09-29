@@ -296,7 +296,7 @@ class LeavebillController extends Controller {
 					'uid' => $uid
 			] );
 			}
-			else{ echo "无此用户";
+			else{ //echo "无此用户";
 					return $this->renderFile ( '@app/views/leavebill/create.php', [
 					'model' => $model,
 					'uid' => $uid
@@ -342,6 +342,9 @@ class LeavebillController extends Controller {
 			$model->token = $request->get ( 'token', '0' );
 
 			$model->save ();
+
+
+
 
 			$this->actionIndex();
 
