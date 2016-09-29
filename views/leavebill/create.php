@@ -17,7 +17,7 @@
 
 	<div class="row">
 		<form  data-abide action="http://localhost/basic/web/index.php"  method="get">
-		<input  name="r" value="leavebill/save&uid=".$uid  />
+		<!-- <input  name="r" value="leavebill/save&uid=".$uid  /> -->
 
 
 		<s:hidden name="userid"/>

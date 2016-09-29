@@ -14,9 +14,9 @@
 
 <div class="off-canvas-wrap" data-offcanvas>
 	<div class="inner-wrap">
-		
+		<form data-abide action="workflowAction_submitTaskByLeaveBillId.action?id=<s:property value="id" method="post"/>
 		<!--请假条内容部分-->
-		<div class="row">
+<div class="row">
 			
 			<div class="row-tab">&nbsp;</div>
 			
@@ -39,7 +39,24 @@
 					<p><?=Html::encode($model['remark']) ?></p>
 					<p>请您审批</p>
 				</div>
-				
+				<!--这里是审批人提的意见-->
+				<s:if test="#bill.state==1">
+				<div class="conInfo">
+					
+						<div class="small-11">
+					      <div class="row">
+					        <div class="small-3 columns">
+					          <label for="right-label" class="right inline">意见</label>
+					        </div>
+					        <div class="small-9 columns">
+					          <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入您的批语" name="comment"></textarea>
+					        </div>
+					      </div>
+					    </div>
+					
+				</div>
+				</s:if>
+				<!--end 这里是审批人提的意见-->
 				
 			</div>
 			
@@ -53,8 +70,7 @@
 			
 			<h3 class="freightTit">流程跟踪</h3>
 			<ul class="freightUl">	
-<!-- 				<s:if test="#list!=null && #list.size()>0"> -->
-				<?php if(($dataAgree!=null)&&(count($dataAgree)>0)){?>
+				<s:if test="#list!=null && #list.size()>0">
 				<s:iterator value="#list">
 					<li class="mcurrent">
 					<span class="note"></span>				
@@ -62,33 +78,31 @@
 					<p class="date"><s:date name="time" format="YYYY-MM-dd HH:mm"/></p>
 					</li>
 				</s:iterator>
-				<?php } ?>
+				</s:if>
 			
 				<li>
 					<span class="note"></span>				
 					<p>创建请假条</p>
-					<p class="date">
-					<span class="fr date">
-<!-- 	  						<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
-									<?=Html::encode($model['applyTime']) ?>
-	  				</span>
-					</p>
+					<p class="date"><s:date name="#bill.applyTime" format="YYYY-MM-dd HH:mm"/></p>
 				</li>
 			</ul>	
 			
 		</div>
 		<!--end 跟踪流程-->
-		<?php  if($model['state']==3){?>
-			<div class="row">
+		
+		<div class="row">
+		<s:if test="#bill.state==1">
 	  		<div class="small-6 columns">	  			
-	  			<button type="button" class="button disabled expand" name="outcome" onclick="window.location.href='workflowAction_toUpdate.action?id=<?php $model['id']?>">再次提交</button>
+	  			<button type="submit" class="button expand" name="outcome" value="1">同意</button>
 	  		</div>
 	  		
 	  		<div class="small-6 columns">
-	  			<button type="button" class="button secondary expand" name="outcome" onclick="window.location.href='workflowAction_submitTaskByLeaveBillId.action?id=<?php $model['id']?>">放弃</button>
+	  			<button type="submit" class="button secondary expand" name="outcome" value="0">拒绝</button>
 	  		</div>
+	  	</s:if>
 	  	</div>
-	  	<?php }?>
+		
+		</form>
 	</div>
 </div>
 </body>

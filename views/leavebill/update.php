@@ -9,7 +9,7 @@
 <meta name="format-detection" content="telephone=no">
 <title>请假条列表-重申</title>
 <?php use yii\helpers\Html;?>
-<?=Html::cssFile('../css/leave.css')?>
+<?=Html::cssFile('../views/css/leave.css')?>
 
 </head>
 <body>

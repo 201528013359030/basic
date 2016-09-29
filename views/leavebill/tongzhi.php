@@ -8,7 +8,7 @@
 <meta name="format-detection" content="telephone=no">
 <title>通知</title>
 <?php use yii\helpers\Html;?>
-<?=Html::cssFile('../css/leave.css')?>
+<?=Html::cssFile('../views/css/leave.css')?>
 </head>
 <body>
 <div class="off-canvas-wrap" data-offcanvas>
