@@ -97,17 +97,17 @@ class LeavebillController extends Controller {
 					'applyTime' => SORT_DESC
 			] )->asArray ()->all ();
 
-			print_r ( $dataDisagree );
-			echo "</br>";
+// 			print_r ( $dataDisagree );
+// 			echo "</br>";
 			// print_r ( $dataAgree );echo "</br>";
 			// print_r ( $dataDisapproval );echo "</br>";
 			// print_r ( $dataApproval );
 
 			return $this->renderFile ( '@app/views/leavebill/list.php', [
-					'$dataDisagree' => $dataDisagree,
-					'$dataAgree' => $dataAgree,
-					'$dataDisapproval' => $dataDisapproval,
-					'$dataApproval' => $dataApproval,
+					'dataDisagree' => $dataDisagree,
+					'dataAgree' => $dataAgree,
+					'dataDisapproval' => $dataDisapproval,
+					'dataApproval' => $dataApproval,
 					'uid' => $request->queryParams ['uid']
 			] );
 		} else {
@@ -128,38 +128,56 @@ class LeavebillController extends Controller {
 
 		$searchModel = new LeavebillSearch ();
 
+
+
+		//echo "你好".$request->get( 'uid' );
+
+		if($request->get ( 'uid' )){
+
 		// 查询当前用户的请假信息-
 		$dataUserLeavebill = LeavebillSearch::find ()->where ( [
 
 				'userid' => $request->get ( 'uid' )
-		] )->orderBy ( 'applyTime' )->asArray ()->all ();
+		] )->orderBy ( [
+				'applyTime' => SORT_DESC
+		] )->asArray ()->all ();
 
 		// 查询需要当前用户审批的请假信息--已审批
 		$dataApproval = LeavebillSearch::find ()->where ( [
 				'approvalPerson' => $request->get ( 'uid' )
-		] )->orderBy ( 'applyTime' )->asArray ()->all ();
+		] )->orderBy ( [
+				'applyTime' => SORT_DESC
+		] )->asArray ()->all ();
 
 		// print_r ( $dataDisagree );echo "</br>";
 		// print_r ( $dataAgree );echo "</br>";
 		// print_r ( $dataDisapproval );echo "</br>";
 		// print_r ( $dataApproval );
 
-		return $this->renderFile ( '@app/views/leavebill/list.php', [
-				'$approvalPerson' => $dataUserLeavebill,
-				'$dataApproval' => $dataApproval,
+		return $this->renderFile ( '@app/views/leavebill/list-more.php', [
+				'approvalPerson' => $dataUserLeavebill,
+				'dataApproval' => $dataApproval,
 				'uid' => $request->get ( 'uid' )
 		] );
+		}
+		else{
+			return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [
+// 					'approvalPerson' => $dataUserLeavebill,
+// 					'dataApproval' => $dataApproval,
+// 					'uid' => $request->get ( 'uid' )
+			] );
+		}
 	}
 
 	/**
 	 * Displays detail infomation about leavebill.
 	 *
 	 * @param
-	 *@ id uid
+	 *        	@ id uid
 	 * @return data
 	 * @author fyq
 	 */
-	public function actionDetail() {
+	public function actionContent() {
 		$request = Yii::$app->request;
 
 		$searchModel = new LeavebillSearch ();
@@ -181,46 +199,44 @@ class LeavebillController extends Controller {
 	 * @return mixed
 	 */
 	public function actionSendnotice() {
-
-		$params['id'] = '80';
-		$params['eid'] = '3';
-		$params['title'] = '新版上线了，请下载更新。';
-		$params['url'] = 'http://uc.sipsys.com/lanou/html/lanou_down.html';
-		$params['uids[0]'] = '3@3';
-		$params['auth_token'] = '239d48513662381f07243c238145ed9d';
-		$params['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";
-		$webService =
-		"http://192.168.139.162/elgg/services/api/rest/json/?method=lapp.notice";
-		$curl = new CurlModel();
-		$result = $curl->post($webService, $params);
+		$params ['id'] = '80';
+		$params ['eid'] = '3';
+		$params ['title'] = '新版上线了，请下载更新。';
+		$params ['url'] = 'http://uc.sipsys.com/lanou/html/lanou_down.html';
+		$params ['uids[0]'] = '3@3';
+		$params ['auth_token'] = '239d48513662381f07243c238145ed9d';
+		$params ['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";
+		$webService = "http://192.168.139.162/elgg/services/api/rest/json/?method=lapp.notice";
+		$curl = new CurlModel ();
+		$result = $curl->post ( $webService, $params );
 
 		// 获取form post 参数
-// 		$uid = I ( 'uid' );
-// 	$uid = '3@3';
+		// $uid = I ( 'uid' );
+		// $uid = '3@3';
 
-// 		$params ['id'] = 5; // 轻应用id （企业门户添加轻应用后生成）
-// 		$params ['eid'] = explode ( "@", $uid ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
-// 		$params ['title'] =  'text' ; // 通知内容
-// 		$params ['url'] = "http://uc.sipsys.com"; // 通知的链接地址
-// 		$params ['uids[0]'] = $uid; // 接收者uid (数组)
-// 		$params ['auth_token'] =  'auth_token' ; // 用户认证
-// 		$params ['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";
+		// $params ['id'] = 5; // 轻应用id （企业门户添加轻应用后生成）
+		// $params ['eid'] = explode ( "@", $uid ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
+		// $params ['title'] = 'text' ; // 通知内容
+		// $params ['url'] = "http://uc.sipsys.com"; // 通知的链接地址
+		// $params ['uids[0]'] = $uid; // 接收者uid (数组)
+		// $params ['auth_token'] = 'auth_token' ; // 用户认证
+		// $params ['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";
 
-// 		// 接口地址
-// 		$webService = "http://192.168.139.162/elgg/services/api/rest/json/?method=lapp.notice";
-// 		$curl = new CurlModel ();
-// 		$result = json_decode ( $curl->post ( $webService, $params ), true );
+		// // 接口地址
+		// $webService = "http://192.168.139.162/elgg/services/api/rest/json/?method=lapp.notice";
+		// $curl = new CurlModel ();
+		// $result = json_decode ( $curl->post ( $webService, $params ), true );
 
 		echo "<pre>";
 		echo "参数</br>";
 		var_dump ( $params );
 		echo "结果</br>";
 		var_dump ( $result );
-// 		$this->display ();
+		// $this->display ();
 
-// 		return $this->render ( 'view', [
-// 				'model' => $this->findModel ( $id )
-// 		] );
+		// return $this->render ( 'view', [
+		// 'model' => $this->findModel ( $id )
+		// ] );
 	}
 
 	/**
@@ -266,14 +282,47 @@ class LeavebillController extends Controller {
 	 * @author fyq
 	 */
 	public function actionCreate() {
+		$uid = Yii::$app->request->get ('uid') ;
+
+		$model = Employee::find ()->where ( [
+				// 'username'=> '3@15'
+				'username' => $uid
+		] )->asArray ()->all ();
+
+			//return $this->renderFile ( '@app/views/leavebill/create.php', [
+			if($model){
+			return $this->renderFile ( '@app/views/leavebill/create.php', [
+					'model' => $model,
+					'uid' => $uid
+			] );
+			}
+			else{ echo "无此用户";
+					return $this->renderFile ( '@app/views/leavebill/create.php', [
+					'model' => $model,
+					'uid' => $uid
+			] );
+			}
+		//}
+	}
+
+	/**
+	 * Creates a new Leavebill model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 *
+	 * @return mixed
+	 * @author fyq
+	 */
+	public function actionSave() {
 		$model = new Leavebill ();
+		$request = Yii::$app->request;
+	    $uid = $request->get ('uid');
 
 		// if ($model->load ( Yii::$app->request->get () ) && $model->save ()) {
 		// echo date('Y-m-d H:i:s');
 
-		if (count ( Yii::$app->request->get () ) > 0) {
+		if (Yii::$app->request->get ('uid')) {
 
-			$request = Yii::$app->request;
+
 
 			$model->userid = $request->get ( 'userid', '0' );
 			$model->leaveType = $request->get ( 'leaveType', '0' );
@@ -294,6 +343,8 @@ class LeavebillController extends Controller {
 
 			$model->save ();
 
+			$this->actionIndex();
+
 			// echo $model->id;
 			// print_r(Yii::$app->request->post( 1)) ;
 			// return $this->redirect ( [
@@ -302,9 +353,10 @@ class LeavebillController extends Controller {
 			// ] );
 		} else {
 
-			return $this->renderPartial ( 'create', [
+			//return $this->renderFile ( '@app/views/leavebill/create.php', [
+			return $this->renderFile ( '@app/views/leavebill/create.php', [
 					'model' => $model,
-					'request' => $request->get ( 'ffff', 'e' )
+					//'request' => $request->get ( 'ffff', 'e' )
 			] );
 		}
 	}

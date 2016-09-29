@@ -8,7 +8,7 @@
 <meta name="format-detection" content="telephone=no">
 <title>请假条列表-创建</title>
 <?php use yii\helpers\Html;?>
-<?=Html::cssFile('../css/leave.css')?>
+<?=Html::cssFile('../views/css/leave.css')?>
 </head>
 <body>
 
@@ -16,7 +16,9 @@
 	<div class="inner-wrap">
 
 	<div class="row">
-		<form  data-abide action="http://localhost/basic/web/index.php?r=test/index"  method="get">
+		<form  data-abide action="http://localhost/basic/web/index.php?r=leavebill/save"  method="get">
+		<input  name="r" value="leavebill/save&uid=".$uid />
+
 
 		<s:hidden name="userid"/>
 			<!--表单主体-->
@@ -26,7 +28,7 @@
 			            <label class="center inline">请假人</label>
 			        </div>
 			        <div class="small-9 columns">
-			            <label class="inline">${sessionScope.globle_user.position }</label>
+			            <label class="inline"><?print_r($model)?></label>
 			        </div>
 			    </div>
 				<div class="row">
@@ -138,9 +140,9 @@
 -->
 
 
-<script src="${basePath}/js/vendor/jquery.js"></script>
-<script src="${basePath}/js/foundation.min.js"></script>
-<script src="${basePath}/js/htmlset.js"></script>
+<script src="../views/js/vendor/jquery.js"></script>
+<script src="../views/js/foundation.min.js"></script>
+<script src="../views/js/htmlset.js"></script>
 <script type="text/javascript">
 
 $(document).foundation({
@@ -265,8 +267,8 @@ function showPageError(txt){
 
 <!--时间控件部分-->
 
-<link href="${basePath}/js/vendor/mobiscroll.mo.min.css" rel="stylesheet" type="text/css" />
-<script src="${basePath}/js/vendor/mobiscroll.custom.min.js" type="text/javascript"></script>
+<link href="../views/js/vendor/mobiscroll.mo.min.css" rel="stylesheet" type="text/css" />
+<script src="../views/js/vendor/mobiscroll.custom.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
     $(function(){
