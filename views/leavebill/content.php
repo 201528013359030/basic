@@ -9,6 +9,7 @@
 <title>请假条列表-详细</title>
 <?php use yii\helpers\Html;?>
 <?=Html::cssFile('../views/css/leave.css')?>
+<?php $data = $dataDetail ?>
 </head>
 <body>
 
@@ -23,20 +24,20 @@
 			<div class="content">
 				
 				<div class="conInfo">
-					<p><?=Html::encode($model['spuser']) ?>,您好:<br><br>我是<span class="fb"><?=Html::encode($model['username']) ?>-<?=Html::encode($model['dep']) ?></span>,<span class="fb"><?=Html::encode($model['reason']) ?></span>，需请<span class="fb"><?php if ($model['leaveType']==1){?>事假<?php }elseif ($model['leaveType']==2){?>病假<?php }elseif ($model['leaveType']==3){?>婚假<?php }elseif ($model['leaveType']==4){?>丧假<?php }elseif ($model['leaveType']==5){?>年假<?php }else{?>其他<?php }?></span> <span class="fb"><?php  $model=['days']?> 天</span>
+					<p><?=Html::encode($data['spuser']) ?>,您好:<br><br>我是<span class="fb"><?=Html::encode($data['username']) ?>-<?=Html::encode($data['dep']) ?></span>,<span class="fb"><?=Html::encode($data['reason']) ?></span>，需请<span class="fb"><?php if ($data['leaveType']==1){?>事假<?php }elseif ($data['leaveType']==2){?>病假<?php }elseif ($data['leaveType']==3){?>婚假<?php }elseif ($data['leaveType']==4){?>丧假<?php }elseif ($data['leaveType']==5){?>年假<?php }else{?>其他<?php }?></span> <span class="fb"><?php  $data=['days']?> 天</span>
 					</p>
 					<p><mark class="fmak">
 					<span class="fr date">
 <!-- 	  						<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
-									<?=Html::encode($model['leaveStartTime']) ?>
+									<?=Html::encode($data['leaveStartTime']) ?>
 	  				</span>
 					~ 
 					<span class="fr date">
 <!-- 	  						<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
-									<?=Html::encode($model['leaveEndTime']) ?>
+									<?=Html::encode($data['leaveEndTime']) ?>
 	  				</span>
 					</mark></p>
-					<p><?=Html::encode($model['remark']) ?></p>
+					<p><?=Html::encode($data['remark']) ?></p>
 					<p>请您审批</p>
 				</div>
 				
@@ -70,7 +71,7 @@
 					<p class="date">
 					<span class="fr date">
 <!-- 	  						<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
-									<?=Html::encode($model['applyTime']) ?>
+									<?=Html::encode($data['applyTime']) ?>
 	  				</span>
 					</p>
 				</li>
@@ -78,14 +79,14 @@
 			
 		</div>
 		<!--end 跟踪流程-->
-		<?php  if($model['state']==3){?>
+		<?php  if($data['state']==3){?>
 			<div class="row">
 	  		<div class="small-6 columns">	  			
-	  			<button type="button" class="button disabled expand" name="outcome" onclick="window.location.href='workflowAction_toUpdate.action?id=<?php $model['id']?>">再次提交</button>
+	  			<button type="button" class="button disabled expand" name="outcome" onclick="window.location.href='workflowAction_toUpdate.action?id=<?php $data['id']?>">再次提交</button>
 	  		</div>
 	  		
 	  		<div class="small-6 columns">
-	  			<button type="button" class="button secondary expand" name="outcome" onclick="window.location.href='workflowAction_submitTaskByLeaveBillId.action?id=<?php $model['id']?>">放弃</button>
+	  			<button type="button" class="button secondary expand" name="outcome" onclick="window.location.href='workflowAction_submitTaskByLeaveBillId.action?id=<?php $data['id']?>">放弃</button>
 	  		</div>
 	  	</div>
 	  	<?php }?>

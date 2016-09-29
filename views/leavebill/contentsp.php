@@ -91,7 +91,7 @@
 		<!--end 跟踪流程-->
 		
 		<div class="row">
-		<s:if test="#bill.state==1">
+		<?php  if($model['state']==1){?>
 	  		<div class="small-6 columns">	  			
 	  			<button type="submit" class="button expand" name="outcome" value="1">同意</button>
 	  		</div>
@@ -99,7 +99,7 @@
 	  		<div class="small-6 columns">
 	  			<button type="submit" class="button secondary expand" name="outcome" value="0">拒绝</button>
 	  		</div>
-	  	</s:if>
+	  	<?php }?>
 	  	</div>
 		
 		</form>
