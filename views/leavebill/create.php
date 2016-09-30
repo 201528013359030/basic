@@ -16,8 +16,10 @@
 	<div class="inner-wrap">
 
 	<div class="row">
-		<form  data-abide action="http://localhost/basic/web/index.php"  method="get">
-		<!-- <input  name="r" value="leavebill/save&uid=".$uid  /> -->
+<!-- 	<form  data-abide action="http://192.168.1.112/basic/web/index.php"  method="get"> -->
+<form  data-abide action="/basic/web/index.php?r=qingjiatiao%2Fcreate"  method="post">
+		 <input type="hidden" name="r" value="leavebill/save"  />
+		   <input  type="hidden" value=<?=$uid?> name="uid"  />
 
 
 		<s:hidden name="userid"/>
@@ -62,7 +64,7 @@
 			          <label for="right-label" class="center inline">结束</label>
 			        </div>
 			        <div class="small-9 columns">
-			          <input class="datesel" name="leaveEndTime"  type="text" placeholder="请选择"  required data-greatthan="leaveStarTim" data-abide-validator="greatThan" />
+			          <input class="datesel" name="leaveEndTime"  type="text" placeholder="请选择"  required data-greatthan="leaveStarTime" data-abide-validator="greatThan" />
 			          <small class="error">结束时间不能小于开始时间</small>
 			        </div>
 			    </div>
@@ -75,7 +77,7 @@
 			        <div class="small-9 columns timeBox">
 			          <a href="javascript:void(0);" class="btn-link" id="approver">请选择您的审批人</a>
 			          <input id="spuser-input" class="hid-input" value="" type="text" name="spuser" required />
-			          <input id="approver-input" class="hid-input" value=" " type="text" name="approvalPerson" required />
+			          <input id="approver-input" class="hid-input" value="" type="text" name="approvalPerson" required />
 
 			          <small class="error">请选择审批人</small>
 			        </div>

@@ -14,20 +14,20 @@
 
 </head>
 <body>
-<?php 
+<?php
 //print_r( $dataDisagree);
 ?>
 
 <div class="off-canvas-wrap" data-offcanvas>
 	<div class="inner-wrap">
-		
+
 	  	<div class="row">
 	  	<div class="row-button">
 	  			  <?= Html::tag('a', Html::encode("创建请假条"), ['href'=>'index.php?r=leavebill/create&uid='.$uid]) ?>
 <!-- 	  			<a href="leaveBillAction_input.action">创建请假条 </a> -->
 	  	</div>
 	  		<!--未处理状态-->
-	 
+
 <!-- 	  		<s:if test="#lb_list!=null && #lb_list.size()>0"> -->
 	  		<?php if(($dataDisagree!=null)&&(count($dataDisagree)>0)){?>
 	  		<div class="row-tab">进行中</div>
@@ -109,9 +109,9 @@
 	  			</div>
 	  		</s:if>
 	  		<?php }?>
-	  		
-	  		
-	  		
+
+
+
 <!-- 	  		<s:if test="#sp_list!=null && #sp_list.size()>0"> -->
 			<?php if(($dataDisapproval !=null)&&(count($dataDisapproval)>0)){?>
 	  		<div class="row-tab">待处理的审批</div>
@@ -150,18 +150,18 @@
 	  				<p class="info clearfix">
 	  					<span class="fl name">
 <!-- 	  					<s:property value="username"/> -->
-			<?=Html::encode($disagree['username']) ?>
+			<?=Html::encode($disapproval['username']) ?>
 	  					</span>
 	  					<span class="fr status"><em class="fc_sucess">待审批</em></span>
 	  				</p>
 	  				<p class="info clearfix">
 	  					<span class="fl date">
 <!-- 	  					<s:property value="day"/> -->
-					<?=Html::encode($disagree['days']) ?>
+					<?=Html::encode($disapproval['days']) ?>
 	  					天</span>
 	  					<span class="fr date">
 <!-- 	  					<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
-								<?=Html::encode($disagree['applyTime']) ?>
+								<?=Html::encode($disapproval['applyTime']) ?>
 	  					</span>
 	  				</p>
 	  				<?=Html::endTag('a')?>
@@ -171,11 +171,11 @@
 	  			</div>
 <!-- 	  		</s:if> -->
 	  			<?php }?>
-	  		
+
 	  		<!--end 未处理状态-->
-	  		
+
 	  		<div class="row-tab">&nbsp;</div>
-	  		
+
 	  		<div class="list-group">
 <!-- 	  			<s:if test="#list1!=null && #list1.size()>0"> -->
 				<?php if(($dataAgree!=null)&&(count($dataAgree)>0)){?>
@@ -295,7 +295,7 @@
 											<?=Html::encode($approval['username']) ?>
 	  					</span>
 	  					<span class="fr status">
-	  					
+
 	  						<?php if($agree['state']==1){?>
 <!-- 	  						<s:if test="state==1"> -->
 	  							<em class="fc_sucess">审批中</em>
@@ -314,7 +314,7 @@
 <!-- 	  						</s:else> -->
 					<?php }?>
 
-	  					
+
 						</span>
 	  				</p>
 	  				<p class="info clearfix">
@@ -333,7 +333,7 @@
 <!-- 	  			</s:if> -->
 					<?php }?>
 			<?php }?>
-	  		</div>	  		
+	  		</div>
 	  	</div>
 	  	<div class="row">
 	  		<div class="small-12 columns">
@@ -346,9 +346,9 @@
 <!-- 	  			</a> -->
 	  		</div>
 	  	</div>
-	  	
+
 	</div>
 </div>
-	
+
 </body>
 </html>

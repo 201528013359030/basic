@@ -7,7 +7,7 @@ use Yii;
 /**
  * This is the model class for table "leavebill".
  *
- * @property string $id
+ * @property integer $id
  * @property string $userid
  * @property string $leaveType
  * @property string $leaveStartTime
@@ -41,7 +41,6 @@ class Leavebill extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
             [['leaveStartTime', 'leaveEndTime', 'applyTime'], 'safe'],
             [['state'], 'integer'],
             [['days'], 'number'],
