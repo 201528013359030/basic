@@ -195,7 +195,7 @@ class LeavebillController extends Controller {
 	 */
 	public function actionSendnotice() {
 		$GLOBALS['uid']='3@15';
-		$params ['id'] = '80';
+		$params ['id'] = '46'; //和轻应用有关
 		$params ['eid'] =  explode ( "@", $GLOBALS['uid'] ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
 		                      // $params ['eid'] = '3';
 		$params ['title'] = '新版上线了，请下载更新。';
@@ -247,7 +247,7 @@ class LeavebillController extends Controller {
 	 *        	通知人
 	 * @return mixed
 	 */
-	public function actionSendmessage($id) {
+	public function actionSendmessage() {
 		// $params ['id'] = '80';
 		// $params ['eid'] = '15';
 		// $params ['title'] = '新版上线了，请下载更新。';
@@ -262,7 +262,9 @@ class LeavebillController extends Controller {
 		// $model=$this->findModel ( $id );
 		// $model1=Leavebill::find()->all();
 		// print_r($model1);
-		$model = $this->findModel ( 'QJDH00000000000' ); // $id
+
+		$id ='QJDH00000000000'; //函数参数--测试
+		$model = $this->findModel ( $id);
 		                                                 // print_r($model);
 		if ($model ['state'] == 2) {
 
@@ -366,12 +368,14 @@ class LeavebillController extends Controller {
 		$tag = 0;
 
 		for($i = 0; $i < count ( $model ); $i ++) {
-			if ($model [$i] [leaveEndTime] > $request->get ( 'leaveEndTime' )) {
+			if ($model [$i] [leaveEndTime] > $request->get ( 'leaveStartTime' )&&$request->get ( 'leaveStartTime' )>=date ( 'Y-m-d H:i:s' )) {
 				$tag = 1;
 			}
 		}
 
-		if ($tag == 1) {
+		if ($tag == 0) {
+
+			$diff = date_diff ( date_create ( $request->get ( 'leaveStartTime' ) ), date_create ( $request->get ( 'leaveEndTime' ) ) )->format ( "%R%a days" ) + 0;
 
 			$model->userid = $request->get ( 'userid', '0' ); // $GLOBALS['uid']
 			$model->leaveType = $request->get ( 'leaveType', '0' );
@@ -383,7 +387,7 @@ class LeavebillController extends Controller {
 			$model->applyTime = date ( 'Y-m-d H:i:s' );
 			$model->state = $request->get ( 'state', '0' );
 			$model->username = $request->get ( 'username', '0' );
-			$model->days = $request->get ( 'days', '0' );
+			$model->days = $diff;
 			$model->dep = $request->get ( 'dep', '0' );
 			$model->spuser = $request->get ( 'spuser', '0' ); // name
 			$model->tzuser = $request->get ( 'tzuser', '0' ); // name
