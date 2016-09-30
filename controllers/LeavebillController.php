@@ -193,13 +193,14 @@ class LeavebillController extends Controller {
 	 * @param string $id
 	 * @return mixed
 	 */
-	public function actionSendnotice($to_uid) {
+	public function actionSendnotice() {
+		$GLOBALS['uid']='3@15';
 		$params ['id'] = '80';
-		$params ['eid'] = 15; // explode ( "@", $GLOBALS['uid'] ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
+		$params ['eid'] =  explode ( "@", $GLOBALS['uid'] ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
 		                      // $params ['eid'] = '3';
 		$params ['title'] = '新版上线了，请下载更新。';
 		$params ['url'] = 'http://uc.sipsys.com/lanou/html/lanou_down.html';
-		$params ['uids[0]'] = '8@15'; // $to_uid;
+		$params ['uids[0]'] = '5@15'; // $to_uid;
 		$params ['auth_token'] = '239d48513662381f07243c238145ed9d'; // $GLOBALS['auth_token']
 		$params ['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";
 		$webService = "http://192.168.139.160/elgg/services/api/rest/json/?method=lapp.notice";
