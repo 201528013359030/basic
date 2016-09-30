@@ -179,8 +179,8 @@ class LeavebillController extends Controller {
 
 		// 查询当前用户的请假信息-
 
-		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) );
-
+		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray();
+		
 		return $this->renderFile ( '@app/views/leavebill/content.php', [
 				'dataDetail' => $dataDetail,
 				'uid' => $request->get ( 'uid' )
