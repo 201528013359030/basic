@@ -53,7 +53,7 @@
 			          <label for="right-label" class="center inline">开始</label>
 			        </div>
 			        <div class="small-9 columns">
-			          <input id="starTime" class="datesel" name="startTime"  type="text" placeholder="请选择" required />
+			          <input id="leaveStarTime" class="datesel" name="leaveStartTime"  type="text" placeholder="请选择" required />
 			          <small class="error">请选择开始时间</small>
 			        </div>
 			    </div>
@@ -62,7 +62,7 @@
 			          <label for="right-label" class="center inline">结束</label>
 			        </div>
 			        <div class="small-9 columns">
-			          <input class="datesel" name="endTime"  type="text" placeholder="请选择"  required data-greatthan="starTime" data-abide-validator="greatThan" />
+			          <input class="datesel" name="leaveEndTime"  type="text" placeholder="请选择"  required data-greatthan="leaveStarTim" data-abide-validator="greatThan" />
 			          <small class="error">结束时间不能小于开始时间</small>
 			        </div>
 			    </div>
@@ -74,8 +74,8 @@
 
 			        <div class="small-9 columns timeBox">
 			          <a href="javascript:void(0);" class="btn-link" id="approver">请选择您的审批人</a>
-			          <input id="spuser-input" class="hid-input" value="777" type="text" name="spuser" required />
-			          <input id="approver-input" class="hid-input" value="888" type="text" name="approvalPerson" required />
+			          <input id="spuser-input" class="hid-input" value="" type="text" name="spuser" required />
+			          <input id="approver-input" class="hid-input" value=" " type="text" name="approvalPerson" required />
 
 			          <small class="error">请选择审批人</small>
 			        </div>
@@ -88,8 +88,8 @@
 			          <!--这里需要把获取到的人名 放在 a里显示，也要放到hid input中显示-->
 
 			          <a href="javascript:void(0);" class="btn-link" id="member">请选择工作相关人员</a>
-			          <input id="tzuser-input" class="hid-input" value="666" type="text" name="tzuser" required />
-			          <input id="member-input" class="hid-input" value="555"  type="text" name="tongzhi" required />
+			          <input id="tzuser-input" class="hid-input" value="" type="text" name="tzuser" required />
+			          <input id="member-input" class="hid-input" value=""  type="text" name="tongzhi" required />
 
 			          <small class="error">请选择通知人</small>
 			        </div>

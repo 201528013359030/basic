@@ -24,19 +24,9 @@
 			<div class="content">
 				
 				<div class="conInfo">
-					<p><?=Html::encode($data['spuser']) ?>,您好:<br><br>我是<span class="fb"><?=Html::encode($data['username']) ?>-<?=Html::encode($data['dep']) ?></span>,<span class="fb"><?=Html::encode($data['reason']) ?></span>，需请<span class="fb"><?php if ($data['leaveType']==1){?>事假<?php }elseif ($data['leaveType']==2){?>病假<?php }elseif ($data['leaveType']==3){?>婚假<?php }elseif ($data['leaveType']==4){?>丧假<?php }elseif ($data['leaveType']==5){?>年假<?php }else{?>其他<?php }?></span> <span class="fb"><?php  $data=['days']?> 天</span>
+					<p><?=Html::encode($data['spuser']) ?>,您好:<br><br>我是<span class="fb"><?=Html::encode($data['username']) ?>-<?=Html::encode($data['dep']) ?></span>,<span class="fb"><?=Html::encode($data['reason']) ?></span>，需请<span class="fb"><?php if ($data['leaveType']==1){?>事假<?php }elseif ($data['leaveType']==2){?>病假<?php }elseif ($data['leaveType']==3){?>婚假<?php }elseif ($data['leaveType']==4){?>丧假<?php }elseif ($data['leaveType']==5){?>年假<?php }else{?>其他<?php }?></span> <span class="fb"><?=$data['days']?> 天</span>
 					</p>
-					<p><mark class="fmak">
-					<span class="fr date">
-<!-- 	  						<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
-									<?=Html::encode($data['leaveStartTime']) ?>
-	  				</span>
-					~ 
-					<span class="fr date">
-<!-- 	  						<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
-									<?=Html::encode($data['leaveEndTime']) ?>
-	  				</span>
-					</mark></p>
+					<p><mark class="fmak"><span><?=Html::encode($data['leaveStartTime'])?></span>~<span><?=Html::encode($data['leaveEndTime']) ?></span></mark></p>
 					<p><?=Html::encode($data['remark']) ?></p>
 					<p>请您审批</p>
 				</div>
@@ -55,7 +45,7 @@
 			<h3 class="freightTit">流程跟踪</h3>
 			<ul class="freightUl">	
 <!-- 				<s:if test="#list!=null && #list.size()>0"> -->
-				<?php if(($dataAgree!=null)&&(count($dataAgree)>0)){?>
+				<?php if(($data!=null)&&(count($data)>0)){?>
 				<s:iterator value="#list">
 					<li class="mcurrent">
 					<span class="note"></span>				
@@ -69,7 +59,7 @@
 					<span class="note"></span>				
 					<p>创建请假条</p>
 					<p class="date">
-					<span class="fr date">
+					<span>
 <!-- 	  						<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
 									<?=Html::encode($data['applyTime']) ?>
 	  				</span>
