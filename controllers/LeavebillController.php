@@ -198,7 +198,7 @@ class LeavebillController extends Controller {
 		$params ['id'] = '46'; //和轻应用有关
 		$params ['eid'] =  explode ( "@", $GLOBALS['uid'] ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
 		                      // $params ['eid'] = '3';
-		$params ['title'] = '新版上线了，请下载更新。';
+		$params ['title'] = '有新的请假通知';
 		$params ['url'] = 'http://uc.sipsys.com/lanou/html/lanou_down.html';
 		$params ['uids[0]'] = '5@15'; // $to_uid;
 		$params ['auth_token'] = '239d48513662381f07243c238145ed9d'; // $GLOBALS['auth_token']
