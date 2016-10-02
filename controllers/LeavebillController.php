@@ -46,6 +46,21 @@ class LeavebillController extends Controller {
 	 * @author fyq
 	 */
 	public function actionIndex() {
+
+// 		print_r($_SERVER['HTTP_ACCEPT']);
+// 		echo "</br>";
+// 		echo $_SERVER['HTTP_ACCEPT'];
+// 		echo "</br>";
+// 		echo $_SERVER['SCRIPT_FILENAME'];
+// 		echo "</br>";
+// 		echo $_SERVER['SERVER_ADDR'];
+// 		echo "</br>";
+// 		echo $_SERVER['SERVER_NAME'];
+// 		echo "</br>";
+
+
+		//echo $_SERVER['SERVER_NAME'];
+
 		$request = Yii::$app->request;
 		//$GLOBALS ['auth_token'] = $request->queryParams ['auth_token'];
 		 $uid = $request->queryParams ['uid'];
@@ -61,9 +76,6 @@ class LeavebillController extends Controller {
 	 * @author fyq
 	 */
 	public function actionList($uid) {
-
-
-
 
 		$customers = Employee::find ()->where ( [
 				// 'username'=> '3@15'
@@ -137,6 +149,139 @@ class LeavebillController extends Controller {
 			echo $uid;
 		} else {
 			echo "用户不存在";
+		}
+	}
+
+	/**
+	 * Creates a new Leavebill model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 *
+	 * @return mixed
+	 * @author fyq
+	 */
+	public function actionCreate() {
+
+		$uid = Yii::$app->request->get ( 'uid' );
+
+		$model = Employee::find ()->where ( [
+				// 'username'=> '3@15'
+				'username' => $uid
+		] )->asArray ()->all ();
+
+		// return $this->renderFile ( '@app/views/leavebill/create.php', [
+		if ($model) {
+			return $this->renderFile ( '@app/views/leavebill/create.php', [
+					'model' => $model,
+					'uid' => $uid
+			] );
+		} else { // echo "无此用户";
+			return $this->renderFile ( '@app/views/leavebill/create.php', [
+					'model' => $model,
+					'uid' => $uid
+			] );
+		}
+		// }
+	}
+
+	/**
+	 * Creates a new Leavebill model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 *
+	 * @return mixed
+	 * @author fyq
+	 */
+	public function actionSave() {
+		//$model = new Leavebill ();
+		$request = Yii::$app->request;
+		$uid =$request->get('uid');
+		//$uid = $request->get ( 'uid' );
+		$model1 = Leavebill::find ()->where ( [
+				'userid' => $uid
+		] )->asArray()->all ();
+
+		$tag = 0;
+
+		for($i = 0; $i < count ( $model1 ); $i ++) {
+			if ($model1 [$i] ['leaveEndTime'] > $request->get ( 'leaveStartTime' )&&$request->get ( 'leaveStartTime' )>=date ( 'Y-m-d H:i:s' )) {
+				$tag = 1;
+			}
+		}
+		if ($tag == 0) {
+			$model= new Leavebill();
+
+			$diff = date_diff ( date_create ( $request->get ( 'leaveStartTime' ) ), date_create ( $request->get ( 'leaveEndTime' ) ) )->format ( "%R%a days" ) + 0;
+
+			//	$model->userid = $request->get ( 'userid', '0' ); // $GLOBALS['uid']
+
+			$model->userid = $request->get ( 'userid', $uid ); // $GLOBALS['uid']
+			$model->leaveType = $request->get ( 'leaveType', '0' );
+			$model->leaveStartTime = $request->get ( 'leaveStartTime', '0' );
+			$model->leaveEndTime = $request->get ( 'leaveEndTime', '0' );
+			$model->reason = $request->get ( 'reason', '0' );
+			$model->approvalPerson = $request->get ( 'approvalPerson', '0' ); // id
+			$model->remark = $request->get ( 'remark', '0' );
+			$model->applyTime = date ( 'Y-m-d H:i:s' );
+			$model->state = $request->get ( 'state', '1' );
+			$model->username= $request->get ( 'username', '0' );
+			$model->days = $diff;
+			$model->dep =$request->get ( 'dep', '0' );
+			$model->spuser = $request->get ( 'spuser', '0' ); // name
+			$model->tzuser = $request->get ( 'tzuser', '0' ); // name
+			$model->tongzhi = $request->get ( 'tongzhi', '0' ); // id
+			$model->token= $request->get ( 'token', '0' ); // $GLOBALS['auth_token'];
+
+
+			$model->save();
+			//echo "保存成功";
+			if ($request->get ( 'approvalPerson' )) {
+
+				$this->actionSendnotice ( $uid,$request->get ( 'approvalPerson' ) );
+				return $this->actionList($uid);
+			} else {
+				echo "审批人id为空";
+				$this->actionList($uid);
+			}
+		} else {
+			echo "开始时间小于历史请假结束时间！";
+		}
+	}
+
+
+
+	/**
+	 * Deletes an existing Leavebill model.
+	 * If deletion is successful, the browser will be redirected to the 'index' page.
+	 *
+	 * @param string $id
+	 * @return mixed
+	 */
+	public function actionDelete($id) {
+		$this->findModel ( $id )->delete ();
+
+		return $this->redirect ( [
+				'index'
+		] );
+	}
+
+	/**
+	 * Updates an existing Leavebill model.
+	 * If update is successful, the browser will be redirected to the 'view' page.
+	 *
+	 * @param string $id
+	 * @return mixed
+	 */
+	public function actionUpdate($id) {
+		$model = $this->findModel ( $id ); // $id为请假条记录id
+
+		if ($model->load ( Yii::$app->request->get () ) && $model->save ()) {
+			return $this->redirect ( [
+					'view',
+					'id' => $model->id
+			] );
+		} else {
+			return $this->render ( 'update', [
+					'model' => $model
+			] );
 		}
 	}
 
@@ -240,13 +385,16 @@ class LeavebillController extends Controller {
 	 * @return mixed
 	 */
 	public function actionSendnotice($uid,$to_uid) {
+
+// 		print_r($_SERVER['HTTP_ACCEPT']);
+
 // 		$GLOBALS['uid']='3@15';
 		$params ['id'] = '46'; //和轻应用有关
 		$params ['eid'] = 15;//explode ( "@",$uid ) [1] ;// explode ( "@", $GLOBALS['uid'] ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
 		                      // $params ['eid'] = '3';
 		$params ['title'] = '有新的请假通知';
 
-		$params ['url'] = 'http://192.168.1.112/basic/web/index.php?r=leavebill/index&uid=&eguid=&auth_token=';
+		$params ['url'] = 'http://'.$_SERVER['HTTP_HOST'].'/basic/web/index.php?r=leavebill/index&uid=&eguid=&auth_token=';
 		$params ['uids[0]'] =  $to_uid;
 		$params ['auth_token'] = '239d48513662381f07243c238145ed9d'; // $GLOBALS['auth_token']
 		$params ['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";
@@ -367,136 +515,7 @@ class LeavebillController extends Controller {
 		] );
 	}
 
-	/**
-	 * Creates a new Leavebill model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 *
-	 * @return mixed
-	 * @author fyq
-	 */
-	public function actionCreate() {
 
-		$uid = Yii::$app->request->get ( 'uid' );
-
-		$model = Employee::find ()->where ( [
-				// 'username'=> '3@15'
-				'username' => $uid
-		] )->asArray ()->all ();
-
-		// return $this->renderFile ( '@app/views/leavebill/create.php', [
-		if ($model) {
-			return $this->renderFile ( '@app/views/leavebill/create.php', [
-					'model' => $model,
-					'uid' => $uid
-			] );
-		} else { // echo "无此用户";
-			return $this->renderFile ( '@app/views/leavebill/create.php', [
-					'model' => $model,
-					'uid' => $uid
-			] );
-		}
-		// }
-	}
-
-	/**
-	 * Creates a new Leavebill model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 *
-	 * @return mixed
-	 * @author fyq
-	 */
-	public function actionSave() {
-		//$model = new Leavebill ();
-		$request = Yii::$app->request;
-		$uid =$request->get('uid');
-		//$uid = $request->get ( 'uid' );
-		$model1 = Leavebill::find ()->where ( [
-				'userid' => $uid
-		] )->asArray()->all ();
-
-		$tag = 0;
-
-		for($i = 0; $i < count ( $model1 ); $i ++) {
-			if ($model1 [$i] ['leaveEndTime'] > $request->get ( 'leaveStartTime' )&&$request->get ( 'leaveStartTime' )>=date ( 'Y-m-d H:i:s' )) {
- 				$tag = 1;
- 			}
- 		}
-		if ($tag == 0) {
-			$model= new Leavebill();
-
-			$diff = date_diff ( date_create ( $request->get ( 'leaveStartTime' ) ), date_create ( $request->get ( 'leaveEndTime' ) ) )->format ( "%R%a days" ) + 0;
-
-		//	$model->userid = $request->get ( 'userid', '0' ); // $GLOBALS['uid']
-
-			$model->userid = $request->get ( 'userid', $uid ); // $GLOBALS['uid']
-			$model->leaveType = $request->get ( 'leaveType', '0' );
-			$model->leaveStartTime = $request->get ( 'leaveStartTime', '0' );
-			$model->leaveEndTime = $request->get ( 'leaveEndTime', '0' );
-			$model->reason = $request->get ( 'reason', '0' );
-			$model->approvalPerson = $request->get ( 'approvalPerson', '0' ); // id
-			$model->remark = $request->get ( 'remark', '0' );
-			$model->applyTime = date ( 'Y-m-d H:i:s' );
-			$model->state = $request->get ( 'state', '1' );
-			$model->username= $request->get ( 'username', '0' );
-			$model->days = $diff;
-			$model->dep =$request->get ( 'dep', '0' );
-			$model->spuser = $request->get ( 'spuser', '0' ); // name
-			$model->tzuser = $request->get ( 'tzuser', '0' ); // name
-			$model->tongzhi = $request->get ( 'tongzhi', '0' ); // id
-			$model->token= $request->get ( 'token', '0' ); // $GLOBALS['auth_token'];
-
-
-			$model->save();
-			//echo "保存成功";
-			if ($request->get ( 'approvalPerson' )) {
-
-				$this->actionSendnotice ( $uid,$request->get ( 'approvalPerson' ) );
-				return $this->actionList($uid);
-			} else {
-				echo "审批人id为空";
-				$this->actionList($uid);
-			}
-		} else {
-			echo "开始时间小于历史请假结束时间！";
-		}
-	}
-
-	/**
-	 * Updates an existing Leavebill model.
-	 * If update is successful, the browser will be redirected to the 'view' page.
-	 *
-	 * @param string $id
-	 * @return mixed
-	 */
-	public function actionUpdate($id) {
-		$model = $this->findModel ( $id ); // $id为请假条记录id
-
-		if ($model->load ( Yii::$app->request->get () ) && $model->save ()) {
-			return $this->redirect ( [
-					'view',
-					'id' => $model->id
-			] );
-		} else {
-			return $this->render ( 'update', [
-					'model' => $model
-			] );
-		}
-	}
-
-	/**
-	 * Deletes an existing Leavebill model.
-	 * If deletion is successful, the browser will be redirected to the 'index' page.
-	 *
-	 * @param string $id
-	 * @return mixed
-	 */
-	public function actionDelete($id) {
-		$this->findModel ( $id )->delete ();
-
-		return $this->redirect ( [
-				'index'
-		] );
-	}
 
 	/**
 	 * Finds the Leavebill model based on its primary key value.
