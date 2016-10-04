@@ -66,7 +66,7 @@ class LeavebillController extends Controller {
 		 $uid = $request->queryParams ['uid'];
 
 
-		return $this->actionList($uid);
+		 return $this->redirect(['list', 'uid' => $uid]);
 	}
 
 	/**
@@ -183,6 +183,36 @@ class LeavebillController extends Controller {
 		// }
 	}
 
+	public function actionWhere() {
+
+		//$uid = Yii::$app->request->get ( 'uid' );
+		$posts = Yii::$app->db->createCommand('SELECT * FROM leavebill where userid = :uid and id > :id and applyTime < :applyTime')
+		->bindValue(':uid', '8@15')
+		->bindValue(':id', 502)
+		->bindValue(':applyTime', date ( 'Y-m-d H:i:s' ))
+		->queryAll();
+
+// 		$model = Leavebill::find ()->where(['>','id','500'])->asArray()->all();
+
+		//$model->andWhere([ 'leaveType'=>'1']);
+
+		print_r($posts);
+
+		// return $this->renderFile ( '@app/views/leavebill/create.php', [
+// 		if ($model) {
+// 			return $this->renderFile ( '@app/views/leavebill/create.php', [
+// 					'model' => $model,
+// 					'uid' => $uid
+// 			] );
+// 		} else { // echo "无此用户";
+// 			return $this->renderFile ( '@app/views/leavebill/create.php', [
+// 					'model' => $model,
+// 					'uid' => $uid
+// 			] );
+		}
+		// }
+
+
 	/**
 	 * Creates a new Leavebill model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
@@ -199,27 +229,38 @@ class LeavebillController extends Controller {
 				'userid' => $uid
 		] )->asArray()->all ();
 
+		echo"-----------------------------------------</br>";
+
 		$tag = 0;
+		//echo count ( $model1 );
+
 
 		for($i = 0; $i < count ( $model1 ); $i ++) {
-			if ($model1 [$i] ['leaveEndTime'] > $request->get ( 'leaveStartTime' )&&$request->get ( 'leaveStartTime' )>=date ( 'Y-m-d H:i:s' )) {
-				$tag = 1;
+
+
+			if ($model1 [$i] ['leaveEndTime'] > $request->get ( 'leaveStartTime' )&&$request->get ( 'leaveStartTime' )<=date ( 'Y-m-d H:i:s' )) {
+
+				//$tag = 1;
 			}
 		}
 		if ($tag == 0) {
 			$model= new Leavebill();
+// 			print_r($model);
+
 
 			$diff = date_diff ( date_create ( $request->get ( 'leaveStartTime' ) ), date_create ( $request->get ( 'leaveEndTime' ) ) )->format ( "%R%a days" ) + 0;
 
 			//	$model->userid = $request->get ( 'userid', '0' ); // $GLOBALS['uid']
 
-			$model->userid = $request->get ( 'userid', $uid ); // $GLOBALS['uid']
-			$model->leaveType = $request->get ( 'leaveType', '0' );
+			//$model->id = '6';
+
+			echo $model->userid = $request->get ( 'userid', $uid ); // $GLOBALS['uid']
+			echo $model->leaveType = $request->get ( 'leaveType', '0' );
 			$model->leaveStartTime = $request->get ( 'leaveStartTime', '0' );
 			$model->leaveEndTime = $request->get ( 'leaveEndTime', '0' );
-			$model->reason = $request->get ( 'reason', '0' );
+			echo $model->reason = $request->get ( 'reason', '0' );
 			$model->approvalPerson = $request->get ( 'approvalPerson', '0' ); // id
-			$model->remark = $request->get ( 'remark', '0' );
+			echo $model->remark = $request->get ( 'remark', '0' );
 			$model->applyTime = date ( 'Y-m-d H:i:s' );
 			$model->state = $request->get ( 'state', '1' );
 			$model->username= $request->get ( 'username', '0' );
@@ -230,13 +271,16 @@ class LeavebillController extends Controller {
 			$model->tongzhi = $request->get ( 'tongzhi', '0' ); // id
 			$model->token= $request->get ( 'token', '0' ); // $GLOBALS['auth_token'];
 
-
+			echo "***********************************</br>";
 			$model->save();
+
+// 			print_r($model);
 			//echo "保存成功";
 			if ($request->get ( 'approvalPerson' )) {
 
-				$this->actionSendnotice ( $uid,$request->get ( 'approvalPerson' ) );
-				return $this->actionList($uid);
+				//$this->actionSendnotice ( $uid,$request->get ( 'approvalPerson' ) );
+				return $this->redirect(['list', 'uid' => $uid]);
+			//	return $this->actionList($uid);
 			} else {
 				echo "审批人id为空";
 				$this->actionList($uid);
