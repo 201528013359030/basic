@@ -13,8 +13,6 @@
 <?=Html::cssFile("../views/css/public.css")?>
 </head>
 <body>
-	
-	
 <div class="off-canvas-wrap" data-offcanvas>
 	<div class="inner-wrap">
 		<div class="row-button">
@@ -43,66 +41,26 @@
 					<?php //print_r($dataApproval);?>
 					<!--tab1的内容区域-->
 					<div class="content active" id="panel1">		    
-<!-- 						<s:if test="#lb_list!=null && #lb_list.size()>0"> -->
 							<?php if(($dataApproval!=null)&&(count($dataApproval)>0)){?>
 							<div class="list-group">
-							<!--循环的还是 list.html的结构
-								a 作为循环内容
-<!-- 							--> 
-<!-- 							<s:iterator value="#lb_list"> -->
 				<?php foreach ($dataApproval as $approval){?>
-<!-- 	  			<a href="leaveBillAction_viewTask.action?id=<s:property value="id"/>" class="listIteam"> -->
-<!-- 					<a href="" class="listIteam"> -->
 					<?=Html::beginTag('a',['class'=>'listIteam','uid'=>$uid,'href'=>'index.php?r=leavebill/content&uid='.$uid])?>
 						<?php if($approval["leaveType"]==1){ ?>
-<!-- 	  				<s:if test="leaveType==1"> -->
 	  					<i class="icon ic_shi">事</i>
-<!-- 	  				</s:if> -->
 				<?php }elseif ($approval['leaveType']==2){?>
-<!-- 	  				<s:elseif test="leaveType==2"> -->
 	  					<i class="icon ic_ill">病</i>
-<!-- 	  				</s:elseif> -->
 	  				<?php }elseif ($approval['leaveType']==3){?>
-<!-- 	  				<s:elseif test="leaveType==3"> -->
 	  					<i class="icon ic_marry">婚</i>
-<!-- 	  				</s:elseif> -->
 	  				<?php }elseif ($approval['leaveType']==4){?>
-<!-- 	  				<s:elseif test="leaveType==4"> -->
 	  					<i class="icon ic_die">丧</i>
-<!-- 	  				</s:elseif> -->
 	  				<?php }elseif ($approval['leaveType']==5){?>
-<!-- 	  				<s:elseif test="leaveType==5"> -->
 	  					<i class="icon ic_year">年</i>
-<!-- 	  				</s:elseif> -->
 	  				<?php }elseif ($approval['leaveType']==6){?>
-<!-- 	  				<s:else> -->
 	  					<i class="icon ic_other">其</i>
-<!-- 	  				</s:else> -->
 	  				<?php }?>
-					
-					
-<!-- 	  				<s:if test="leaveType==1"> -->
-<!-- 	  					<i class="icon ic_shi">事</i> -->
-<!-- 	  				</s:if> -->
-<!-- 	  				<s:elseif test="leaveType==2"> -->
-<!-- 	  					<i class="icon ic_ill">病</i> -->
-<!-- 	  				</s:elseif> -->
-<!-- 	  				<s:elseif test="leaveType==3"> -->
-<!-- 	  					<i class="icon ic_marry">婚</i> -->
-<!-- 	  				</s:elseif> -->
-<!-- 	  				<s:elseif test="leaveType==4"> -->
-<!-- 	  					<i class="icon ic_die">丧</i> -->
-<!-- 	  				</s:elseif> -->
-<!-- 	  				<s:elseif test="leaveType==5"> -->
-<!-- 	  					<i class="icon ic_year">年</i> -->
-<!-- 	  				</s:elseif> -->
-<!-- 	  				<s:else> -->
-<!-- 	  					<i class="icon ic_other">其</i> -->
-<!-- 	  				</s:else> -->
 	  				<i class="ficon icon-angle-right"></i>
 	  				<p class="info clearfix">
 	  					<span class="fl name">
-<!-- 	  							<s:property value="day"/> -->
 									<?=Html::encode($approval['days']) ?>
 	  							天</span>
 	  							
@@ -110,52 +68,26 @@
 	  					
 	  						<?php if($approval['state']==1){?>
 	  							<em class="fc_sucess">审批中</em>
-<!-- 	  						</s:if> -->
 						<?php }elseif ($approval['state']==2){?>
-<!-- 	  						<s:elseif test="state==2"> -->
 	  							<em class="fc_sucess">同意</em>
-<!-- 	  						</s:elseif> -->
 						<?php }elseif($approval['state']==3){?>
-<!-- 	  						<s:elseif test="state==3"> -->
 	  							<em class="fc_error">拒绝</em>
-<!-- 	  						</s:elseif> -->
 						<?php }elseif($approval['state']==4){?>
-<!-- 	  						<s:else> -->
 	  							<em class="fc_sucess">放弃</em>
-<!-- 	  						</s:else> -->
 						<?php }?>
-	  					
-	  					
-<!-- 	  						<s:if test="state==1"> -->
-<!-- 	  							<em class="fc_sucess">审批中</em> -->
-<!-- 	  						</s:if> -->
-<!-- 	  						<s:elseif test="state==2"> -->
-<!-- 	  							<em class="fc_undo">同意</em> -->
-<!-- 	  						</s:elseif> -->
-<!-- 	  						<s:elseif test="state==3"> -->
-<!-- 	  							<em class="fc_error">拒绝</em> -->
-<!-- 	  						</s:elseif> -->
-<!-- 	  						<s:else> -->
-<!-- 	  							<em class="fc_undo">放弃</em> -->
-<!-- 	  						</s:else> -->
 	  					</span>
 	  				</p>
 	  				<p class="info clearfix">
 	  					<span class="fl summary textCut">
-<!-- 	  								<s:property value="reason"/> -->
 										<?=Html::encode($approval['reason']) ?>
 	  					</span>
 	  					<span class="fr date">
-<!-- 	  						<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
 								<?=Html::encode($approval['applyTime']) ?>
 	  					</span>
 	  				</p>
-<!-- 	  				</a> -->
 						<?=Html::endTag('a')?>
-<!-- 	  			</s:iterator> -->
 							<?php }?>
 						</div>
-<!-- 						</s:if> -->
 							<?php }?>
 					</div>	
 					<!--end tab1的内容区域-->
@@ -275,9 +207,10 @@
 					
 				</div> <!--tabs-content-->
 				
-				<!--<div id="pullUp">
+				<div id="pullUp">
 					<span class="pullUpIcon"></span><span class="pullUpLabel">上拉加载更多...</span>
-<!-- 				</div>--> 
+					<li class="list"></li>
+				</div>
 		  
 		    </div> <!--end scroller-->	
 		</div>
@@ -285,20 +218,60 @@
 		
 	</div>
 </div>
-	
+<input type="hidden" value=<?=$uid?> class="uid">
+<script src="../views/js/vendor/jquery.js"></script>
+<script src="../views/js/foundation.min.js"></script>
 
-<?=Html::jsFile("/basic/views/js/vendor/jquery.js")?>
-<?=Html::jsFile("/basic/views/js/foundation.min.js")?>
-<!-- 
-<script src="../js/vendor/jquery.js"></script>
-<script src="../js/foundation.min.js"></script>
- -->
 <script>
 //初始化fundation 
-
 $(document).foundation();
-	
 </script>
+<script>
+var $jq = jQuery.noConflict();
+var uid=$jq(".uid").val();
+var curPage = 1; //当前页码  
+var total,pageSize,totalPage;  
+//获取数据  
+//var jq = $.noConflict();
 
+function getData(page){  
+	
+	$jq.ajax({  
+        type: 'GET',  
+        url: 'index.php?r=leavebill/page',  
+        data: {'page':page-1,'uid':uid},  
+        dataType:'json',  
+        afterSend:function(){  
+            $(".pullUpIcon").append("<li id='loading'>loading</li>");  
+        },  
+        success:function(json){  
+            total = json.total; //总记录数  
+            pageSize = json.pageSize; //每页显示条数  
+            curPage = page; //当前页  
+            totalPage = json.totalPage; //总页数  
+            dataApproval=json.dataApproval;
+            setView(dataApproval);
+            //alert(total+"  "+pageSize+" "+curPage+" "+totalPage);
+        },  
+        complete:function(){ //生成分页条  
+            //getPageBar();  
+        },  
+        error:function(){  
+            alert("数据加载失败");  
+        }  
+    });  
+}  
+getData(1);
+</script>
+<script>
+	function setView(data){
+		var view="";
+		//alert(data);
+		$jq.each(data,function(index,array){
+					view+="<a class='listIteam' href='index.php?r=leavebill/content&uid='"+uid+"&id="+array['id']+">"
+			});
+		$jq("#list-group").append(view);
+}
+</script>	
 </body>
 </html>

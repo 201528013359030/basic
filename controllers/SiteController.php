@@ -11,7 +11,7 @@ use app\models\ContactForm;
 use app\models\EntryForm;
 
 class SiteController extends Controller {
-	
+	//public $enableCsrfValidation = false;
 	/**
 	 * @fyq
 	 */
@@ -141,5 +141,12 @@ class SiteController extends Controller {
 	 */
 	public function actionAbout() {
 		return $this->render ( 'about' );
+	}
+	public function actionTest(){
+		echo "ddd";
+		
+	}
+	public function actionTest1(){
+		return $this->render('formtest');
 	}
 }
