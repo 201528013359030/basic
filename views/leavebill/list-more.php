@@ -10,8 +10,6 @@
 <title>请假条列表-查看更多</title>
 <?php use yii\helpers\Html;?>
 <?=Html::cssFile("../views/css/leave.css")?>
-<?=Html::cssFile("../views/css/module.css")?>
-<?=Html::cssFile("../views/css/public.css")?>
 </head>
 <body onLoad=Init();>
 	<div class="off-canvas-wrap" data-offcanvas>
@@ -37,7 +35,7 @@
 					<div class="tabs-content">
 					<?php //print_r($dataApproval);?>
 					<!--tab1的内容区域-->
-						<div class="content active" id="panel1">		    
+						<div class="content active" id="panel1">
 							<?php //if(($dataApproval!=null)&&(count($dataApproval)>0)){?>
 							<div class="list-group"></div>
 							<?php //}?>
@@ -45,8 +43,8 @@
 						<!--end tab1的内容区域-->
 
 						<!--tab2的内容区域-->
-						<div class="content" id="panel2">		 
-					<?php //if(($approvalPerson!=null)&&(count($approvalPerson)>0)){?>   
+						<div class="content" id="panel2">
+					<?php //if(($approvalPerson!=null)&&(count($approvalPerson)>0)){?>
 <!-- 						<s:if test="#sp_list!=null && #sp_list.size()>0"> -->
 							<div class="list-group"></div>
 						<?php //}?>
@@ -73,33 +71,48 @@
 	<script src="../views/js/foundation.min.js"></script>
 
 	<script>
-//初始化fundation 
+//初始化fundation
 $(document).foundation();
 </script>
-	<script>
+<script>
 var $jq = jQuery.noConflict();
 var uid=$jq(".uid").val();
-var panel1CurPage = 1; //当前页码  
-var panel1Total,panel1PageSize,panel1TotalPage;  
+var panel1CurPage = 1; //当前页码
+var panel1Total,panel1PageSize,panel1TotalPage;
 var panel1Page=2;
 var panel2Page=2;
-var panel2CurPage = 1; //当前页码  
+var panel2CurPage = 1; //当前页码
 var panel2Total,panel2PageSize,panel2TotalPage;
 var curTime="";
 var index=0;
+function Init(){
+	 panel1Total = <?=$panel1Total?>; //总记录数
+    panel1PageSize = <?=$pageSize?>; //每页显示条数
+    panel1CurPage = 1; //当前页
+    panel1TotalPage = <?=$panel1TotalPage?>; //总页数
+    panel2Total = <?=$panel2Total?>; //总记录数
+    panel2PageSize = <?=$pageSize?>; //每页显示条数
+    panel2CurPage = 1; //当前页
+    panel2TotalPage = <?=$panel2TotalPage?>; //总页数
+    curTime=<?=(string)$curTime?>;
+	setPanel1View(<?=$dataBill?>);
+	setPanel2View(<?=$dataApproval?>);
+//     console.log(panel1TotalPage);
+//     console.log(curTime);
+}
 $jq(".tabs li").bind("click",function(){
 	index=$jq(this).index();
 	if(index==0){
 		if(panel1TotalPage-panel1CurPage>0){
-			$jq(".pullUpLabel").html("点击加载更多....");  
+			$jq(".pullUpLabel").html("点击加载更多....");
 		}else{
-			$jq(".pullUpLabel").html("没有更多数据了...");  
+			$jq(".pullUpLabel").html("没有更多数据了...");
 		}
 	}else if(index==1){
 		if(panel2TotalPage-panel2CurPage>0){
-			$jq(".pullUpLabel").html("点击加载更多....");  
+			$jq(".pullUpLabel").html("点击加载更多....");
 		}else{
-			$jq(".pullUpLabel").html("没有更多数据了...");  
+			$jq(".pullUpLabel").html("没有更多数据了...");
 		}
 	}
 	//console.log(index);
@@ -110,106 +123,92 @@ function getData(){
 				panel1CurPage+=1;
 				getPanel1Data(panel1CurPage);
 			}else{
-				$jq(".pullUpLabel").html("没有更多数据了...");  
+				$jq(".pullUpLabel").html("没有更多数据了...");
 			}
-		}else if(index==1){ 
+		}else if(index==1){
 			if(panel2TotalPage-panel2CurPage>0){
 				panel2CurPage+=1;
 				getPanel2Data(panel2CurPage);
 			}else{
-				$jq(".pullUpLabel").html("没有更多数据了...");  
+				$jq(".pullUpLabel").html("没有更多数据了...");
 			}
 		}
 }
-// $jq(document).ready(function() {  
-//     $jq(window).scroll(function() {  
-//         if(totalPage-i>0){  
-//             //滚动条到达底部加载  
-//             if ($jq(document).scrollTop() >= $jq(document).height() - $jq(window).height()) {  
-//                 if(totalPage-i>0){  
-//                     setTimeout(function() {   
-//                         $jq('.list-group').append(getData(i));  
-//                     }, 200);   
-//                         i++;  
-//                 }  
-//             }  
-              
-//         }else{  
-//                     $jq(".pullUpLabel").html("没有更多数据了...");  
-//                     setTimeout(function() {   
-//                         $jq(".pullUpLabel").hide();  
-//                     }, 3000);     
-//         }  
-//     });  
-// }); 
-function getPanel1Data(page){  	
-	$jq.ajax({  
-        type: 'GET',  
-        url: 'index.php?r=leavebill/mybill',  
-        data: {'page':page-1,'uid':uid,'applyTime':curTime,'pageSize':panel1PageSize},  
-        dataType:'json',  
-        afterSend:function(){  
-        	   $(".pullUpLabel").html("loading...");  
-        },  
-        success:function(json){  
+// $jq(document).ready(function() {
+//     $jq(window).scroll(function() {
+//         if(totalPage-i>0){
+//             //滚动条到达底部加载
+//             if ($jq(document).scrollTop() >= $jq(document).height() - $jq(window).height()) {
+//                 if(totalPage-i>0){
+//                     setTimeout(function() {
+//                         $jq('.list-group').append(getData(i));
+//                     }, 200);
+//                         i++;
+//                 }
+//             }
+
+//         }else{
+//                     $jq(".pullUpLabel").html("没有更多数据了...");
+//                     setTimeout(function() {
+//                         $jq(".pullUpLabel").hide();
+//                     }, 3000);
+//         }
+//     });
+// });
+function getPanel1Data(page){
+	$jq.ajax({
+        type: 'GET',
+        url: 'index.php?r=leavebill/mybill',
+        data: {'page':page-1,'uid':uid,'applyTime':curTime,'pageSize':panel1PageSize},
+        dataType:'json',
+        afterSend:function(){
+        	   $(".pullUpLabel").html("loading...");
+        },
+        success:function(json){
             dataApproval=json.dataApproval;
             //console.log(dataApproval.length);
             if(dataApproval!=null&&dataApproval.length>0){
             	setPanel1View(dataApproval);
             }else{
-            	$jq(".pullUpLabel").html("没有更多数据了...");  
+            	$jq(".pullUpLabel").html("没有更多数据了...");
             }
-        },  
-        complete:function(){ //生成分页条  
-            //getPageBar();  
-        },  
-        error:function(){  
-        	$jq(".pullUpLabel").html("数据加载失败...");  
-//             alert("数据加载失败");  
-        }  
-    });  
-}  
-function Init(){
-	 panel1Total = <?=$panel1Total?>; //总记录数  
-     panel1PageSize = <?=$pageSize?>; //每页显示条数  
-     panel1CurPage = 1; //当前页  
-     panel1TotalPage = <?=$panel1TotalPage?>; //总页数  
-     panel2Total = <?=$panel2Total?>; //总记录数  
-     panel2PageSize = <?=$pageSize?>; //每页显示条数  
-     panel2CurPage = 1; //当前页  
-     panel2TotalPage = <?=$panel2TotalPage?>; //总页数  
-     curTime=<?=(string)$curTime?>;
-     getPanel1Data(panel1CurPage);
-     getPanel2Data(panel2CurPage);
-     console.log(panel1TotalPage);
-     console.log(curTime);  
+        },
+        complete:function(){ //生成分页条
+            //getPageBar();
+        },
+        error:function(){
+        	$jq(".pullUpLabel").html("数据加载失败...");
+//             alert("数据加载失败");
+        }
+    });
 }
+
 //改进
-function getPanel2Data(page){  	
-	$jq.ajax({  
-        type: 'GET',  
-        url: 'index.php?r=leavebill/myapproval',  
-        data: {'page':page-1,'uid':uid,'applyTime':curTime,'pageSize':panel2PageSize},  
-        dataType:'json',  
-        afterSend:function(){  
-            $(".pullUpLabel").html("loading...");  
-        },  
-        success:function(json){  
+function getPanel2Data(page){
+	$jq.ajax({
+        type: 'GET',
+        url: 'index.php?r=leavebill/myapproval',
+        data: {'page':page-1,'uid':uid,'applyTime':curTime,'pageSize':panel2PageSize},
+        dataType:'json',
+        afterSend:function(){
+            $(".pullUpLabel").html("loading...");
+        },
+        success:function(json){
             dataApproval=json.dataApproval;
             if(dataApproval!=null&&dataApproval.length>0){
             	setPanel2View(dataApproval);
             }else{
-            	$jq(".pullUpLabel").html("没有更多数据了...");  
+            	$jq(".pullUpLabel").html("没有更多数据了...");
             }
-        },  
-        complete:function(){ //生成分页条  
-            //getPageBar();  
-        },  
-        error:function(){  
-//             alert("数据加载失败");  
-        	$jq(".pullUpLabel").html("数据加载失败...");  
-        }  
-    });  
+        },
+        complete:function(){ //生成分页条
+            //getPageBar();
+        },
+        error:function(){
+//             alert("数据加载失败");
+        	$jq(".pullUpLabel").html("数据加载失败...");
+        }
+    });
 }
 </script>
 	<script>
@@ -235,7 +234,7 @@ function getPanel2Data(page){
 			view+="<span class='fl name'>";
 			view +=data['days'];
 			view +="天</span>";
-			view +="<span class='fr status'>";	
+			view +="<span class='fr status'>";
 			if(data['state']==1){
 				view+="<em class='fc_sucess'>审批中</em>";
 			}else if(data['state']==2){
@@ -256,7 +255,7 @@ function getPanel2Data(page){
 			view+="</span>";
 			view+="</p>";
 			view+="</a>";
-			
+
 			});
 		$jq("#panel1 .list-group").append(view);
 }
@@ -283,7 +282,7 @@ function getPanel2Data(page){
 			view+="<span class='fl name'>";
 			view +=data['username'];
 			view +="</span>";
-			view +="<span class='fr status'>";	
+			view +="<span class='fr status'>";
 			if(data['state']==1){
 				view+="<em class='fc_sucess'>审批中</em>";
 			}else if(data['state']==2){
@@ -303,7 +302,7 @@ function getPanel2Data(page){
 			view+=data['applyTime'];
 			view+="</span>";
 			view+="</p>";
-			view+="</a>";			
+			view+="</a>";
 			});
 		$jq("#panel2 .list-group").append(view);
 }
