@@ -293,42 +293,42 @@ class LeavebillController extends Controller {
 	 * @return mixed
 	 * @author fyq
 	 */
-	public function actionMore() {
-		$request = Yii::$app->request;
+// 	public function actionMore() {
+// 		$request = Yii::$app->request;
 
-		$searchModel = new LeavebillSearch ();
+// 		$searchModel = new LeavebillSearch ();
 
-		// echo "你好".$request->get( 'uid' );
+// 		// echo "你好".$request->get( 'uid' );
 
-		if ($request->get ( 'uid' )) {
+// 		if ($request->get ( 'uid' )) {
 
-			// 查询当前用户的请假信息-
-			$dataUserLeavebill = LeavebillSearch::find ()->where ( [
+// 			// 查询当前用户的请假信息-
+// 			$dataUserLeavebill = LeavebillSearch::find ()->where ( [
 
-					'userid' => $request->get ( 'uid' )
-			] )->orderBy ( [
-					'applyTime' => SORT_DESC
-			] )->asArray ()->all ();
+// 					'userid' => $request->get ( 'uid' )
+// 			] )->orderBy ( [
+// 					'applyTime' => SORT_DESC
+// 			] )->asArray ()->all ();
 
-			// 查询需要当前用户审批的请假信息--已审批
-			$dataApproval = LeavebillSearch::find ()->where ( [
-					'approvalPerson' => $request->get ( 'uid' )
-			] )->orderBy ( [
-					'applyTime' => SORT_DESC
-			] )->asArray ()->all ();
+// 			// 查询需要当前用户审批的请假信息--已审批
+// 			$dataApproval = LeavebillSearch::find ()->where ( [
+// 					'approvalPerson' => $request->get ( 'uid' )
+// 			] )->orderBy ( [
+// 					'applyTime' => SORT_DESC
+// 			] )->asArray ()->all ();
 
-			return $this->renderFile ( '@app/views/leavebill/list-more.php', [
-					'approvalPerson' => $dataUserLeavebill,
-					'dataApproval' => $dataApproval,
-					'uid' => $request->get ( 'uid' )
-			] );
-		} else {
-			return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [ ] );
-			// 'approvalPerson' => $dataUserLeavebill,
-			// 'dataApproval' => $dataApproval,
-			// 'uid' => $request->get ( 'uid' )
-		}
-	}
+// 			return $this->renderFile ( '@app/views/leavebill/list-more.php', [
+// 					'approvalPerson' => $dataUserLeavebill,
+// 					'dataApproval' => $dataApproval,
+// 					'uid' => $request->get ( 'uid' )
+// 			] );
+// 		} else {
+// 			return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [ ] );
+// 			// 'approvalPerson' => $dataUserLeavebill,
+// 			// 'dataApproval' => $dataApproval,
+// 			// 'uid' => $request->get ( 'uid' )
+// 		}
+// 	}
 
 	/**
 	 * Displays detail infomation about leavebill.
@@ -533,38 +533,26 @@ class LeavebillController extends Controller {
 		}
 	}
 	
-		public function actionPage1() {
+		public function actionMybill() {
  			$request = Yii::$app->request;
  			$page=$request->get('page');
  			$applyTime=$request->get('applyTime');
   			$pageSize=$request->get('pageSize');
-//  			$total=LeavebillSearch::find()->where(['userid'=>$request->get('uid')])->count();
-//  			$totalPage=ceil($total/$pageSize);
  			$dataApproval = LeavebillSearch::find()->where(['userid'=>$request->get('uid')])->andwhere(['<','applyTime',$applyTime])->orderBy (['applyTime' => SORT_DESC])->offset ($page*$pageSize )->limit ( $pageSize )->asArray()->all ();
-//   				print_r($dataApproval);
- 			//print_r($dataApproval);
  			echo json_encode(['dataApproval'=>$dataApproval]);  
 
 		}
-		public function actionPage2() {
+		public function actionMyapproval() {
 			$request = Yii::$app->request;
 			$page=$request->get('page');
 			$applyTime=$request->get('applyTime');
 			$pageSize=$request->get('pageSize');
-			//$total=LeavebillSearch::find()->where(['approvalPerson' => $request->get ( 'uid' )])->count();
-			//$totalPage=ceil($total/$pageSize);
 			$dataApproval = LeavebillSearch::find()->where(['approvalPerson' => $request->get ( 'uid' )])->andwhere(['<','applyTime',$applyTime])->orderBy (['applyTime' => SORT_DESC])->offset ($page*$pageSize )->limit ( $pageSize )->asArray()->all ();
-// 			$dataApproval = (new \yii\db\Query())
-// 			->from('leavebill')
-// 			->where(['approvalPerson' => $request->get ( 'uid' )])
-// 			->andwhere(['<','applyTime',$applyTime])
-// 			->
-			//print_r($dataApproval);
 			echo json_encode(['dataApproval'=>$dataApproval]);
 		
 		}
 		
-		public function actionMore1() {
+		public function actionMore() {
 			$request = Yii::$app->request;
 			$pageSize=4;
 			$curTime=date ( 'Y-m-d H:i:s' );
@@ -578,7 +566,7 @@ class LeavebillController extends Controller {
 			// echo "你好".$request->get( 'uid' );
 		
 			if ($request->get ( 'uid' )) {
-				return $this->renderFile ( '@app/views/leavebill/list-more2.php', [
+				return $this->renderFile ( '@app/views/leavebill/list-more.php', [
 						'pageSize'=>$pageSize,
 						'panel1Total' => $panel1Total,
 						'panel1TotalPage' => $panel1TotalPage,
@@ -589,9 +577,6 @@ class LeavebillController extends Controller {
 				] );
 			} else {
 				return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [ ] );
-				// 'approvalPerson' => $dataUserLeavebill,
-				// 'dataApproval' => $dataApproval,
-				// 'uid' => $request->get ( 'uid' )
 			}
 		}
 }

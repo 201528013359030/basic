@@ -145,17 +145,13 @@ function getData(){
 function getPanel1Data(page){  	
 	$jq.ajax({  
         type: 'GET',  
-        url: 'index.php?r=leavebill/page1',  
+        url: 'index.php?r=leavebill/mybill',  
         data: {'page':page-1,'uid':uid,'applyTime':curTime,'pageSize':panel1PageSize},  
         dataType:'json',  
         afterSend:function(){  
         	   $(".pullUpLabel").html("loading...");  
         },  
         success:function(json){  
-//             panel1Total = json.total; //总记录数  
-//             panel1PageSize = json.pageSize; //每页显示条数  
-//             panel1CurPage = page; //当前页  
-//             panel1TotalPage = json.totalPage; //总页数  
             dataApproval=json.dataApproval;
             //console.log(dataApproval.length);
             if(dataApproval!=null&&dataApproval.length>0){
@@ -192,17 +188,13 @@ function Init(){
 function getPanel2Data(page){  	
 	$jq.ajax({  
         type: 'GET',  
-        url: 'index.php?r=leavebill/page2',  
+        url: 'index.php?r=leavebill/myapproval',  
         data: {'page':page-1,'uid':uid,'applyTime':curTime,'pageSize':panel2PageSize},  
         dataType:'json',  
         afterSend:function(){  
             $(".pullUpLabel").html("loading...");  
         },  
         success:function(json){  
-//             panel2Total = json.total; //总记录数  
-//             panel2PageSize = json.pageSize; //每页显示条数  
-//             panel2CurPage = page; //当前页  
-//             panel2TotalPage = json.totalPage; //总页数  
             dataApproval=json.dataApproval;
             if(dataApproval!=null&&dataApproval.length>0){
             	setPanel2View(dataApproval);
