@@ -76,7 +76,7 @@
 //初始化fundation 
 $(document).foundation();
 </script>
-	<script>
+<script>
 var $jq = jQuery.noConflict();
 var uid=$jq(".uid").val();
 var panel1CurPage = 1; //当前页码  
@@ -87,6 +87,21 @@ var panel2CurPage = 1; //当前页码
 var panel2Total,panel2PageSize,panel2TotalPage;
 var curTime="";
 var index=0;
+function Init(){
+	 panel1Total = <?=$panel1Total?>; //总记录数  
+    panel1PageSize = <?=$pageSize?>; //每页显示条数  
+    panel1CurPage = 1; //当前页  
+    panel1TotalPage = <?=$panel1TotalPage?>; //总页数  
+    panel2Total = <?=$panel2Total?>; //总记录数  
+    panel2PageSize = <?=$pageSize?>; //每页显示条数  
+    panel2CurPage = 1; //当前页  
+    panel2TotalPage = <?=$panel2TotalPage?>; //总页数  
+    curTime=<?=(string)$curTime?>;
+	setPanel1View(<?=$dataBill?>);
+	setPanel2View(<?=$dataApproval?>);
+//     console.log(panel1TotalPage);
+//     console.log(curTime);  
+}
 $jq(".tabs li").bind("click",function(){
 	index=$jq(this).index();
 	if(index==0){
@@ -169,21 +184,7 @@ function getPanel1Data(page){
         }  
     });  
 }  
-function Init(){
-	 panel1Total = <?=$panel1Total?>; //总记录数  
-     panel1PageSize = <?=$pageSize?>; //每页显示条数  
-     panel1CurPage = 1; //当前页  
-     panel1TotalPage = <?=$panel1TotalPage?>; //总页数  
-     panel2Total = <?=$panel2Total?>; //总记录数  
-     panel2PageSize = <?=$pageSize?>; //每页显示条数  
-     panel2CurPage = 1; //当前页  
-     panel2TotalPage = <?=$panel2TotalPage?>; //总页数  
-     curTime=<?=(string)$curTime?>;
-     getPanel1Data(panel1CurPage);
-     getPanel2Data(panel2CurPage);
-     console.log(panel1TotalPage);
-     console.log(curTime);  
-}
+
 //改进
 function getPanel2Data(page){  	
 	$jq.ajax({  

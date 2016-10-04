@@ -606,7 +606,7 @@ class LeavebillController extends Controller {
 		
 		public function actionMore() {
 			$request = Yii::$app->request;
-			$pageSize=4;
+			$pageSize=8;
 			$curTime=date ( 'Y-m-d H:i:s' );
 			
 			$searchModel = new LeavebillSearch ();
@@ -615,6 +615,8 @@ class LeavebillController extends Controller {
 			$panel2Total=LeavebillSearch::find()->where(['approvalPerson' => $request->get ( 'uid' )])->andwhere(['<','applyTime',$curTime])->count();
 		
 			$panel2TotalPage=ceil($panel2Total/$pageSize);
+			$dataBill = LeavebillSearch::find()->where(['userid'=>$request->get('uid')])->andwhere(['<','applyTime',$curTime])->orderBy (['applyTime' => SORT_DESC])->offset (0 )->limit ( $pageSize )->asArray()->all ();
+			$dataApproval = LeavebillSearch::find()->where(['approvalPerson' => $request->get ( 'uid' )])->andwhere(['<','applyTime',$curTime])->orderBy (['applyTime' => SORT_DESC])->offset (0 )->limit ( $pageSize )->asArray()->all ();
 			// echo "你好".$request->get( 'uid' );
 		
 			if ($request->get ( 'uid' )) {
@@ -625,6 +627,8 @@ class LeavebillController extends Controller {
 						'panel2Total' => $panel2Total,
                         'panel2TotalPage' => $panel2TotalPage,
 						'curTime'=>"'".$curTime."'",
+						'dataBill'=>json_encode($dataBill),
+						'dataApproval'=>json_encode($dataApproval),
 						'uid' => $request->get ( 'uid' )
 				] );
 			} else {
