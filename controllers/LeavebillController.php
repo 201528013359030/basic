@@ -584,4 +584,66 @@ class LeavebillController extends Controller {
 			throw new NotFoundHttpException ( 'The requested page does not exist.' );
 		}
 	}
+	
+		public function actionPage1() {
+ 			$request = Yii::$app->request;
+ 			$page=$request->get('page');
+ 			$applyTime=$request->get('applyTime');
+  			$pageSize=$request->get('pageSize');
+//  			$total=LeavebillSearch::find()->where(['userid'=>$request->get('uid')])->count();
+//  			$totalPage=ceil($total/$pageSize);
+ 			$dataApproval = LeavebillSearch::find()->where(['userid'=>$request->get('uid')])->andwhere(['<','applyTime',$applyTime])->orderBy (['applyTime' => SORT_DESC])->offset ($page*$pageSize )->limit ( $pageSize )->asArray()->all ();
+//   				print_r($dataApproval);
+ 			//print_r($dataApproval);
+ 			echo json_encode(['dataApproval'=>$dataApproval]);  
+
+		}
+		public function actionPage2() {
+			$request = Yii::$app->request;
+			$page=$request->get('page');
+			$applyTime=$request->get('applyTime');
+			$pageSize=$request->get('pageSize');
+			//$total=LeavebillSearch::find()->where(['approvalPerson' => $request->get ( 'uid' )])->count();
+			//$totalPage=ceil($total/$pageSize);
+			$dataApproval = LeavebillSearch::find()->where(['approvalPerson' => $request->get ( 'uid' )])->andwhere(['<','applyTime',$applyTime])->orderBy (['applyTime' => SORT_DESC])->offset ($page*$pageSize )->limit ( $pageSize )->asArray()->all ();
+// 			$dataApproval = (new \yii\db\Query())
+// 			->from('leavebill')
+// 			->where(['approvalPerson' => $request->get ( 'uid' )])
+// 			->andwhere(['<','applyTime',$applyTime])
+// 			->
+			//print_r($dataApproval);
+			echo json_encode(['dataApproval'=>$dataApproval]);
+		
+		}
+		
+		public function actionMore1() {
+			$request = Yii::$app->request;
+			$pageSize=4;
+			$curTime=date ( 'Y-m-d H:i:s' );
+			
+			$searchModel = new LeavebillSearch ();
+			$panel1Total=LeavebillSearch::find()->where(['userid'=>$request->get('uid')])->andwhere(['<','applyTime',$curTime])->count();
+			$panel1TotalPage=ceil($panel1Total/$pageSize);
+			$panel2Total=LeavebillSearch::find()->where(['approvalPerson' => $request->get ( 'uid' )])->andwhere(['<','applyTime',$curTime])->count();
+		
+			$panel2TotalPage=ceil($panel2Total/$pageSize);
+			// echo "你好".$request->get( 'uid' );
+		
+			if ($request->get ( 'uid' )) {
+				return $this->renderFile ( '@app/views/leavebill/list-more2.php', [
+						'pageSize'=>$pageSize,
+						'panel1Total' => $panel1Total,
+						'panel1TotalPage' => $panel1TotalPage,
+						'panel2Total' => $panel2Total,
+                        'panel2TotalPage' => $panel2TotalPage,
+						'curTime'=>"'".$curTime."'",
+						'uid' => $request->get ( 'uid' )
+				] );
+			} else {
+				return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [ ] );
+				// 'approvalPerson' => $dataUserLeavebill,
+				// 'dataApproval' => $dataApproval,
+				// 'uid' => $request->get ( 'uid' )
+			}
+		}
 }
