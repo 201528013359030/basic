@@ -11,17 +11,12 @@ use yii\filters\VerbFilter;
 use app\models\Employee;
 use app\models\CurlModel;
 
-
-
-
 /**
  * LeavebillController implements the CRUD actions for Leavebill model.
  */
 class LeavebillController extends Controller {
 	public $layout = 'false';
 	public $auth_token;
-
-
 
 	/**
 	 * @inheritdoc
@@ -47,26 +42,27 @@ class LeavebillController extends Controller {
 	 */
 	public function actionIndex() {
 
-// 		print_r($_SERVER['HTTP_ACCEPT']);
-// 		echo "</br>";
-// 		echo $_SERVER['HTTP_ACCEPT'];
-// 		echo "</br>";
-// 		echo $_SERVER['SCRIPT_FILENAME'];
-// 		echo "</br>";
-// 		echo $_SERVER['SERVER_ADDR'];
-// 		echo "</br>";
-// 		echo $_SERVER['SERVER_NAME'];
-// 		echo "</br>";
 
+		// print_r($_SERVER['HTTP_ACCEPT']);
+		// echo "</br>";
+		// echo $_SERVER['HTTP_ACCEPT'];
+		// echo "</br>";
+		// echo $_SERVER['SCRIPT_FILENAME'];
+		// echo "</br>";
+		// echo $_SERVER['SERVER_ADDR'];
+		// echo "</br>";
+		// echo $_SERVER['SERVER_NAME'];
+		// echo "</br>";
 
-		//echo $_SERVER['SERVER_NAME'];
-
+		// echo $_SERVER['SERVER_NAME'];
 		$request = Yii::$app->request;
-		//$GLOBALS ['auth_token'] = $request->queryParams ['auth_token'];
-		 $uid = $request->queryParams ['uid'];
+		// $GLOBALS ['auth_token'] = $request->queryParams ['auth_token'];
+		$uid = $request->queryParams ['uid'];
 
-
-		 return $this->redirect(['list', 'uid' => $uid]);
+		return $this->redirect ( [
+				'list',
+				'uid' => $uid
+		] );
 	}
 
 	/**
@@ -76,7 +72,6 @@ class LeavebillController extends Controller {
 	 * @author fyq
 	 */
 	public function actionList($uid) {
-
 		$customers = Employee::find ()->where ( [
 				// 'username'=> '3@15'
 				'username' => $uid
@@ -88,6 +83,7 @@ class LeavebillController extends Controller {
 			// $dataProvider = $searchModel->search ( $request->queryParams )->asArray();
 
 			// 查询当前用户的请假信息---未同意
+			$limit = 3;
 			$dataDisagree = LeavebillSearch::find ()->where ( [
 					// 'username'=> '3@15'
 					'userid' => $uid,
@@ -96,7 +92,7 @@ class LeavebillController extends Controller {
 							3,
 							4
 					]
-			] )->orderBy ( [
+			] )->limit ( $limit )->orderBy ( [
 					'applyTime' => SORT_DESC
 			] )->asArray ()->all ();
 
@@ -105,7 +101,7 @@ class LeavebillController extends Controller {
 					// 'username'=> '3@15'
 					'userid' => $uid,
 					'state' => '2'
-			] )->orderBy ( [
+			] )->limit ( $limit )->orderBy ( [
 					'applyTime' => SORT_DESC
 			] )->asArray ()->all ();
 
@@ -117,7 +113,7 @@ class LeavebillController extends Controller {
 							1,
 							4
 					]
-			] )->orderBy ( [
+			] )->limit ( $limit )->orderBy ( [
 					'applyTime' => SORT_DESC
 			] )->asArray ()->all ();
 
@@ -129,7 +125,7 @@ class LeavebillController extends Controller {
 							2,
 							3
 					]
-			] )->orderBy ( [
+			] )->limit ( $limit )->orderBy ( [
 					'applyTime' => SORT_DESC
 			] )->asArray ()->all ();
 
@@ -160,7 +156,6 @@ class LeavebillController extends Controller {
 	 * @author fyq
 	 */
 	public function actionCreate() {
-
 		$uid = Yii::$app->request->get ( 'uid' );
 
 		$model = Employee::find ()->where ( [
@@ -182,36 +177,30 @@ class LeavebillController extends Controller {
 		}
 		// }
 	}
-
 	public function actionWhere() {
 
-		//$uid = Yii::$app->request->get ( 'uid' );
-		$posts = Yii::$app->db->createCommand('SELECT * FROM leavebill where userid = :uid and id > :id and applyTime < :applyTime')
-		->bindValue(':uid', '8@15')
-		->bindValue(':id', 502)
-		->bindValue(':applyTime', date ( 'Y-m-d H:i:s' ))
-		->queryAll();
+		// $uid = Yii::$app->request->get ( 'uid' );
+		$posts = Yii::$app->db->createCommand ( 'SELECT * FROM leavebill where userid = :uid and id > :id and applyTime < :applyTime' )->bindValue ( ':uid', '8@15' )->bindValue ( ':id', 502 )->bindValue ( ':applyTime', date ( 'Y-m-d H:i:s' ) )->queryAll ();
 
-// 		$model = Leavebill::find ()->where(['>','id','500'])->asArray()->all();
+		// $model = Leavebill::find ()->where(['>','id','500'])->asArray()->all();
 
-		//$model->andWhere([ 'leaveType'=>'1']);
+		// $model->andWhere([ 'leaveType'=>'1']);
 
-		print_r($posts);
+		print_r ( $posts );
 
 		// return $this->renderFile ( '@app/views/leavebill/create.php', [
-// 		if ($model) {
-// 			return $this->renderFile ( '@app/views/leavebill/create.php', [
-// 					'model' => $model,
-// 					'uid' => $uid
-// 			] );
-// 		} else { // echo "无此用户";
-// 			return $this->renderFile ( '@app/views/leavebill/create.php', [
-// 					'model' => $model,
-// 					'uid' => $uid
-// 			] );
-		}
-		// }
-
+		// if ($model) {
+		// return $this->renderFile ( '@app/views/leavebill/create.php', [
+		// 'model' => $model,
+		// 'uid' => $uid
+		// ] );
+		// } else { // echo "无此用户";
+		// return $this->renderFile ( '@app/views/leavebill/create.php', [
+		// 'model' => $model,
+		// 'uid' => $uid
+		// ] );
+	}
+	// }
 
 	/**
 	 *
@@ -229,38 +218,35 @@ class LeavebillController extends Controller {
 	 * @author fyq
 	 */
 	public function actionSave() {
-		//$model = new Leavebill ();
+		// $model = new Leavebill ();
 		$request = Yii::$app->request;
-		$uid =$request->get('uid');
-		//$uid = $request->get ( 'uid' );
+		$uid = $request->get ( 'uid' );
+		// $uid = $request->get ( 'uid' );
 		$model1 = Leavebill::find ()->where ( [
 				'userid' => $uid
-		] )->asArray()->all ();
+		] )->asArray ()->all ();
 
-		echo"-----------------------------------------</br>";
+		echo "-----------------------------------------</br>";
 
 		$tag = 0;
-		//echo count ( $model1 );
-
+		// echo count ( $model1 );
 
 		for($i = 0; $i < count ( $model1 ); $i ++) {
 
+			if ($model1 [$i] ['leaveEndTime'] > $request->get ( 'leaveStartTime' ) && $request->get ( 'leaveStartTime' ) <= date ( 'Y-m-d H:i:s' )) {
 
-			if ($model1 [$i] ['leaveEndTime'] > $request->get ( 'leaveStartTime' )&&$request->get ( 'leaveStartTime' )<=date ( 'Y-m-d H:i:s' )) {
-
-				//$tag = 1;
+				// $tag = 1;
 			}
 		}
 		if ($tag == 0) {
-			$model= new Leavebill();
-// 			print_r($model);
-
+			$model = new Leavebill ();
+			// print_r($model);
 
 			$diff = date_diff ( date_create ( $request->get ( 'leaveStartTime' ) ), date_create ( $request->get ( 'leaveEndTime' ) ) )->format ( "%R%a days" ) + 0;
 
-			//	$model->userid = $request->get ( 'userid', '0' ); // $GLOBALS['uid']
+			// $model->userid = $request->get ( 'userid', '0' ); // $GLOBALS['uid']
 
-			//$model->id = '6';
+			// $model->id = '6';
 
 			echo $model->userid = $request->get ( 'userid', $uid ); // $GLOBALS['uid']
 			echo $model->leaveType = $request->get ( 'leaveType', '0' );
@@ -271,34 +257,35 @@ class LeavebillController extends Controller {
 			echo $model->remark = $request->get ( 'remark', '0' );
 			$model->applyTime = date ( 'Y-m-d H:i:s' );
 			$model->state = $request->get ( 'state', '1' );
-			$model->username= $request->get ( 'username', '0' );
+			$model->username = $request->get ( 'username', '0' );
 			$model->days = $diff;
-			$model->dep =$request->get ( 'dep', '0' );
+			$model->dep = $request->get ( 'dep', '0' );
 			$model->spuser = $request->get ( 'spuser', '0' ); // name
 			$model->tzuser = $request->get ( 'tzuser', '0' ); // name
 			$model->tongzhi = $request->get ( 'tongzhi', '0' ); // id
-			$model->token= $request->get ( 'token', '0' ); // $GLOBALS['auth_token'];
+			$model->token = $request->get ( 'token', '0' ); // $GLOBALS['auth_token'];
 
 			echo "***********************************</br>";
-			$model->save();
+			$model->save ();
 
-// 			print_r($model);
-			//echo "保存成功";
+			// print_r($model);
+			// echo "保存成功";
 			if ($request->get ( 'approvalPerson' )) {
 
-				//$this->actionSendnotice ( $uid,$request->get ( 'approvalPerson' ) );
-				return $this->redirect(['list', 'uid' => $uid]);
-			//	return $this->actionList($uid);
+				// $this->actionSendnotice ( $uid,$request->get ( 'approvalPerson' ) );
+				return $this->redirect ( [
+						'list',
+						'uid' => $uid
+				] );
+				// return $this->actionList($uid);
 			} else {
 				echo "审批人id为空";
-				$this->actionList($uid);
+				$this->actionList ( $uid );
 			}
 		} else {
 			echo "开始时间小于历史请假结束时间！";
 		}
 	}
-
-
 
 	/**
 	 * Deletes an existing Leavebill model.
@@ -345,42 +332,42 @@ class LeavebillController extends Controller {
 	 * @return mixed
 	 * @author fyq
 	 */
-// 	public function actionMore() {
-// 		$request = Yii::$app->request;
+	// public function actionMore() {
+	// $request = Yii::$app->request;
 
-// 		$searchModel = new LeavebillSearch ();
+	// $searchModel = new LeavebillSearch ();
 
-// 		// echo "你好".$request->get( 'uid' );
+	// // echo "你好".$request->get( 'uid' );
 
-// 		if ($request->get ( 'uid' )) {
+	// if ($request->get ( 'uid' )) {
 
-// 			// 查询当前用户的请假信息-
-// 			$dataUserLeavebill = LeavebillSearch::find ()->where ( [
+	// // 查询当前用户的请假信息-
+	// $dataUserLeavebill = LeavebillSearch::find ()->where ( [
 
-// 					'userid' => $request->get ( 'uid' )
-// 			] )->orderBy ( [
-// 					'applyTime' => SORT_DESC
-// 			] )->asArray ()->all ();
+	// 'userid' => $request->get ( 'uid' )
+	// ] )->orderBy ( [
+	// 'applyTime' => SORT_DESC
+	// ] )->asArray ()->all ();
 
-// 			// 查询需要当前用户审批的请假信息--已审批
-// 			$dataApproval = LeavebillSearch::find ()->where ( [
-// 					'approvalPerson' => $request->get ( 'uid' )
-// 			] )->orderBy ( [
-// 					'applyTime' => SORT_DESC
-// 			] )->asArray ()->all ();
+	// // 查询需要当前用户审批的请假信息--已审批
+	// $dataApproval = LeavebillSearch::find ()->where ( [
+	// 'approvalPerson' => $request->get ( 'uid' )
+	// ] )->orderBy ( [
+	// 'applyTime' => SORT_DESC
+	// ] )->asArray ()->all ();
 
-// 			return $this->renderFile ( '@app/views/leavebill/list-more.php', [
-// 					'approvalPerson' => $dataUserLeavebill,
-// 					'dataApproval' => $dataApproval,
-// 					'uid' => $request->get ( 'uid' )
-// 			] );
-// 		} else {
-// 			return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [ ] );
-// 			// 'approvalPerson' => $dataUserLeavebill,
-// 			// 'dataApproval' => $dataApproval,
-// 			// 'uid' => $request->get ( 'uid' )
-// 		}
-// 	}
+	// return $this->renderFile ( '@app/views/leavebill/list-more.php', [
+	// 'approvalPerson' => $dataUserLeavebill,
+	// 'dataApproval' => $dataApproval,
+	// 'uid' => $request->get ( 'uid' )
+	// ] );
+	// } else {
+	// return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [ ] );
+	// // 'approvalPerson' => $dataUserLeavebill,
+	// // 'dataApproval' => $dataApproval,
+	// // 'uid' => $request->get ( 'uid' )
+	// }
+	// }
 
 	/**
 	 * Displays detail infomation about leavebill.
@@ -398,7 +385,7 @@ class LeavebillController extends Controller {
 
 		// 查询当前用户的请假信息-
 
-		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray();
+		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray ();
 
 		return $this->renderFile ( '@app/views/leavebill/content.php', [
 				'dataDetail' => $dataDetail,
@@ -422,7 +409,7 @@ class LeavebillController extends Controller {
 
 		// 查询当前用户的请假信息-
 
-		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray();
+		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray ();
 
 		return $this->renderFile ( '@app/views/leavebill/contentsp.php', [
 				'dataDetail' => $dataDetail,
@@ -436,29 +423,29 @@ class LeavebillController extends Controller {
 	 * @param string $id
 	 * @return mixed
 	 */
-	public function actionSendnotice($uid,$to_uid) {
+	public function actionSendnotice($uid, $to_uid) {
 
-// 		print_r($_SERVER['HTTP_ACCEPT']);
+		// print_r($_SERVER['HTTP_ACCEPT']);
 
-// 		$GLOBALS['uid']='3@15';
-		$params ['id'] = '46'; //和轻应用有关
-		$params ['eid'] = 15;//explode ( "@",$uid ) [1] ;// explode ( "@", $GLOBALS['uid'] ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
+		// $GLOBALS['uid']='3@15';
+		$params ['id'] = '46'; // 和轻应用有关
+		$params ['eid'] = 15; // explode ( "@",$uid ) [1] ;// explode ( "@", $GLOBALS['uid'] ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
 		                      // $params ['eid'] = '3';
 		$params ['title'] = '有新的请假通知';
 
-		$params ['url'] = 'http://'.$_SERVER['HTTP_HOST'].'/basic/web/index.php?r=leavebill/index&uid=&eguid=&auth_token=';
-		$params ['uids[0]'] =  $to_uid;
+		$params ['url'] = 'http://' . $_SERVER ['HTTP_HOST'] . '/basic/web/index.php?r=leavebill/index&uid=&eguid=&auth_token=';
+		$params ['uids[0]'] = $to_uid;
 		$params ['auth_token'] = '239d48513662381f07243c238145ed9d'; // $GLOBALS['auth_token']
 		$params ['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";
 		$webService = "http://192.168.139.160/elgg/services/api/rest/json/?method=lapp.notice";
 		$curl = new CurlModel ();
 		$result = $curl->post ( $webService, $params );
 
-// 		echo "<pre>";
-// 		echo "参数</br>";
-// 		var_dump ( $params );
-// 		echo "结果</br>";
-// 		var_dump ( $result );
+		// echo "<pre>";
+		// echo "参数</br>";
+		// var_dump ( $params );
+		// echo "结果</br>";
+		// var_dump ( $result );
 
 		// 获取form post 参数
 		// $uid = I ( 'uid' );
@@ -476,7 +463,6 @@ class LeavebillController extends Controller {
 		// $webService = "http://192.168.139.162/elgg/services/api/rest/json/?method=lapp.notice";
 		// $curl = new CurlModel ();
 		// $result = json_decode ( $curl->post ( $webService, $params ), true );
-
 
 		// $this->display ();
 
@@ -509,10 +495,9 @@ class LeavebillController extends Controller {
 		// $model=$this->findModel ( $id );
 		// $model1=Leavebill::find()->all();
 		// print_r($model1);
-
-		$id ='QJDH00000000000'; //函数参数--测试
-		$model = $this->findModel ( $id);
-		                                                 // print_r($model);
+		$id = 'QJDH00000000000'; // 函数参数--测试
+		$model = $this->findModel ( $id );
+		// print_r($model);
 		if ($model ['state'] == 2) {
 
 			$to_uids = explode ( ",", $model ['tongzhi'] );
@@ -567,8 +552,6 @@ class LeavebillController extends Controller {
 		] );
 	}
 
-
-
 	/**
 	 * Finds the Leavebill model based on its primary key value.
 	 * If the model is not found, a 404 HTTP exception will be thrown.
@@ -584,51 +567,82 @@ class LeavebillController extends Controller {
 			throw new NotFoundHttpException ( 'The requested page does not exist.' );
 		}
 	}
-	
-		public function actionMybill() {
- 			$request = Yii::$app->request;
- 			$page=$request->get('page');
- 			$applyTime=$request->get('applyTime');
-  			$pageSize=$request->get('pageSize');
- 			$dataApproval = LeavebillSearch::find()->where(['userid'=>$request->get('uid')])->andwhere(['<','applyTime',$applyTime])->orderBy (['applyTime' => SORT_DESC])->offset ($page*$pageSize )->limit ( $pageSize )->asArray()->all ();
- 			echo json_encode(['dataApproval'=>$dataApproval]);  
+	public function actionMybill() {
+		$request = Yii::$app->request;
+		$page = $request->get ( 'page' );
+		$applyTime = $request->get ( 'applyTime' );
+		$pageSize = $request->get ( 'pageSize' );
+		$dataApproval = LeavebillSearch::find ()->where ( [
+				'userid' => $request->get ( 'uid' )
+		] )->andwhere ( [
+				'<',
+				'applyTime',
+				$applyTime
+		] )->orderBy ( [
+				'applyTime' => SORT_DESC
+		] )->offset ( $page * $pageSize )//从第$page * $pageSize行开始返回数据
+		->limit ( $pageSize ) // 一次返回$pageSize行数据
+		->asArray ()
+		->all ();
+		echo json_encode ( [
+				'dataApproval' => $dataApproval
+		] );
+	}
+	public function actionMyapproval() {
+		$request = Yii::$app->request;
+		$page = $request->get ( 'page' );
+		$applyTime = $request->get ( 'applyTime' );
+		$pageSize = $request->get ( 'pageSize' );
+		$dataApproval = LeavebillSearch::find ()->where ( [
+				'approvalPerson' => $request->get ( 'uid' )
+		] )->andwhere ( [
+				'<',
+				'applyTime',
+				$applyTime
+		] )->orderBy ( [
+				'applyTime' => SORT_DESC
+		] )->offset ( $page * $pageSize )->limit ( $pageSize )->asArray ()->all ();
+		echo json_encode ( [
+				'dataApproval' => $dataApproval
+		] );
+	}
+	public function actionMore() {
+		$request = Yii::$app->request;
+		$pageSize = 4;
+		$curTime = date ( 'Y-m-d H:i:s' );
 
+		$searchModel = new LeavebillSearch ();
+		$panel1Total = LeavebillSearch::find ()->where ( [
+				'userid' => $request->get ( 'uid' )
+		] )->andwhere ( [
+				'<',
+				'applyTime',
+				$curTime
+		] )->count ();
+		$panel1TotalPage = ceil ( $panel1Total / $pageSize );
+		$panel2Total = LeavebillSearch::find ()->where ( [
+				'approvalPerson' => $request->get ( 'uid' )
+		] )->andwhere ( [
+				'<',
+				'applyTime',
+				$curTime
+		] )->count ();
+
+		$panel2TotalPage = ceil ( $panel2Total / $pageSize );
+		// echo "你好".$request->get( 'uid' );
+
+		if ($request->get ( 'uid' )) {
+			return $this->renderFile ( '@app/views/leavebill/list-more.php', [
+					'pageSize' => $pageSize,
+					'panel1Total' => $panel1Total,
+					'panel1TotalPage' => $panel1TotalPage,
+					'panel2Total' => $panel2Total,
+					'panel2TotalPage' => $panel2TotalPage,
+					'curTime' => "'" . $curTime . "'",
+					'uid' => $request->get ( 'uid' )
+			] );
+		} else {
+			return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [ ] );
 		}
-		public function actionMyapproval() {
-			$request = Yii::$app->request;
-			$page=$request->get('page');
-			$applyTime=$request->get('applyTime');
-			$pageSize=$request->get('pageSize');
-			$dataApproval = LeavebillSearch::find()->where(['approvalPerson' => $request->get ( 'uid' )])->andwhere(['<','applyTime',$applyTime])->orderBy (['applyTime' => SORT_DESC])->offset ($page*$pageSize )->limit ( $pageSize )->asArray()->all ();
-			echo json_encode(['dataApproval'=>$dataApproval]);
-		
-		}
-		
-		public function actionMore() {
-			$request = Yii::$app->request;
-			$pageSize=4;
-			$curTime=date ( 'Y-m-d H:i:s' );
-			
-			$searchModel = new LeavebillSearch ();
-			$panel1Total=LeavebillSearch::find()->where(['userid'=>$request->get('uid')])->andwhere(['<','applyTime',$curTime])->count();
-			$panel1TotalPage=ceil($panel1Total/$pageSize);
-			$panel2Total=LeavebillSearch::find()->where(['approvalPerson' => $request->get ( 'uid' )])->andwhere(['<','applyTime',$curTime])->count();
-		
-			$panel2TotalPage=ceil($panel2Total/$pageSize);
-			// echo "你好".$request->get( 'uid' );
-		
-			if ($request->get ( 'uid' )) {
-				return $this->renderFile ( '@app/views/leavebill/list-more.php', [
-						'pageSize'=>$pageSize,
-						'panel1Total' => $panel1Total,
-						'panel1TotalPage' => $panel1TotalPage,
-						'panel2Total' => $panel2Total,
-                        'panel2TotalPage' => $panel2TotalPage,
-						'curTime'=>"'".$curTime."'",
-						'uid' => $request->get ( 'uid' )
-				] );
-			} else {
-				return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [ ] );
-			}
-		}
+	}
 }
