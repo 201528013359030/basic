@@ -80,10 +80,8 @@ class LeavebillController extends Controller {
 		] )->asArray ()->all ();
 
 		if ($customers) {
-
 			$searchModel = new LeavebillSearch ();
 			// $dataProvider = $searchModel->search ( $request->queryParams )->asArray();
-
 			// 查询当前用户的请假信息---未被审核的
 			$limit =array();
 			$limit[0] = 3;
@@ -129,13 +127,12 @@ class LeavebillController extends Controller {
 			] )->limit ( $limit[3] )->orderBy ( [
 					'applyTime' => SORT_DESC
 			] )->asArray ()->all ();
-
-			// print_r ( $dataDisagree );
-			// echo "</br>";
-			// print_r ( $dataAgree );echo "</br>";
-			// print_r ( $dataDisapproval );echo "</br>";
-			// print_r ( $dataApproval );
-
+			if(($dataDisagree==null||count($dataDisagree)<=0)&&
+					($dataAgree==null||count($dataAgree)<=0)&&
+					($dataDisapproval==null||count($dataDisapproval)<=0)&&
+					($dataApproval==null||count($dataApproval)<=0)){
+					return $this->renderFile('@app/views/leavebill/list-empty.php',['uid'=>$uid]);
+			}else{
 			return $this->renderFile ( '@app/views/leavebill/list.php', [
 					'dataDisagree' => $dataDisagree,
 					'dataAgree' => $dataAgree,
@@ -144,6 +141,7 @@ class LeavebillController extends Controller {
 					'uid' => $uid
 			] );
 			echo $uid;
+			}
 		} else {
 			echo "用户不存在";
 		}
@@ -171,10 +169,11 @@ class LeavebillController extends Controller {
 					'uid' => $uid
 			] );
 		} else { // echo "无此用户";
-			return $this->renderFile ( '@app/views/leavebill/create.php', [
-					'model' => $model,
-					'uid' => $uid
-			] );
+			echo "用户不存在";
+// 			return $this->renderFile ( '@app/views/leavebill/create.php', [
+// 					'model' => $model,
+// 					'uid' => $uid
+// 			] );
 		}
 		// }
 	}
@@ -218,10 +217,25 @@ class LeavebillController extends Controller {
 	 * @return mixed
 	 * @author fyq
 	 */
+	
+	//修改
+	/*
+	 * 		$model1 = Leavebill::find ()->where ( [
+				'userid' => $uid
+		] )->asArray ()->all ();
+	 */
 	public function actionSave() {
 		// $model = new Leavebill ();
 		$request = Yii::$app->request;
 		$uid = $request->get ( 'uid' );
+		$model = Employee::find ()->where ( [
+				// 'username'=> '3@15'
+				'username' => $uid
+		] )->asArray ()->all ();
+		if(!$model){
+			echo  "无此用户";
+			return;
+		}
 		// $uid = $request->get ( 'uid' );
 		$model1 = Leavebill::find ()->where ( [
 				'userid' => $uid
@@ -257,7 +271,7 @@ class LeavebillController extends Controller {
 			$model->approvalPerson = $request->get ( 'approvalPerson', '0' ); // id
 			$model->remark = $request->get ( 'remark', '0' );
 			$model->applyTime = date ( 'Y-m-d H:i:s' );
-			$model->state = $request->get ( 'state', '1' );
+			$model->state = $request->get ( 'state', '0' );
 			$model->username = $request->get ( 'username', '0' );
 			$model->days = $diff;
 			$model->dep = $request->get ( 'dep', '0' );
@@ -266,19 +280,13 @@ class LeavebillController extends Controller {
 			$model->tongzhi = $request->get ( 'tongzhi', '0' ); // id
 			$model->token = $request->get ( 'token', '0' ); // $GLOBALS['auth_token'];
 
-			echo "***********************************</br>";
+			//echo "***********************************</br>";
 			$model->save ();
 			$workflowMode = new WorkflowModel();
-			$result=$workflowMode->saveStartProcess($model->id,$model->userid);
-			if($result=="success"){
-				
-			}elseif($result=="error"){
-				
-			}
+			$result=$workflowMode->saveStartProcess($model,$model->userid);
 			// print_r($model);
 			// echo "保存成功";
 			if ($request->get ( 'approvalPerson' )) {
-
 				$this->actionSendnotice ( $uid,$request->get ( 'approvalPerson' ) );
 				return $this->redirect ( [
 						'list',
@@ -316,23 +324,81 @@ class LeavebillController extends Controller {
 	 * @param string $id
 	 * @return mixed
 	 */
-	public function actionUpdate($id,$data) {
-		$model = $this->findModel ( $id ); // $id为请假条记录id
-		$model->state=$data;
-		$model->save ();
+// 	public function actionUpdate($id,$data) {
+// 		$model = $this->findModel ( $id ); // $id为请假条记录id
+// 		$model->state=$data;
+// 		$model->save ();
 		
 		
 
-// 		if ($model->load ( Yii::$app->request->get () ) && $model->save ()) {
-// 			return $this->redirect ( [
-// 					'view',
-// 					'id' => $model->id
-// 			] );
-// 		} else {
-// 			return $this->render ( 'update', [
-// 					'model' => $model
-// 			] );
-// 		}
+// // 		if ($model->load ( Yii::$app->request->get () ) && $model->save ()) {
+// // 			return $this->redirect ( [
+// // 					'view',
+// // 					'id' => $model->id
+// // 			] );
+// // 		} else {
+// // 			return $this->render ( 'update', [
+// // 					'model' => $model
+// // 			] );
+// // 		}
+// 	}
+		public function actionUpdate(){
+			$request = Yii::$app->request;
+			$uid=$request->get("uid");
+			$id=$request->get("id");
+			//待检查用户
+			$employee = Employee::find ()->where ( [
+					'username' => $uid
+			] )->asArray()->all();
+			if(count($employee)>0){
+				$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray ();
+				if($dataDetail!=null&&count($dataDetail)>0){
+					return $this->renderFile ( '@app/views/leavebill/update.php', ['model'=>$dataDetail,'uid'=>$uid,'id'=>$id,'username'=>$employee->name] );
+				}else{
+					//返回错误页面
+					echo "无此请假条";
+					return;
+				}
+			}else{
+				echo "无此用户";
+				return;
+			}
+		}
+		public function actionUpdatestart() {
+			$request = Yii::$app->request;
+		$uid = $request->post ( "uid" );
+		$id = $request->post ( "id" );
+		$employee = Employee::find ()->where ( [ 
+				'username' => $uid 
+		] )->asArray ()->all ();
+		if (count ( $employee ) <= 0) {
+			echo "无此用户";
+			return;
+		}	
+			$workflowModel = new WorkflowModel ();
+			$model = LeavebillSearch::findOne ( $request->post ( 'id' ) );
+			$diff = date_diff ( date_create ( $request->get ( 'leaveStartTime' ) ), date_create ( $request->get ( 'leaveEndTime' ) ) )->format ( "%R%a days" ) + 0;
+			$model->userid = $request->post ( 'userid', $model ['userid'] ); // $GLOBALS['uid']
+			$model->leaveType = $request->post ( 'leaveType', '0' );
+			$model->leaveStartTime = $request->post ( 'leaveStartTime', '0' );
+			$model->leaveEndTime = $request->post ( 'leaveEndTime', '0' );
+			$model->reason = $request->post ( 'reason', '0' );
+			$model->approvalPerson = $request->post ( 'approvalPerson', '0' ); // id
+			$model->remark = $request->post ( 'remark', '0' );
+			$model->state = $request->post ( 'state', '1' );
+			$model->username = $request->post ( 'username', '0' );
+			$model->days = $diff;
+			$model->dep = $request->post ( 'dep', '0' );
+			$model->spuser = $request->post ( 'spuser', '0' ); // name
+			$model->tzuser = $request->post ( 'tzuser', '0' ); // name
+			$model->tongzhi = $request->post ( 'tongzhi', '0' ); // id
+			$model->token = $request->post ( 'token', '0' ); // $GLOBALS['auth_token'];
+			                                                 // $model->save();
+			$result = $workflowModel->updateStartLeaveBill ( $model );
+			return $this->redirect ( [ 
+					'list',
+					'uid' => $model->userid 
+			] );
 	}
 
 	/**
@@ -391,7 +457,14 @@ class LeavebillController extends Controller {
 	 */
 	public function actionContent() {
 		$request = Yii::$app->request;
-
+		$uid=$request->get('uid');
+		$employee = Employee::find ()->where ( [
+				'username' => $uid
+		] )->asArray ()->all ();
+		if (count ( $employee ) <= 0) {
+			echo "无此用户";
+			return;
+		}
 		$searchModel = new LeavebillSearch ();
 		$workflowMode=new WorkflowModel();
 		// 查询当前用户的请假信息-
@@ -418,7 +491,14 @@ class LeavebillController extends Controller {
 	 */
 	public function actionContentsp() {
 		$request = Yii::$app->request;
-
+		$uid=$request->get('uid');
+		$employee = Employee::find ()->where ( [
+				'username' => $uid
+		] )->asArray ()->all ();
+		if (count ( $employee ) <= 0) {
+			echo "无此用户";
+			return;
+		}
 		$searchModel = new LeavebillSearch ();
 		$workflowMode=new WorkflowModel();
 
@@ -579,6 +659,7 @@ class LeavebillController extends Controller {
 	 * @throws NotFoundHttpException if the model cannot be found
 	 */
 	protected function findModel($id) {
+		
 		if (($model = Leavebill::findOne ( $id )) !== null) {
 			return $model->toArray ();
 		} else {
@@ -664,33 +745,53 @@ class LeavebillController extends Controller {
 // 		}
 // <<<<<<< HEAD
 // 	}
+	public function actionGiveup(){
+		$workflowModel = new WorkflowModel();
+		$request = Yii::$app->request;
+		$uid=$request->get('uid');
+		$employee = Employee::find ()->where ( [
+				'username' => $uid
+		] )->asArray ()->all ();
+		if (count ( $employee ) <= 0) {
+			echo "无此用户";
+			return;
+		}
+		$leaveBillId=$request->get("id");
+		//$uid=$request->get("uid");
+		$outcome=$request->get("outcome");
+		if (($model = Leavebill::findOne ( $leaveBillId )) !== null) {
+			$workflowModel->saveSubmitTaskByLeaveBillId($model,$outcome,$uid);
+			return $this->redirect ( [
+					'list',
+					'uid' => $uid
+			] );
+		} else {
+			throw new NotFoundHttpException ( 'The requested page does not exist.' );
+		}
+	}
+	
+	
 		public function actionSaveapproval(){
 			$workflowModel = new WorkflowModel();
 			$request = Yii::$app->request;
-		    $leaveBillId = $request->post('id');
-			'<br/>';
-			$outcome=$request->post('outcome');
-			'<br/>';
 			$uid=$request->post('uid');
-	
+			$employee = Employee::find ()->where ( [
+					'username' => $uid
+			] )->asArray ()->all ();
+			if (count ( $employee ) <= 0) {
+				echo "无此用户";
+				return;
+			}
+		    $leaveBillId = $request->post('id');
+			$outcome=$request->post('outcome');
 			$comment=$request->post('comment');
-// 			$leaveBill=LeavebillSearch::find()->where(['id'=>$leaveBillId])->asArray()->all ()[0];
 		if (($model = Leavebill::findOne ( $leaveBillId )) !== null) {
-			
-			//print_r($leaveBill);
-			//echo $leaveBill['id'];
-			//$key="LeaveBill";
-			//$businessKey=$key.'.'.$leaveBillId;
-		
 				$workflowModel->saveSubmitTaskByLeaveBillId($model,$outcome,$uid,$comment);
-					
-				//return $this->renderFile ( '@app/views/leavebill/index.php',['uid'=>$uid] );
+				//通知
 				return $this->redirect ( [
 						'list',
 						'uid' => $uid
 				] );
-		
-			//$leaveBillId=$request->get('id');
 		} else {
 			throw new NotFoundHttpException ( 'The requested page does not exist.' );
 		}
@@ -704,7 +805,6 @@ class LeavebillController extends Controller {
 			$pageSize=$request->get('pageSize');
 			$dataApproval = LeavebillSearch::find()->where(['approvalPerson' => $request->get ( 'uid' )])->andwhere(['<','applyTime',$applyTime])->orderBy (['applyTime' => SORT_DESC])->offset ($page*$pageSize )->limit ( $pageSize )->asArray()->all ();
 			echo json_encode(['dataApproval'=>$dataApproval]);
-
 		}
 
 		public function actionMore() {
@@ -743,5 +843,7 @@ class LeavebillController extends Controller {
 			
 		return $this->renderFile ( '@app/views/leavebill/deployments.php');
 		}
+		
+
 
 }

@@ -18,12 +18,19 @@
 	<div class="inner-wrap">
 		
 	<div class="row">
-		<form  data-abide action="leaveBillAction_updateStart.action" method="POST">
-		<input type="hidden"  name="userid" value='<s:property value="#bill.userid"/>'/>
-		<input type="hidden"  name="dep" value='<s:property value="#bill.dep"/>'/>
-		<input type="hidden"  name="username" value='<s:property value="#bill.username"/>'/>
-		<input type="hidden"  name="token" value='<s:property value="#bill.token"/>'/>
-		<input type="hidden"  name="id" value='<s:property value="#bill.id"/>'/>
+			<form  data-abide action="index.php?r=leavebill/updatestart" method="POST">
+				<input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
+<!-- 		<form  data-abide action="leaveBillAction_updateStart.action" method="POST"> -->
+<!-- 		<input type="hidden"  name="userid" value='<s:property value="#bill.userid"/>'/> -->
+		<input type="hidden"  name="userid" value='<?php echo $model['userid'];?>' />
+<!-- 		<input type="hidden"  name="dep" value='<s:property value="#bill.dep"/>'/> -->
+		<input type="hidden"  name="dep" value='<?php echo $model['dep'];?>' />
+<!-- 		<input type="hidden"  name="username" value='<s:property value="#bill.username"/>'/> -->
+		<input type="hidden"  name="username" value='<?php echo $model['username'];?>' />
+<!-- 		<input type="hidden"  name="token" value='<s:property value="#bill.token"/>'/> -->
+		<input type="hidden"  name="token" value='<?php echo $model['token'];?>' />
+<!-- 		<input type="hidden"  name="id" value='<s:property value="#bill.id"/>'/> -->
+		<input type="hidden"  name="id" value='<?php echo $model['id'];?>' />
 			<!--表单主体-->
 			<div class="form-group">
 				<div class="row">
@@ -31,7 +38,8 @@
 			            <label class="center inline">请假人</label>
 			        </div>
 			        <div class="small-9 columns">
-			            <label class="inline">${sessionScope.globle_user.position }</label>
+<!-- 			            <label class="inline">${sessionScope.globle_user.position }</label> -->
+							<label class="inline"><?php echo $username?></label>
 			        </div>
 			    </div>
 				<div class="row">
@@ -41,13 +49,14 @@
 			        <div class="small-9 columns">
 			          <select data-invalid aria-invalid="true" required name="leaveType" >
 			          <!-- 此处判断目前选择的结果 -->
+			          
 				          <option value="">请选择</option>
-				          <option value="1"  >事假</option>
-				          <option value="2"  >病假</option>
-				          <option value="3" >婚假</option>
-				          <option value="4" >丧假</option>
-				          <option value="5" >年假</option>
-				          <option value="6"  >其他</option>
+				          <option value="1"  <?php if($model['leaveType']==1) echo 'selected'?>>事假</option>
+				          <option value="2"  <?php if($model['leaveType']==2) echo 'selected'?>>病假</option>
+				          <option value="3" <?php if($model['leaveType']==3) echo 'selected'?>>婚假</option>
+				          <option value="4" <?php if($model['leaveType']==4) echo 'selected'?>>丧假</option>
+				          <option value="5" <?php if($model['leaveType']==5) echo 'selected'?>>年假</option>
+				          <option value="6" <?php if($model['leaveType']==6) echo 'selected'?> >其他</option>
 				        </select>
 				        <small class="error">请正确选择类型</small>
 			        </div>
@@ -57,7 +66,8 @@
 			          <label for="right-label" class="center inline">开始</label>
 			        </div>
 			        <div class="small-9 columns">
-			          <input id="starTime" class="datesel" name="startTime"  type="text" placeholder="请选择" required value='<s:property value="#bill.startTime"/>' />
+<!-- 			          <input id="starTime" class="datesel" name="startTime"  type="text" placeholder="请选择" required value='<s:property value="#bill.startTime"/>' /> -->
+						<input id="starTime" class="datesel" name="startTime"  type="text" placeholder="请选择" required value='<?php echo $model['leaveStartTime']?>' />
 			          <small class="error">请选择开始时间</small>
 			        </div>
 			    </div>
@@ -66,7 +76,8 @@
 			          <label for="right-label" class="center inline">结束</label>
 			        </div>
 			        <div class="small-9 columns">
-			          <input class="datesel" name="endTime"  type="text" placeholder="请选择"  required data-greatthan="starTime" data-abide-validator="greatThan" value='<s:property value="#bill.endTime"/>' />
+<!-- 			          <input class="datesel" name="endTime"  type="text" placeholder="请选择"  required data-greatthan="starTime" data-abide-validator="greatThan" value='<s:property value="#bill.endTime"/>' /> -->
+			          <input class="datesel" name="endTime"  type="text" placeholder="请选择"  required data-greatthan="starTime" data-abide-validator="greatThan" value='<?php echo $model['leaveEndTime']?>' />
 			          <small class="error">结束时间不能小于开始时间</small>
 			        </div>
 			    </div>
@@ -76,9 +87,12 @@
 			        </div>
 			        <!--这里需要把获取到的人名 放在 a里显示，也要放到hid input中显示-->
 			        <div class="small-9 columns timeBox">
-			          <a href="javascript:void(0);" class="btn-link" id="approver"><s:property value="#bill.spuser"/></a>
-			          <input id="spuser-input" class="hid-input" value='<s:property value="#bill.spuser"/>' type="text" name="spuser" required />
-			          <input id="approver-input" class="hid-input" value='<s:property value="#bill.approvalPerson"/>' type="text" name="approvalPerson" required />
+<!-- 			          <a href="javascript:void(0);" class="btn-link" id="approver"><s:property value="#bill.spuser"/></a> -->
+						 <a href="javascript:void(0);" class="btn-link" id="approver"><?php echo $model['spuser']?></a>
+<!-- 			          <input id="spuser-input" class="hid-input" value='<s:property value="#bill.spuser"/>' type="text" name="spuser" required /> -->
+			          <input id="spuser-input" class="hid-input" value='<?php echo $model['spuser']?>' type="text" name="spuser" required />
+<!-- 			          <input id="approver-input" class="hid-input" value='<s:property value="#bill.approvalPerson"/>' type="text" name="approvalPerson" required /> -->
+			          <input id="approver-input" class="hid-input" value='<?php echo $model['approvalPerson']?>' type="text" name="approvalPerson" required />
 			          <small class="error">请选择审批人</small>
 			        </div>
 			    </div>			    
@@ -88,9 +102,12 @@
 			        </div>
 			        <div class="small-9 columns timeBox">
 			          <!--这里需要把获取到的人名 放在 a里显示，也要放到hid input中显示-->
-			          <a href="javascript:void(0);" class="btn-link" id="member"><s:property value="#bill.tzuser"/></a>
-			          <input id="tzuser-input" class="hid-input" value='<s:property value="#bill.tzuser"/>' type="text" name="tzuser" required />
-			          <input id="member-input" class="hid-input" value='<s:property value="#bill.tongzhi"/>'  type="text" name="tongzhi" required />
+<!-- 			          <a href="javascript:void(0);" class="btn-link" id="member"><s:property value="#bill.tzuser"/></a> -->
+			          <a href="javascript:void(0);" class="btn-link" id="member"><?php echo $model['tzuser']?></a>
+<!-- 			          <input id="tzuser-input" class="hid-input" value='<s:property value="#bill.tzuser"/>' type="text" name="tzuser" required /> -->
+			          <input id="tzuser-input" class="hid-input" value='<?php echo $model['tzuser']?>' type="text" name="tzuser" required />
+<!-- 			          <input id="member-input" class="hid-input" value='<s:property value="#bill.tongzhi"/>'  type="text" name="tongzhi" required /> -->
+			          <input id="member-input" class="hid-input" value='<?php echo $model['tongzhi']?>'  type="text" name="tongzhi" required />
 			          <small class="error">请选择通知人</small>
 			        </div>
 			        
@@ -100,7 +117,8 @@
 			          <label for="right-label" class="center inline">事由</label>
 			        </div>
 			        <div class="small-9 columns">
-			        <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入请假事由" required name="reason" ><s:property value="#bill.reason"/> </textarea>	
+<!-- 			        <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入请假事由" required name="reason" ><s:property value="#bill.reason"/> </textarea>	 -->
+			        <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入请假事由" required name="reason" ><?php echo $model['reason']?> </textarea>	
 			          <small class="error">请输入请假事由</small>
 			        </div>
 			    </div>
@@ -110,7 +128,8 @@
 			        </div>
 			        <!--不是必填-->
 			        <div class="small-9 columns">
-			          <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入您请假后的工作安排" name="remark"><s:property value="#bill.remark"/></textarea>
+<!-- 			          <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入您请假后的工作安排" name="remark"><s:property value="#bill.remark"/></textarea> -->
+			          <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入您请假后的工作安排" name="remark"><?php echo $model['remark']?></textarea>
 			        </div>
 			    </div>			    
 		    </div>
