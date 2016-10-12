@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "employee".
+ * This is the model class for table "a_employee".
  *
  * @property string $id
  * @property string $username
@@ -16,20 +16,14 @@ use Yii;
  * @property string $department
  * @property string $position
  */
-class Employee extends \yii\db\ActiveRecord
+class ALeavebill extends \yii\db\ActiveRecord
 {
-
-	public static function getDb()
-	{
-		return \Yii::$app->db;  // 使用名为 "db2" 的应用组件
-	}
-
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'employee';
+        return 'a_employee';
     }
 
     /**
@@ -39,8 +33,8 @@ class Employee extends \yii\db\ActiveRecord
     {
         return [
             [['username', 'password', 'name', 'email', 'role', 'department', 'position'], 'string', 'max' => 255],
-            [['username'], 'unique'],
             [['email'], 'unique'],
+            [['username'], 'unique'],
         ];
     }
 

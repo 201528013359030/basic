@@ -14,11 +14,7 @@
 
 </head>
 <body>
-<?php $request;
-'model'  $model;
 
-
-?>
 
 <div class="off-canvas-wrap" data-offcanvas>
 	<div class="inner-wrap">

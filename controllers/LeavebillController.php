@@ -10,11 +10,14 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\Employee;
 use app\models\CurlModel;
+use app\models\UploadForm;
+use yii\web\UploadedFile;
 
 /**
  * LeavebillController implements the CRUD actions for Leavebill model.
  */
 class LeavebillController extends Controller {
+	public $enableCsrfValidation = false;
 	public $layout = 'false';
 	public $auth_token;
 
@@ -267,6 +270,50 @@ class LeavebillController extends Controller {
 			echo "***********************************</br>";
 			$model->save ();
 
+			$model1 = Leavebill::find()->where ( [
+					'userid' => $uid
+			] )->orderBy ( [
+					'applyTime' => SORT_DESC
+			] )->limit ( 1 )->asArray ()->all ();
+
+// 			启动一个流程实例:申请->
+			$businessKey=$model1['userid'].$model1['id'];
+			$rtartProcessInstancesResult=$this->actionStartProcessInstances($businessKey, $uid);
+
+
+// 			查询当前用户的任务:申请->
+			$name='请假申请';
+			$processInstanceId=$rtartProcessInstancesResult->id;
+			$assignee=$uid;
+			$params=['name'=>$name,
+					'assignee'=>$assignee,
+					'processInstanceId'=>$processInstanceId,
+					// 					'type'=>'integer',
+			// 					'value'=>'1234'
+			];
+			$queryTaskResult=$this->actionQueryTask($params);
+
+
+// 			完成当前用户的任务:申请->审批->
+			$approvalPerson=$request->get ( 'approvalPerson','' );
+			$params=['action'=>'complete',
+					'variables'=>[[
+							'name'=>'isAbandon',
+							'type'=>'string',
+							'value'=>'1'],
+							[
+									'name'=>'approvalPerson',
+									'type'=>'string',
+									'value'=>$approvalPerson
+							]]
+			];
+
+			for($i=0; $i<$queryTaskResult->total;$i++){
+
+				$taskId=$queryTaskResult->data[$i]->id;
+				$this->actionCompleteTask( $params, $taskId);
+			}
+
 			// print_r($model);
 			// echo "保存成功";
 			if ($request->get ( 'approvalPerson' )) {
@@ -286,6 +333,40 @@ class LeavebillController extends Controller {
 		}
 	}
 
+	public function actionStartProcessInstances($businessKey,$uid){
+
+// 			 启动流程实例
+		$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+		$curl->setHeaders($header);
+		$params=['processDefinitionId'=>'LeaveBill:1:2504',
+				'businessKey'=>$businessKey,
+				'variables'=>[[
+						'name'=>'inputUser',
+						'value'=>$uid
+				]]
+		];
+		$params=json_encode($params);
+		print_r($params);
+		$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances';
+		$result=$curl->post($webService,$params);
+		$result = json_decode($result);
+		return $result;
+
+	}
+
+	public function actionQueryTask($params){
+
+// 		查询任务-请假申请状态
+			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+			$curl->setHeaders($header);
+
+			$params=json_encode($params);
+			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/tasks';
+			$result=$curl->post($webService,$params);
+			$result = json_decode($result);
+			return $result;
+	}
+
 	/**
 	 * Deletes an existing Leavebill model.
 	 * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -300,6 +381,63 @@ class LeavebillController extends Controller {
 				'index'
 		] );
 	}
+
+	public function actionCompleteTask($params,$taskId){
+
+// 		操作任务-完成任务-请假申请
+		$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+		$curl->setHeaders($header);
+
+		$params=json_encode($params);
+		$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks/'.$taskId;
+		$result=$curl->post($webService,$params);
+		$result = json_decode($result);
+		return $result;
+	}
+
+	public function actionQueryProcessInstance(){
+
+// 		 查询流程实例
+		$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+		$curl->setHeaders($header);
+		$params=['processDefinitionId'=>'LeaveBill:1:2504',
+
+				'variables'=>[[
+						'name'=>'inputUser',
+						'value'=>'8@15',
+						'operation' => 'equals'
+
+				]]
+		];
+		$params=json_encode($params);
+		$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/process-instances';
+		$result=$curl->post($webService,$params);
+		$result = json_decode($result);
+		return $result;
+	}
+
+	public function actionShowProcessInstance($params){
+
+// 		 显示流程实例列表
+		$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances';
+
+// 		$params=['businessKey'=>'myBusinessKey'];
+		// 			$params=json_decode($params);
+		// 			$webService ='http://192.168.139.75:8080/activiti-rest/service/runtime/process-instances';
+		$result=$curl->get($webService,$params);
+		$result = json_decode($result);
+		return $result;
+	}
+
+	public function actionAcquireProcessInstance($processInstanceId){
+
+// 		获得流程实例
+	$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/'.$processInstanceId;
+	 $result=$curl->get($webService);
+	 $result = json_decode($result);
+	 return $result;
+	}
+
 
 	/**
 	 * Updates an existing Leavebill model.
@@ -386,6 +524,13 @@ class LeavebillController extends Controller {
 
 		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray ();
 
+		$param=$dataDetail['userid'].$dataDetail['id'];
+// 		$result=$this->actionAcquireProcessInstance($param);
+		$param=['basinessKey'=>$param];
+		$result=$this->actionShowProcessInstance($params);
+		$ProcessInstanceId=$result->data[0]->id;
+		//根据processInstanceId查询任务id
+
 		return $this->renderFile ( '@app/views/leavebill/content.php', [
 				'dataDetail' => $dataDetail,
 				'uid' => $request->get ( 'uid' )
@@ -469,6 +614,8 @@ class LeavebillController extends Controller {
 		// 'model' => $this->findModel ( $id )
 		// ] );
 	}
+
+
 
 	/**
 	 * Sendmessage.
@@ -587,64 +734,7 @@ class LeavebillController extends Controller {
 				'dataApproval' => $dataApproval
 		] );
 	}
-// 	public function actionMyapproval() {
-// 		$request = Yii::$app->request;
-// 		$page = $request->get ( 'page' );
-// 		$applyTime = $request->get ( 'applyTime' );
-// 		$pageSize = $request->get ( 'pageSize' );
-// 		$dataApproval = LeavebillSearch::find ()->where ( [
-// 				'approvalPerson' => $request->get ( 'uid' )
-// 		] )->andwhere ( [
-// 				'<',
-// 				'applyTime',
-// 				$applyTime
-// 		] )->orderBy ( [
-// 				'applyTime' => SORT_DESC
-// 		] )->offset ( $page * $pageSize )->limit ( $pageSize )->asArray ()->all ();
-// 		echo json_encode ( [
-// 				'dataApproval' => $dataApproval
-// 		] );
-// 	}
-// 	public function actionMore() {
-// 		$request = Yii::$app->request;
-// 		$pageSize = 4;
-// 		$curTime = date ( 'Y-m-d H:i:s' );
 
-// 		$searchModel = new LeavebillSearch ();
-// 		$panel1Total = LeavebillSearch::find ()->where ( [
-// 				'userid' => $request->get ( 'uid' )
-// 		] )->andwhere ( [
-// 				'<',
-// 				'applyTime',
-// 				$curTime
-// 		] )->count ();
-// 		$panel1TotalPage = ceil ( $panel1Total / $pageSize );
-// 		$panel2Total = LeavebillSearch::find ()->where ( [
-// 				'approvalPerson' => $request->get ( 'uid' )
-// 		] )->andwhere ( [
-// 				'<',
-// 				'applyTime',
-// 				$curTime
-// 		] )->count ();
-
-// 		$panel2TotalPage = ceil ( $panel2Total / $pageSize );
-// 		// echo "你好".$request->get( 'uid' );
-
-// 		if ($request->get ( 'uid' )) {
-// 			return $this->renderFile ( '@app/views/leavebill/list-more.php', [
-// 					'pageSize' => $pageSize,
-// 					'panel1Total' => $panel1Total,
-// 					'panel1TotalPage' => $panel1TotalPage,
-// 					'panel2Total' => $panel2Total,
-// 					'panel2TotalPage' => $panel2TotalPage,
-// 					'curTime' => "'" . $curTime . "'",
-// 					'uid' => $request->get ( 'uid' )
-// 			] );
-// 		} else {
-// 			return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [ ] );
-// 		}
-// <<<<<<< HEAD
-// 	}
 
 		public function actionMyapproval() {
 			$request = Yii::$app->request;
@@ -687,5 +777,457 @@ class LeavebillController extends Controller {
 				return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [ ] );
 			}
 		}
+
+		/**
+		 * Sendnotice.
+		 *
+		 * @param string $id
+		 * @return mixed
+		 */
+		public function actionFileform() {
+			// 		echo "2222";
+
+			return $this->renderFile('@app/views/leavebill/fileform.php');
+			// 		echo "2222";
+			// 		$this->renderFile("file_form");
+		}
+		public function actionUpload()
+		{
+			$employee = Employee::getDb();
+			var_dump($employee);
+
+// 			$model = new UploadForm();
+
+
+// 			if (Yii::$app->request->isPost) {
+// 				$model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+// 				print_r($model);
+// 				if ($model->upload()) {
+// 					// 文件上传成功
+// 					echo "文件上传成功";
+// 					return "文件上传成功";
+// 				}else {
+// 					echo "文件上传失败";
+// 				}
+// 			}
+
+// 			return $this->renderPartial('upload', ['model' => $model]);
+
+// 			print_r(readfile("d:/leavebill.bpmn20.xml")) ;
+		}
+
+		/** php 发送流文件
+		 * @param  String  $url  接收的路径
+		 * @param  String  $file 要发送的文件
+		 * @return boolean
+		 */
+		public function actionSendStreamFile($url, $file){
+
+			if(file_exists($file)){
+
+				$opts = array(
+						'http' => array(
+								'method' => 'POST',
+								'header' => ['content-type:multipart/form-data','Authorization:Basic '.base64_encode("kermit:kermit")],
+								'content' => file_get_contents($file)
+						)
+				);
+
+				$context = stream_context_create($opts);
+				$response = file_get_contents($url, false, $context);
+				$ret = json_decode($response, true);
+				return $ret['success'];
+
+			}else{
+				return false;
+			}
+
+		}
+
+
+		/**
+		 * Sendnotice.
+		 *
+		 * @param string $id
+		 * @return mixed
+		 */
+		public function actionActivitirest() {
+
+// 			Yii::$app->request->post();
+// 			var_dump( Yii::$app->request->bodyParams);
+
+
+			$curl = new CurlModel ();
+			$params='';
+
+			$Authorization=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),);
+			$curl->setHeaders($Authorization);
+
+//  		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/identity/groups';
+
+
+			/****************************** 部署 ************************************************/
+
+// 			部署列表
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/deployments';
+			$webService ='http://192.168.139.75:8080/activiti-rest/service/repository/deployments';
+			$result=$curl->get($webService);
+
+// 			获得一个部署
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/deployments/20';
+// 			$result=$curl->get($webService);
+
+// 			删除一个部署
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/deployments/54';
+// 			$webService ='http://192.168.139.75:8080/activiti-rest/service/repository/deployments/40';
+// 			$result=$curl->delete($webService);
+
+// 			列出部署内的资源
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/deployments/50/resources';
+// 			$result=$curl->get($webService);
+
+// 			获取部署内的资源
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/deployments/46/resources/leaveBill02.png';
+// 			$result=$curl->get($webService);
+
+// 			获取部署内的资源内容
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/deployments/50/resourcedata/leaveBill02.bpmn20.xml';
+// 			$result=$curl->get($webService);
+
+			/****************************** 流程定义 ************************************************/
+
+// 			流程定义列表
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions';
+// 			$result=$curl->get($webService);
+
+// 			获得一个流程定义
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:49';
+// 			$result=$curl->get($webService);
+
+// 			 更新流程定义的分类
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:49';
+// 			$result=$curl->put($webService);
+
+// 			获得一个流程定义的资源内容
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:49/resourcedata';
+// 			$result=$curl->get($webService);
+
+// 			 获得流程定义的BPMN模型
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:49/model';
+// 			$result=$curl->get($webService);
+
+// 			暂停流程定义
+// 			$params=array('action'=>'suspend','includeProcessInstances'=>'false');
+// 			$params=json_encode($params);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:2504';
+// 			$result=$curl->put($webService,$params);
+
+// 			激活流程定义
+// 			$params=array('action'=>'activate','includeProcessInstances'=>'true');
+// 			$params=json_encode($params);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:2504';
+// 			$result=$curl->put($webService,$params);
+
+// 			获得流程定义的所有候选启动者
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:2504/identitylinks';
+// 			$result=$curl->get($webService);
+
+// 			为流程定义添加一个候选启动者
+// 			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+// 			$curl->setHeaders($header);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:2504/identitylinks';
+// 			$params=['user'=>'kermit'];
+// 			$params=json_encode($params);
+// 			$result=$curl->post($webService,$params);
+
+// 			 删除流程定义的候选启动者
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:2504/identitylinks/users/kermit';
+// 			$result=$curl->delete($webService);
+
+// 			 获得流程定义的一个候选启动者
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:2504/identitylinks/users/kermit';
+// 			$result=$curl->get($webService);
+
+			/****************************** 模型 ************************************************/
+
+// 			 获得模型列表
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/models';
+// 			$result=$curl->get($webService);
+
+// 			 获得一个模型
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/models/37';
+// 			$result=$curl->get($webService);
+
+// 			 获得模型的可编译源码
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/models/37/source';
+// 			$result=$curl->get($webService);
+
+// 			 获得模型的附加可编辑源码
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/models/37/source-extra';
+// 			$result=$curl->get($webService);
+
+// 			 获得模型列表
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/models';
+// 			$result=$curl->get($webService);
+
+// 			 获得模型列表
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/models';
+// 			$result=$curl->get($webService);
+
+			/****************************** 流程实例 ************************************************/
+
+
+// 			 启动流程实例
+// 			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+// 			$curl->setHeaders($header);
+// 			$params=['processDefinitionId'=>'LeaveBill:1:2504',
+// 					'businessKey'=>'myBusinessKey',
+// 					'variables'=>[[
+// 							'name'=>'inputUser',
+// 							'value'=>'8@15'
+// 					]]
+// 			];
+// 			$params=json_encode($params);
+// 			print_r($params);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances';
+// 			$result=$curl->post($webService,$params);
+
+// // 			 显示流程实例列表
+			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances';
+
+			$params=['businessKey'=>'myBusinessKey'];
+// 			$params=json_decode($params);
+// 			$webService ='http://192.168.139.75:8080/activiti-rest/service/runtime/process-instances';
+			$result=$curl->get($webService,$params);
+
+// 			 获得流程实例
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2525';
+// 			$result=$curl->get($webService);
+
+// 			 删除流程实例
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/112';
+// 			$result = json_decode($result);
+// 			for($i1=0;$i1<7;$i1++){
+// 			$webService ='http://192.168.139.75:8080/activiti-rest/service/runtime/process-instances/'.$result->data[$i1]->id;
+// 			$curl->delete($webService);
+// 			}
+
+// 			 激活或挂起流程实例
+// 			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+// 			$curl->setHeaders($header);
+// 			$params=['action'=>'suspend'];
+// 			$params=json_encode($params);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553';
+// 			$result=$curl->put($webService);
+
+
+// 			 查询流程实例
+// 			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json");
+// 			$curl->setHeaders($header);
+// 			$params=[
+// 					'processDefinitionId'=>'LeaveBill:1:2504',
+// // 					'id'=>'2568',
+
+// 						'variables'=>[[
+// 										'name'=>'inputUser',
+// 										'value'=>'8@15',
+// 										'operation' => 'equals'
+
+// 						]
+// 						]
+// 			];
+// 			$params=json_encode($params);
+// // 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/process-instances';
+
+// 			$webService ='http://192.168.139.75:8080/activiti-rest/service/query/process-instances';
+// 			$result=$curl->post($webService,$params);
+
+// 			  获得流程实例的流程图
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2586';
+// 			$result=$curl->get($webService);
+
+// 			 获得流程实例的参与者
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/identitylinks';
+// 			$result=$curl->get($webService);
+
+// 	.......		 为流程实例添加一个参与者
+// 			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+// 			$curl->setHeaders($header);
+// 			$params=['userId'=>'john',
+// 					'type'=>'participant'
+// 			];
+// 			$params=json_encode($params);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/identitylinks';
+// 			$result=$curl->post($webService,$params);
+
+// 			 列出流程实例的变量
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/variables';
+// 			$result=$curl->get($webService);
+
+// 			获得流程实例的一个变量
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/variables/inputUser';
+// 			$result=$curl->get($webService);
+
+
+// 			创建（或更新）流程实例变量 post
+// 			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+// 			$curl->setHeaders($header);
+// 			$params=[['name'=>'intProcVar',
+// // 					'type'=>'integer',
+// 					'value'=>'123'
+// 			]];
+// 			$params=json_encode($params);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/variables';
+// 			$result=$curl->post($webService,$params);
+
+// 			创建（或更新）流程实例变量 put
+// 			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+// 			$curl->setHeaders($header);
+// 			$params=[['name'=>'intProcVar',
+// // 					'type'=>'integer',
+// 					'value'=>'123'
+// 			]];
+// 			$params=json_encode($params);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/variables';
+// 			$result=$curl->put($webService,$params);
+
+// 			 更新一个流程实例变量
+// 			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+// 			$curl->setHeaders($header);
+// 			$params=['name'=>'intProcVar',
+// 	// 					'type'=>'integer',
+// 						'value'=>'1234'
+// 					];
+// 			$params=json_encode($params);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/variables/intProcVar';
+// 			$result=$curl->put($webService,$params);
+
+			/********************************* 任务   *************************************************/
+
+//			任务列表
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks';
+// 			$result=$curl->get($webService);
+
+// 			获取任务
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks/2567';
+// 			$result=$curl->get($webService);
+
+// 			查询任务-请假申请状态
+// 			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+// 			$curl->setHeaders($header);
+// 			$params=['name'=>'请假申请',
+// 					'assignee'=>'8@15',
+// 					'processInstanceId'=>'2586',
+// 					// 					'type'=>'integer',
+// // 					'value'=>'1234'
+// 			];
+// 			$params=json_encode($params);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/tasks';
+// 			$result=$curl->post($webService,$params);
+
+// 			查询任务-审批状态
+// 			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+// 			$curl->setHeaders($header);
+// 			$params=['name'=>'审批',
+// 					'assignee'=>'8@15'
+// 					// 					'type'=>'integer',
+// 			// 					'value'=>'1234'
+// 			];
+// 			$params=json_encode($params);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/tasks';
+// 			$result=$curl->post($webService,$params);
+
+
+// 			操作任务-完成任务-请假申请
+// 			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+// 			$curl->setHeaders($header);
+// 			$params=['action'=>'complete',
+// 					'variables'=>[[
+// 							'name'=>'isAbandon',
+// 							'type'=>'string',
+// 							'value'=>'0'],
+// 							[
+// 							'name'=>'approvalPerson',
+// 							'type'=>'string',
+// 							'value'=>'4@15'
+// 					]]
+// 			];
+// 			$params=json_encode($params);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks/2591';
+// 			$result=$curl->post($webService,$params);
+
+// 			操作任务-完成任务-审批
+// 			$header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
+// 			$curl->setHeaders($header);
+// 			$params=['action'=>'complete',
+// 					'variables'=>[[
+// 							'name'=>'outcome',
+// 							'type'=>'string',
+// 							'value'=>'1']]
+
+// 			];
+// 			$params=json_encode($params);
+// 			$webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks/2582';
+// 			$result=$curl->post($webService,$params);
+
+
+
+
+
+
+
+
+
+
+
+			$result = json_decode($result);
+
+
+// 			echo $result->data[0]->id;
+
+// 			echo $result->id;
+
+			echo "<pre>";
+			echo "参数</br>";
+			var_dump ( $params );
+			echo "结果</br>";
+			var_dump ( $result );
+			print_r($result);
+// 			echo ($result);
+
+			// 获取form post 参数
+			// $uid = I ( 'uid' );
+			// $uid = '3@3';
+
+			// $params ['id'] = 5; // 轻应用id （企业门户添加轻应用后生成）
+			// $params ['eid'] = explode ( "@", $uid ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
+			// $params ['title'] = 'text' ; // 通知内容
+			// $params ['url'] = "http://uc.sipsys.com"; // 通知的链接地址
+			// $params ['uids[0]'] = $uid; // 接收者uid (数组)
+			// $params ['auth_token'] = 'auth_token' ; // 用户认证
+			// $params ['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";
+
+			// // 接口地址
+			// $webService = "http://192.168.139.162/elgg/services/api/rest/json/?method=lapp.notice";
+			// $curl = new CurlModel ();
+			// $result = json_decode ( $curl->post ( $webService, $params ), true );
+
+			// $this->display ();
+
+			// return $this->render ( 'view', [
+			// 'model' => $this->findModel ( $id )
+			// ] );
+		}
+
+		public function  actionDeployments (){
+
+			return $this->renderPartial('deployments');
+
+		}
+
+
+
+
+
 
 }
