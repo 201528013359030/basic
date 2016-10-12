@@ -5,9 +5,9 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "a_leaveBill".
+ * This is the model class for table "leavebill".
  *
- * @property string $id
+ * @property integer $id
  * @property string $userid
  * @property string $leaveType
  * @property string $leaveStartTime
@@ -25,7 +25,7 @@ use Yii;
  * @property string $token
  * @property string $approvalPerson
  */
-class Leavebill extends \yii\db\ActiveRecord
+class _LeaveBill extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
@@ -41,7 +41,6 @@ class Leavebill extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
             [['leaveStartTime', 'leaveEndTime', 'applyTime'], 'safe'],
             [['state'], 'integer'],
             [['days'], 'number'],
