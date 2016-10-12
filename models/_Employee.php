@@ -5,9 +5,9 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "a_employee".
+ * This is the model class for table "employee".
  *
- * @property integer $id
+ * @property string $id
  * @property string $username
  * @property string $password
  * @property string $name
@@ -16,14 +16,14 @@ use Yii;
  * @property string $department
  * @property string $position
  */
-class Employee extends \yii\db\ActiveRecord
+class _Employee extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'a_employee';
+        return 'employee';
     }
 
     /**

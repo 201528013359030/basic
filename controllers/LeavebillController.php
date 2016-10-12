@@ -10,6 +10,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\Employee;
 use app\models\CurlModel;
+use app\models\WorkflowModel;
+use app\models\UtilsModel;
 
 /**
  * LeavebillController implements the CRUD actions for Leavebill model.
@@ -244,16 +246,16 @@ class LeavebillController extends Controller {
 			$diff = date_diff ( date_create ( $request->get ( 'leaveStartTime' ) ), date_create ( $request->get ( 'leaveEndTime' ) ) )->format ( "%R%a days" ) + 0;
 
 			// $model->userid = $request->get ( 'userid', '0' ); // $GLOBALS['uid']
-
-			// $model->id = '6';
-
-			echo $model->userid = $request->get ( 'userid', $uid ); // $GLOBALS['uid']
-			echo $model->leaveType = $request->get ( 'leaveType', '0' );
+			$utils = new UtilsModel();
+			// $model->id = '6';			
+			echo $model->id=$utils->saveGetmaxNum('QJDH',11);
+			$model->userid = $request->get ( 'userid', $uid ); // $GLOBALS['uid']
+			$model->leaveType = $request->get ( 'leaveType', '0' );
 			$model->leaveStartTime = $request->get ( 'leaveStartTime', '0' );
 			$model->leaveEndTime = $request->get ( 'leaveEndTime', '0' );
-			echo $model->reason = $request->get ( 'reason', '0' );
+			$model->reason = $request->get ( 'reason', '0' );
 			$model->approvalPerson = $request->get ( 'approvalPerson', '0' ); // id
-			echo $model->remark = $request->get ( 'remark', '0' );
+			$model->remark = $request->get ( 'remark', '0' );
 			$model->applyTime = date ( 'Y-m-d H:i:s' );
 			$model->state = $request->get ( 'state', '1' );
 			$model->username = $request->get ( 'username', '0' );
@@ -266,12 +268,18 @@ class LeavebillController extends Controller {
 
 			echo "***********************************</br>";
 			$model->save ();
-
+			$workflowMode = new WorkflowModel();
+			$result=$workflowMode->saveStartProcess($model->id,$model->userid);
+			if($result=="success"){
+				
+			}elseif($result=="error"){
+				
+			}
 			// print_r($model);
 			// echo "保存成功";
 			if ($request->get ( 'approvalPerson' )) {
 
-				// $this->actionSendnotice ( $uid,$request->get ( 'approvalPerson' ) );
+				$this->actionSendnotice ( $uid,$request->get ( 'approvalPerson' ) );
 				return $this->redirect ( [
 						'list',
 						'uid' => $uid
@@ -308,19 +316,23 @@ class LeavebillController extends Controller {
 	 * @param string $id
 	 * @return mixed
 	 */
-	public function actionUpdate($id) {
+	public function actionUpdate($id,$data) {
 		$model = $this->findModel ( $id ); // $id为请假条记录id
+		$model->state=$data;
+		$model->save ();
+		
+		
 
-		if ($model->load ( Yii::$app->request->get () ) && $model->save ()) {
-			return $this->redirect ( [
-					'view',
-					'id' => $model->id
-			] );
-		} else {
-			return $this->render ( 'update', [
-					'model' => $model
-			] );
-		}
+// 		if ($model->load ( Yii::$app->request->get () ) && $model->save ()) {
+// 			return $this->redirect ( [
+// 					'view',
+// 					'id' => $model->id
+// 			] );
+// 		} else {
+// 			return $this->render ( 'update', [
+// 					'model' => $model
+// 			] );
+// 		}
 	}
 
 	/**
@@ -381,13 +393,16 @@ class LeavebillController extends Controller {
 		$request = Yii::$app->request;
 
 		$searchModel = new LeavebillSearch ();
-
+		$workflowMode=new WorkflowModel();
 		// 查询当前用户的请假信息-
 
 		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray ();
-
+		$leaveBillId=$dataDetail['id'];
+		$taskList=$workflowMode->findCommentByLeaveBillId($leaveBillId);
+	//	var_dump($taskList);
 		return $this->renderFile ( '@app/views/leavebill/content.php', [
 				'dataDetail' => $dataDetail,
+				'taskList'=>$taskList,
 				'uid' => $request->get ( 'uid' )
 		] );
 	}
@@ -405,13 +420,17 @@ class LeavebillController extends Controller {
 		$request = Yii::$app->request;
 
 		$searchModel = new LeavebillSearch ();
+		$workflowMode=new WorkflowModel();
 
 		// 查询当前用户的请假信息-
 
 		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray ();
-
+		$leaveBillId=$dataDetail['id'];
+		$taskList=$workflowMode->findCommentByLeaveBillId($leaveBillId);
+		//var_dump($taskList);
 		return $this->renderFile ( '@app/views/leavebill/contentsp.php', [
 				'dataDetail' => $dataDetail,
+				'taskList'=>$taskList,
 				'uid' => $request->get ( 'uid' )
 		] );
 	}
@@ -645,6 +664,38 @@ class LeavebillController extends Controller {
 // 		}
 // <<<<<<< HEAD
 // 	}
+		public function actionSaveapproval(){
+			$workflowModel = new WorkflowModel();
+			$request = Yii::$app->request;
+		    $leaveBillId = $request->post('id');
+			'<br/>';
+			$outcome=$request->post('outcome');
+			'<br/>';
+			$uid=$request->post('uid');
+	
+			$comment=$request->post('comment');
+// 			$leaveBill=LeavebillSearch::find()->where(['id'=>$leaveBillId])->asArray()->all ()[0];
+		if (($model = Leavebill::findOne ( $leaveBillId )) !== null) {
+			
+			//print_r($leaveBill);
+			//echo $leaveBill['id'];
+			//$key="LeaveBill";
+			//$businessKey=$key.'.'.$leaveBillId;
+		
+				$workflowModel->saveSubmitTaskByLeaveBillId($model,$outcome,$uid,$comment);
+					
+				//return $this->renderFile ( '@app/views/leavebill/index.php',['uid'=>$uid] );
+				return $this->redirect ( [
+						'list',
+						'uid' => $uid
+				] );
+		
+			//$leaveBillId=$request->get('id');
+		} else {
+			throw new NotFoundHttpException ( 'The requested page does not exist.' );
+		}
+			
+		}
 
 		public function actionMyapproval() {
 			$request = Yii::$app->request;
@@ -686,6 +737,11 @@ class LeavebillController extends Controller {
 			} else {
 				return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [ ] );
 			}
+		}
+		
+		public function actionDeployments(){
+			
+		return $this->renderFile ( '@app/views/leavebill/deployments.php');
 		}
 
 }

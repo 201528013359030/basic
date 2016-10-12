@@ -45,14 +45,34 @@
 			<h3 class="freightTit">流程跟踪</h3>
 			<ul class="freightUl">	
 <!-- 				<s:if test="#list!=null && #list.size()>0"> -->
-				<?php if(($data!=null)&&(count($data)>0)){?>
-				<s:iterator value="#list">
+				<?php if(($taskList!=null)&&count($taskList)>0){?>
+				<?php //if(($data!=null)&&(count($data)>0)){?>
+				<?php foreach (array_reverse($taskList) as $task){?>
+<!-- 				<s:iterator value="#list"> -->
+					<?php if($task['deleteReason']=='completed'){?>
 					<li class="mcurrent">
-					<span class="note"></span>				
-					<p><s:property value="fullMessage"/></p>
-					<p class="date"><s:date name="time" format="YYYY-MM-dd HH:mm"/></p>
+					<?php }else{?>
+					<li>
+					<?php }?>
+					<span class="note">
+						<?php ?>
+					</span>				
+					<p>
+					<?=$task['name'].'<br/>'?>
+					<?php if(count($comments=$task['comments'])>0){
+						foreach ($comments as $comment){
+							echo $comment->message;
+						}
+					}?>
+<!-- 					<s:property value="fullMessage"/> -->
+					</p>
+					<p class="date">
+								<?php if($task['deleteReason']=='completed'){ echo $task['endTime'];}else {echo $task['startTime'];}?>
+<!-- 					<s:date name="time" format="YYYY-MM-dd HH:mm"/> -->
+					</p>
 					</li>
-				</s:iterator>
+<!-- 				</s:iterator> -->
+				<?php }?>
 				<?php } ?>
 			
 				<li>

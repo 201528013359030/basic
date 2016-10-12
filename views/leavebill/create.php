@@ -21,7 +21,7 @@
 <!-- <form  data-abide action="/basic/web/index.php?r=qingjiatiao%2Fcreate"  method="post"> -->
 		 <input type="hidden" name="r" value="leavebill/save"  />
 		   <input  type="hidden" value=<?=$uid?> name="uid"  />
-
+			<input type="hidden" value=<?=$model[0]['name']?> name="username"/>
 
 		<s:hidden name="userid"/>
 			<!--表单主体-->
