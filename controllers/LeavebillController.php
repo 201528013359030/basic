@@ -333,15 +333,16 @@ class LeavebillController extends Controller {
 		}
 		if ($tag == 1) {
 
-			echo "请假时间段有重复！";
-			return $this->redirect ( [
-					'list',
-					'uid' => $uid
-			] );
+			echo "请假时间段有重复！请重新输入！";
+			return ;
+// 			return $this->redirect ( [
+// 					'list',
+// 					'uid' => $uid
+// 			] );
 		}
 			$model = new Leavebill ();
 			// print_r($model);
-			$diff = $this->actionTimeDiff ( strtotime ( $request->get ( 'leaveStartTime' ) ), strtotime ( $request->get ( 'leaveEndTime' ) ) );
+			$diff = $this->actionTimeDiff ( strtotime ( $request->post ( 'leaveStartTime' ) ), strtotime ( $request->post ( 'leaveEndTime' ) ) );
 
 			$utils = new UtilsModel ();
 			// $model->id = '6';

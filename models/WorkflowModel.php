@@ -12,7 +12,7 @@ class WorkflowModel extends Model {
 	public function saveStartProcess($leaveBill, $uid) {
 		$searchModel = new LeavebillSearch ();
 		// <<<<<<< HEAD
-		
+
 		// /***************fyq 2016-10-12 13:33:26***************************/
 		// // $leaveBill = LeavebillSearch::find()->where ( [
 		// // // 'username'=> '3@15'
@@ -32,15 +32,15 @@ class WorkflowModel extends Model {
 		// >>>>>>> refs/remotes/basic/master
 		// $bussinessKey=$key.".".$leaveBill['id'];
 		$bussinessKey = "LeaveBill" . "." . $leaveBill ['id'];
-		$variables = [ 
-				[ 
+		$variables = [
+				[
 						'name' => 'inputUser',
-						'value' => $uid 
+						'value' => $uid
 				],
-				[ 
+				[
 						'name' => 'isAbandon',
-						'value' => '1' 
-				] 
+						'value' => '1'
+				]
 		];
 		$activitiModel = new ActivitiModel ();
 		// 开启流程
@@ -59,37 +59,37 @@ class WorkflowModel extends Model {
 		$task = $activitiModel->queryTasks ( $processInstanceId );
 		// >>>>>>> refs/remotes/basic/master
 		$taskId = $task->data [0]->id;
-		$variables2 = [ 
-				[ 
+		$variables2 = [
+				[
 						'name' => 'approvalPerson',
-						'value' => $leaveBill ['approvalPerson'] 
+						'value' => $leaveBill ['approvalPerson']
 				],
-				[ 
+				[
 						'name' => 'isAbandon',
-						'value' => '1' 
-				] 
+						'value' => '1'
+				]
 		];
 		// 完成任务
 		$result2 = $activitiModel->completeTask ( $taskId, $variables2 );
 		// <<<<<<< HEAD
 		// var_dump ( $result2 );
-		
+
 		// $activitiModel->c
 		// var_dump($result);
 		if ($result2 == null || count ( $result2 ) <= 0) {
 			// 保存请假条
 			// echo '</br>';
 			// echo $leaveBill->save ();
-			
+
 			// $result = $leaveBill->save ();
-			return $result = [ 
+			return $result = [
 					'status' => 'success',
-					'model' => $leaveBill 
+					'model' => $leaveBill
 			];
 		} else {
 			// echo "创建请假流程失败"
-			return $result = [ 
-					'status' => 'error' 
+			return $result = [
+					'status' => 'error'
 			]
 			;
 		}
@@ -112,15 +112,15 @@ class WorkflowModel extends Model {
 		$task = $activitiModel->queryTasks ( $processInstanceId )->data;
 		if (count ( $task ) > 0) {
 			$taskId = $task [0]->id;
-			$variables2 = [ 
-					[ 
+			$variables2 = [
+					[
 							'name' => 'approvalPerson',
-							'value' => $leaveBill ['approvalPerson'] 
+							'value' => $leaveBill ['approvalPerson']
 					],
-					[ 
+					[
 							'name' => 'isAbandon',
-							'value' => '1' 
-					] 
+							'value' => '1'
+					]
 			];
 			// 完成任务
 			$result2 = $activitiModel->completeTask ( $taskId, $variables2 );
@@ -132,9 +132,9 @@ class WorkflowModel extends Model {
 	}
 	// <<<<<<< HEAD
 	// //public function submit
-	
+
 	// =======
-	
+
 	// >>>>>>> refs/remotes/basic/master
 	// 获取请假条信息
 	public function findCommentByLeaveBillId($leaveBillId) {
@@ -148,7 +148,7 @@ class WorkflowModel extends Model {
 			return null;
 		}
 		// <<<<<<< HEAD
-		
+
 		// //var_dump($processInstanceId);
 		// //$processInstanceId=$result->id;
 		// //echo $processInstanceId;
@@ -171,16 +171,18 @@ class WorkflowModel extends Model {
 		}
 		return $result;
 	}
-	
+
 	// 审批
 	public function saveSubmitTaskByLeaveBillId($leaveBill, $outcome, $uid, $comment = null) {
+		$session=Yii::$app->session;
+		$name=$session->get('name');
 		$activitiModel = new ActivitiModel ();
 		$leaveBillId = $leaveBill->id;
 		$key = "LeaveBill";
 		$businessKey = $key . '.' . $leaveBillId;
 		$result = $activitiModel->queryHistoricProcessInstances ( $businessKey );
-		$employee = Employee::find ()->where ( [ 
-				'username' => $uid 
+		$employee = Employee::find ()->where ( [
+				'username' => $uid
 		] )->asArray ()->all ();
 		if ($employee != null && count ( $employee ) > 0) {
 			$employee = $employee [0];
@@ -194,7 +196,7 @@ class WorkflowModel extends Model {
 			// return null;
 			// }
 			// echo $processInstanceId;
-			
+
 			// =======
 		} else {
 			return "无此流程";
@@ -210,21 +212,21 @@ class WorkflowModel extends Model {
 			if ("1" == $outcome) {
 				$leaveBill->state = 2;
 				if ($comment != null) {
-					$message = $employee ['name'] . "已同意.\t意见:" . $comment;
+					$message = $name . "已同意.\t意见:" . $comment;
 				} else {
-					$message = $employee ['name'] . "已同意.";
+					$message = $name . "已同意.";
 				}
 				$activitiModel->createCommentOnTask ( $taskId, $message );
-				$variables = [ 
-						[ 
+				$variables = [
+						[
 								'name' => 'outcome',
-								'value' => $outcome 
-						] 
+								'value' => $outcome
+						]
 				];
 				$activitiModel->completeTask ( $taskId, $variables );
 				// <<<<<<< HEAD
 				// //保存leaveBill
-				
+
 				// =======
 				// 保存leaveBill
 				// >>>>>>> refs/remotes/basic/master
@@ -237,15 +239,15 @@ class WorkflowModel extends Model {
 					$message = $employee ['name'] . "已拒绝.";
 				}
 				$activitiModel->createCommentOnTask ( $taskId, $message );
-				$variables = [ 
-						[ 
+				$variables = [
+						[
 								'name' => 'outcome',
-								'value' => $outcome 
+								'value' => $outcome
 						],
-						[ 
+						[
 								'name' => 'approvalPerson',
-								'value' => $uid 
-						] 
+								'value' => $uid
+						]
 				];
 				$activitiModel->completeTask ( $taskId, $variables );
 				// 保存leaveBill
@@ -258,11 +260,11 @@ class WorkflowModel extends Model {
 					$message = $employee ['name'] . "已放弃.";
 				}
 				$activitiModel->createCommentOnTask ( $taskId, $message );
-				$variables = [ 
-						[ 
+				$variables = [
+						[
 								'name' => 'isAbandon',
-								'value' => '0' 
-						] 
+								'value' => '0'
+						]
 				];
 				$activitiModel->completeTask ( $taskId, $variables );
 				// 保存leaveBill
