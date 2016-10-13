@@ -24,7 +24,6 @@
 						value="<?=Yii::$app->request->getCsrfToken()?>" />
 						 <input type="hidden" value=<?=$uid?> name="uid" />
 						 <input type="hidden" value=<?=$model[0]['name']?> name="username" />
-						 <input type="hidden" value=<?=$rand++;?> name="formuuid"/>
 
 					<s:hidden name="userid" />
 					<!--表单主体-->
@@ -146,6 +145,7 @@
 		</div>
 	</div>
 
+
 	<!--这个就是弹出的窗口 可以通过验证来处理隐藏和显示 默认是自动透明度设为0-->
 	<!--
 <div class="pageLoading">
@@ -212,8 +212,6 @@ $('#approver').click(function(){
 		};
 	//调用方法 传参数 op
 	API.send_tonative(op);
-
-
 });
 $('#member').click(function(){
 
@@ -222,15 +220,21 @@ $('#member').click(function(){
 		 "callback":"OnSelectContactsCb",  //可没有
 		 "params":{"dataType":"tongzhi","maxCount":999}  //dateType 记录当前调用的按钮   maxCount 最多能选多少人
 
+
 		};
 
 	//调用方法 传参数 op
 	API.send_tonative(op);
-
-
 });
 
+
+
+
+
+
 function OnSelectContactsCb(datas){
+
+// 	alert(JSON.stringify(datas));
 
 	var status = datas.result.status,
 	 dataType = datas.request.params.dataType,
