@@ -24,7 +24,7 @@
 			<div class="content">
 				
 				<div class="conInfo">
-					<p><?=Html::encode($data['spuser']) ?>,您好:<br><br>我是<span class="fb"><?=Html::encode($data['username']) ?>-<?=Html::encode($data['dep']) ?></span>,<span class="fb"><?=Html::encode($data['reason']) ?></span>，需请<span class="fb"><?php if ($data['leaveType']==1){?>事假<?php }elseif ($data['leaveType']==2){?>病假<?php }elseif ($data['leaveType']==3){?>婚假<?php }elseif ($data['leaveType']==4){?>丧假<?php }elseif ($data['leaveType']==5){?>年假<?php }else{?>其他<?php }?></span> <span class="fb"><?=$data['days']?> 天</span>
+					<p><?=Html::encode($data['spuser']) ?>,您好:<br><br>我是<span class="fb"><?=Html::encode($data['username']) ?>-<?=Html::encode($data['dep']) ?></span>,<span class="fb"><?=Html::encode($data['reason']) ?></span>，需请<span class="fb"><?php if ($data['leaveType']==1){?>事假<?php }elseif ($data['leaveType']==2){?>病假<?php }elseif ($data['leaveType']==3){?>婚假<?php }elseif ($data['leaveType']==4){?>丧假<?php }elseif ($data['leaveType']==5){?>年假<?php }else{?>其他<?php }?></span> <span class="fb"><?=$data['days']?> <!--天  --></span>
 					</p>
 					<p><mark class="fmak"><span><?=Html::encode($data['leaveStartTime'])?></span>~<span><?=Html::encode($data['leaveEndTime']) ?></span></mark></p>
 					<p><?=Html::encode($data['remark']) ?></p>

@@ -41,7 +41,6 @@ use yii\helpers\Html;
 					<!-- 	  			<a href="leaveBillAction_input.action">创建请假条 </a> -->
 					<!-- 	  			<a href="leaveBillAction_viewTask.action?id=<s:property value="id"/>" class="listIteam"> -->
 					<!-- 				<a href="index.php?r=leavebill/detail&uid=".$uid class="listIteam" > -->
-<?php //echo 'index.php?r=leavebill/content&uid='.$uid.'&id='.$disagree['id']?>
 					<?=Html::beginTag('a',['class'=>'listIteam','uid'=>$uid,'href'=>'index.php?r=leavebill/content&uid='.$uid.'&id='.$disagree['id']])?>
 
 	  			<?php if($disagree["leaveType"]==1){?>
@@ -88,9 +87,12 @@ use yii\helpers\Html;
 	  					</span>
 					</p>
 					<p class="info clearfix">
-						<span class="fl summary textCut"> <!-- 	  					<s:property value="reason"/> -->
+						<span class="fl summary textCut">
+						 <!-- 	  					<s:property value="reason"/> -->
 							<?=Html::encode($disagree['reason'])?>
-	  					</span> <span class="fr date"> <!-- 	  						<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
+	  					</span>
+	  					 <span class="fr date">
+	  					  <!-- 	  						<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
 							<?=Html::encode($disagree['applyTime'])?>
 	  					</span>
 					</p>
@@ -147,7 +149,9 @@ use yii\helpers\Html;
 					<p class="info clearfix">
 						<span class="fl date"> <!-- 	  					<s:property value="day"/> -->
 					<?=Html::encode($disapproval['days'])?>
-	  					天</span> <span class="fr date"> <!-- 	  					<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
+	  				<!--  	天-->
+	  					</span>
+	  					 <span class="fr date"> <!-- 	  					<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
 								<?=Html::encode($disapproval['applyTime'])?>
 	  					</span>
 					</p>
@@ -203,7 +207,8 @@ use yii\helpers\Html;
 					<p class="info clearfix">
 						<span class="fl name">
 	  							<?=Html::encode($agree['days'])?>
-<!-- 	  						<s:property value="day"/> --> 天
+<!-- 	  						<s:property value="day"/> -->
+						<!--   天 -->
 						</span> <span class="fr status">
 	  					<?php if($agree['state']==1){?>
 <!-- 	  						<s:if test="state==1"> --> <em class="fc_sucess">审批中</em>
@@ -291,7 +296,9 @@ use yii\helpers\Html;
 					<p class="info clearfix">
 						<span class="fl date"> <!-- 	  							<s:property value="day"/> -->
 	  							<?=Html::encode($approval['days'])?>
-	  							天</span> <span class="fr date"> <!-- 	  								<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
+	  						<!--  	天-->
+	  					</span>
+	  					 <span class="fr date"> <!-- 	  								<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
 								<?=Html::encode($approval['applyTime'])?>
 	  					</span>
 					</p>

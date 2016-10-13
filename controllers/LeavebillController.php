@@ -73,6 +73,8 @@ class LeavebillController extends Controller {
 	public function actionIndex() {
 		$request = Yii::$app->request;
 		$uid = $request->get ( 'uid', '0' );
+		//echo $uid;
+		//return;
 		$eguid = $request->get ( 'eguid', '0' );
 		$auth_token = $request->get ( 'auth_token', '239d48513662381f07243c238145ed9d' );
 		$gid = $request->get ( 'gid', '0' );
@@ -246,13 +248,10 @@ class LeavebillController extends Controller {
 	public function actionCreate() {
 		$uid = Yii::$app->request->get ( 'uid' );
 		$session=Yii::$app->session;
-
 		$model = Employee::find ()->where ( [
 				// 'username'=> '3@15'
 				'username' => $uid
 		] )->asArray ()->all ();
-
-		// return $this->renderFile ( '@app/views/leavebill/create.php', [
 		$session->remove('formuuid');
 		 $rand=rand(10000,99999);
 

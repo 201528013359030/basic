@@ -32,11 +32,11 @@
 				<div class="content">
 
 					<div class="conInfo">
-						<p><?=Html::encode($model['spuser']) ?>,您好:<br>
-							<br>我是<span class="fb"><?=Html::encode($model['username']) ?>-<?=Html::encode($model['dep']) ?></span>,<span
+						<p><?=Html::encode($model['spuser']) ?>,您好:<br> <br>我是<span
+								class="fb"><?=Html::encode($model['username']) ?>-<?=Html::encode($model['dep']) ?></span>,<span
 								class="fb"><?=Html::encode($model['reason']) ?></span>，需请<span
 								class="fb"><?php if ($model['leaveType']==1){?>事假<?php }elseif ($model['leaveType']==2){?>病假<?php }elseif ($model['leaveType']==3){?>婚假<?php }elseif ($model['leaveType']==4){?>丧假<?php }elseif ($model['leaveType']==5){?>年假<?php }else{?>其他<?php }?></span>
-							<span class="fb"><?=$model['days']?> 天</span>
+							<span class="fb"><?=$model['days']?> <!--  天--></span>
 						</p>
 						<p>
 							<mark class="fmak">
@@ -69,29 +69,23 @@
 					          	<?php
 														if ($taskList != null && count ( $taskList ) > 0) {
 															foreach ( array_reverse ( $taskList ) as $task ) {
-																// echo $task['assignee'];
-																// echo $uid;
 																if ($task ['assignee'] == $uid && $task ['name'] == "审批") {
 																	$message = "";
 																	if (count ( $comments = $task ['comments'] ) > 0) {
 																		foreach ( $comments as $comment ) {
-																			if(strpos($comment->message,":")>0){
-																			//echo substr($comment->message,strpos($comment->message,"意见"));
-																		 	$start=strpos($comment->message,":")+1;
-																			//echo
-																			$message= $message." ".substr($comment->message,$start);
-																			//$message=
-																			//$message=substr($comment->message,strstr($comment->message,"意见"));
-																			//$message = $message . "		" . $comment->message;
-																		}
+																			if (strpos ( $comment->message, ":" ) > 0) {
+																				$start = strpos ( $comment->message, ":" ) + 1;
+																				$message = $message . " " . substr ( $comment->message, $start );
+																			}
 																		}
 																	}
 																	?>
-									<textarea onpropertychange="this.style.height=this.scrollHeight + 'px'"
+									<textarea
+											onpropertychange="this.style.height=this.scrollHeight + 'px'"
 											oninput="this.style.height=this.scrollHeight + 'px'"
 											name="comment" disabled><?php echo $message;?></textarea>
 					          	<?php
-																	break;
+												break;
 																}
 															}
 															?>
@@ -123,13 +117,10 @@
 <!-- 				<s:iterator value="#list"> -->
 					<?php if($task['deleteReason']=='completed'){?>
 					<li class="mcurrent">
-<!-- <<<<<<< HEAD -->
-
-
-
-<!-- ======= -->
+						<!-- <<<<<<< HEAD --> <!-- ======= -->
 					<?php }else{?>
 <!-- >>>>>>> refs/remotes/basic/master -->
+					
 					<li>
 					<?php }?>
 					<span class="note">
@@ -141,8 +132,8 @@
 
 
 					<?php
-// >>>>>>> refs/remotes/basic/master
-					if (count ( $comments = $task ['comments'] ) > 0) {
+						// >>>>>>> refs/remotes/basic/master
+						if (count ( $comments = $task ['comments'] ) > 0) {
 							foreach ( $comments as $comment ) {
 								echo $comment->message;
 							}
