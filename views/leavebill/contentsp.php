@@ -75,15 +75,21 @@
 																	$message = "";
 																	if (count ( $comments = $task ['comments'] ) > 0) {
 																		foreach ( $comments as $comment ) {
-																			$message = $message . "		" . $comment->message;
+																			if(strpos($comment->message,":")>0){
+																			//echo substr($comment->message,strpos($comment->message,"意见"));
+																		 	$start=strpos($comment->message,":")+1;
+																			//echo
+																			$message= $message." ".substr($comment->message,$start);
+																			//$message=
+																			//$message=substr($comment->message,strstr($comment->message,"意见"));
+																			//$message = $message . "		" . $comment->message;
+																		}
 																		}
 																	}
 																	?>
 									<textarea onpropertychange="this.style.height=this.scrollHeight + 'px'"
 											oninput="this.style.height=this.scrollHeight + 'px'"
-											name="comment" disabled>
-											<?php echo $message;?>
-								</textarea>
+											name="comment" disabled><?php echo $message;?></textarea>
 					          	<?php
 																	break;
 																}
@@ -117,9 +123,13 @@
 <!-- 				<s:iterator value="#list"> -->
 					<?php if($task['deleteReason']=='completed'){?>
 					<li class="mcurrent">
+<!-- <<<<<<< HEAD -->
+
+
+
+<!-- ======= -->
 					<?php }else{?>
-
-
+<!-- >>>>>>> refs/remotes/basic/master -->
 					<li>
 					<?php }?>
 					<span class="note">
@@ -127,8 +137,11 @@
 					</span>
 						<p>
 					<?=$task['name'].'<br/>'?>
-					<?php
+<!-- <<<<<<< HEAD -->
 
+
+					<?php
+// >>>>>>> refs/remotes/basic/master
 					if (count ( $comments = $task ['comments'] ) > 0) {
 							foreach ( $comments as $comment ) {
 								echo $comment->message;
@@ -138,7 +151,7 @@
 <!-- 					<s:property value="fullMessage"/> -->
 						</p>
 						<p class="date">
-								<?php if($task['deleteReason']=='completed'){ echo $task['endTime'];}else {echo $task['startTime'];}?>
+								<?php date_default_timezone_set('PRC');  if($task['deleteReason']=='completed'){ echo date("Y-m-d H:i:s",strtotime($task['endTime']));}else {echo date("Y-m-d H:i:s",strtotime($task['startTime']));}?>
 <!-- 					<s:date name="time" format="YYYY-MM-dd HH:mm"/> -->
 						</p>
 					</li>

@@ -77,8 +77,8 @@
 
 			        <div class="small-9 columns timeBox">
 			          <a href="javascript:void(0);" class="btn-link" id="approver">请选择您的审批人</a>
-			          <input id="spuser-input" class="hid-input" value="test2013" type="text" name="spuser" required />
-			          <input id="approver-input" class="hid-input" value="8@15" type="text" name="approvalPerson" required />
+			          <input id="spuser-input" class="hid-input" value="" type="text" name="spuser" required />
+			          <input id="approver-input" class="hid-input" value="" type="text" name="approvalPerson" required />
 
 			          <small class="error">请选择审批人</small>
 			        </div>
@@ -91,8 +91,8 @@
 			          <!--这里需要把获取到的人名 放在 a里显示，也要放到hid input中显示-->
 
 			          <a href="javascript:void(0);" class="btn-link" id="member">请选择工作相关人员</a>
-			          <input id="tzuser-input" class="hid-input" value="test2013" type="text" name="tzuser" required />
-			          <input id="member-input" class="hid-input" value="8@15"  type="text" name="tongzhi" required />
+			          <input id="tzuser-input" class="hid-input" value="" type="text" name="tzuser" required />
+			          <input id="member-input" class="hid-input" value=""  type="text" name="tongzhi" required />
 
 			          <small class="error">请选择通知人</small>
 			        </div>

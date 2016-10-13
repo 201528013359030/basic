@@ -15,13 +15,16 @@
 <div class="off-canvas-wrap" data-offcanvas>
 	<div class="inner-wrap">
 
-	  	<div class="pageEmpty">
-	  		<i class="ficon icon-file-alt"></i>
-	  		<p>暂时没有请假信息</p>
-	  		<div class="row-button">
+		<div class="row">
+	  	<div class="row-button">
 	  			  <?= Html::tag('a', Html::encode("创建请假条"), ['href'=>'index.php?r=leavebill/create&uid='.$uid]) ?>
 <!-- 	  			<a href="leaveBillAction_input.action">创建请假条 </a> -->
 	  	</div>
+	  	</div>
+<!-- >>>>>>> refs/remotes/basic/master -->
+	  	<div class="pageEmpty">
+	  		<i class="ficon icon-file-alt"></i>
+	  		<p>暂时没有请假信息</p>
 	  	</div>
 
 	</div>

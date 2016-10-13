@@ -67,7 +67,7 @@
 <!-- 					<s:property value="fullMessage"/> -->
 					</p>
 					<p class="date">
-								<?php if($task['deleteReason']=='completed'){ echo $task['endTime'];}else {echo $task['startTime'];}?>
+								<?php if($task['deleteReason']=='completed'){ echo date("Y-m-d H:i:s",strtotime($task['endTime']));}else {echo date("Y-m-d H:i:s",strtotime($task['startTime']));}?>
 <!-- 					<s:date name="time" format="YYYY-MM-dd HH:mm"/> -->
 					</p>
 					</li>
@@ -92,11 +92,11 @@
 		<?php  if($data['state']==3){?>
 			<div class="row">
 	  		<div class="small-6 columns">	  			
-	  			<button type="button" class="button disabled expand" name="outcome" onclick="window.location.href='workflowAction_toUpdate.action?id=<?php $data['id']?>">再次提交</button>
+	  			<button type="button" class="button disabled expand" name="outcome" onclick="window.location.href='index.php?r=leavebill/update&id=<?php echo $data['id'];?>&uid=<?php echo $uid;?>'">再次提交</button>
 	  		</div>
 	  		
 	  		<div class="small-6 columns">
-	  			<button type="button" class="button secondary expand" name="outcome" onclick="window.location.href='workflowAction_submitTaskByLeaveBillId.action?id=<?php $data['id']?>">放弃</button>
+	  			<button type="button" class="button secondary expand" name="outcome"  onclick="window.location.href='index.php?r=leavebill/giveup&id=<?php echo $data['id']?>&uid=<?php echo $uid?>&outcome=3'">放弃</button>
 	  		</div>
 	  	</div>
 	  	<?php }?>
