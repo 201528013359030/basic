@@ -144,15 +144,7 @@
 			<p class="test"></p>
 		</div>
 	</div>
-<!--
-* @请求用户账号信息
-* param ： typeList 用户账号信息种类，其中包括
-					uid,password,token,url,apiKey
-					之间用,分隔
--->
-	<div class="btnBox">
-	<button class="button button-xs" onclick='requestAccountInfo();'>请求用户账号信息[不可用]</button>
-</div>
+
 
 	<!--这个就是弹出的窗口 可以通过验证来处理隐藏和显示 默认是自动透明度设为0-->
 	<!--
@@ -238,41 +230,11 @@ $('#member').click(function(){
 
 
 
-function requestAccountInfo(){
-// 	var setting = {
-// 		"typeList":"uid,password,token,url"
-// 	};
-	var op_rai = {
-			"name":"RequestAccountInfo",
-			"callback":"OnRequestAccountInfoCb",
-			"params":{
-				"typeList":"uid,password,token,url,membername,apiKey"
-			}
-		};
-	//调用方法 传参数 op
-	API.send_tonative(op_rai);
-}
 
-function OnRequestAccountInfoCb(datas){
-	var status = datas.result.status,
-		params = datas.result.params;
-	//这里做一个演示，把数据转成字符串在页面弹出
-	var str_para = JSON.stringify(params);
-
-	alert("OnRequestAccountInfoCb:"+str_para);
-}
-
-
-
-
-function test(datas){
-	alert(JSON.stringify(datas));
-}
 
 function OnSelectContactsCb(datas){
 
-	alert(JSON.stringify(datas));
-
+// 	alert(JSON.stringify(datas));
 
 	var status = datas.result.status,
 	 dataType = datas.request.params.dataType,
