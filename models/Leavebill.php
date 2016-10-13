@@ -17,7 +17,7 @@ use Yii;
  * @property string $applyTime
  * @property integer $state
  * @property string $username
- * @property double $days
+ * @property string $days
  * @property string $dep
  * @property string $spuser
  * @property string $tzuser
@@ -25,56 +25,102 @@ use Yii;
  * @property string $token
  * @property string $approvalPerson
  */
-class Leavebill extends \yii\db\ActiveRecord
-{
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return 'a_leaveBill';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return [
-            [['id'], 'required'],
-            [['leaveStartTime', 'leaveEndTime', 'applyTime'], 'safe'],
-            [['state'], 'integer'],
-            [['days'], 'number'],
-            [['id'], 'string', 'max' => 15],
-            [['userid', 'leaveType', 'reason', 'remark', 'username', 'dep', 'spuser', 'token', 'approvalPerson'], 'string', 'max' => 255],
-            [['tzuser'], 'string', 'max' => 1500],
-            [['tongzhi'], 'string', 'max' => 2500],
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'userid' => 'Userid',
-            'leaveType' => 'Leave Type',
-            'leaveStartTime' => 'Leave Start Time',
-            'leaveEndTime' => 'Leave End Time',
-            'reason' => 'Reason',
-            'remark' => 'Remark',
-            'applyTime' => 'Apply Time',
-            'state' => 'State',
-            'username' => 'Username',
-            'days' => 'Days',
-            'dep' => 'Dep',
-            'spuser' => 'Spuser',
-            'tzuser' => 'Tzuser',
-            'tongzhi' => 'Tongzhi',
-            'token' => 'Token',
-            'approvalPerson' => 'Approval Person',
-        ];
-    }
+class Leavebill extends \yii\db\ActiveRecord {
+	/**
+	 * @inheritdoc
+	 */
+	public static function tableName() {
+		return 'a_leaveBill';
+	}
+	
+	/**
+	 * @inheritdoc
+	 */
+	public function rules() {
+		return [ 
+				[ 
+						[ 
+								'id' 
+						],
+						'required' 
+				],
+				[ 
+						[ 
+								'leaveStartTime',
+								'leaveEndTime',
+								'applyTime' 
+						],
+						'safe' 
+				],
+				[ 
+						[ 
+								'state' 
+						],
+						'integer' 
+				],
+				
+				[ 
+						[ 
+								'id' 
+						],
+						'string',
+						'max' => 15 
+				],
+				[ 
+						[ 
+								'days',
+								'userid',
+								'leaveType',
+								'reason',
+								'remark',
+								'username',
+								'dep',
+								'spuser',
+								'token',
+								'approvalPerson' 
+						],
+						'string',
+						'max' => 255 
+				],
+				[ 
+						[ 
+								'tzuser' 
+						],
+						'string',
+						'max' => 1500 
+				],
+				[ 
+						[ 
+								'tongzhi' 
+						],
+						'string',
+						'max' => 2500 
+				] 
+		];
+	}
+	
+	/**
+	 * @inheritdoc
+	 */
+	public function attributeLabels() {
+		return [ 
+				'id' => 'ID',
+				'userid' => 'Userid',
+				'leaveType' => 'Leave Type',
+				'leaveStartTime' => 'Leave Start Time',
+				'leaveEndTime' => 'Leave End Time',
+				'reason' => 'Reason',
+				'remark' => 'Remark',
+				'applyTime' => 'Apply Time',
+				'state' => 'State',
+				'username' => 'Username',
+				'days' => 'Days',
+				'dep' => 'Dep',
+				'spuser' => 'Spuser',
+				'tzuser' => 'Tzuser',
+				'tongzhi' => 'Tongzhi',
+				'token' => 'Token',
+				'approvalPerson' => 'Approval Person' 
+		];
+	}
 }

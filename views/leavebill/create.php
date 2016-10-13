@@ -4,149 +4,160 @@
 <meta charset="utf-8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta id="viewport" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+<meta id="viewport" name="viewport"
+	content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
 <meta name="format-detection" content="telephone=no">
 <title>请假条列表-创建</title>
 <?php use yii\helpers\Html;?>
 <?=Html::cssFile('../views/css/leave.css')?>
+
 </head>
 <body>
 
-<div class="off-canvas-wrap" data-offcanvas>
-	<div class="inner-wrap">
+	<div class="off-canvas-wrap" data-offcanvas>
+		<div class="inner-wrap">
 
-	<div class="row">
+			<div class="row">
 
- 	<form  data-abide action="index.php"  method="get">
-<!-- <form  data-abide action="/basic/web/index.php?r=qingjiatiao%2Fcreate"  method="post"> -->
-		 <input type="hidden" name="r" value="leavebill/save"  />
-		   <input  type="hidden" value=<?=$uid?> name="uid"  />
-			<input type="hidden" value=<?=$model[0]['name']?> name="username"/>
+				<form data-abide action="index.php?r=leavebill/save" method="POST">
+					<input type="hidden" name="_csrf"
+						value="<?=Yii::$app->request->getCsrfToken()?>" />
+						 <input type="hidden" value=<?=$uid?> name="uid" />
+						 <input type="hidden" value=<?=$model[0]['name']?> name="username" />
+						 <input type="hidden" value=<?=$rand++;?> name="formuuid"/>
 
-		<s:hidden name="userid"/>
-			<!--表单主体-->
-			<div class="form-group">
-				<div class="row">
-			        <div class="small-3 columns">
-			            <label class="center inline">请假人</label>
-			        </div>
-			        <div class="small-9 columns">
-			            <label class="inline"><?=$model[0]['name']?></label>
-			        </div>
-			    </div>
-				<div class="row">
-			        <div class="small-3 columns">
-			          <label for="right-label" class="center inline">类型</label>
-			        </div>
-			        <div class="small-9 columns">
-			            <select data-invalid aria-invalid="true" required name="leaveType">
-				          <option value="">请选择</option>
-				          <option value="1">事假</option>
-				          <option value="2">病假</option>
-				          <option value="3">婚假</option>
-				          <option value="4">丧假</option>
-				          <option value="5">年假</option>
-				          <option value="6">其他</option>
-				        </select>
-				        <small class="error">请正确选择类型</small>
-			        </div>
-			    </div>
-				<div class="row">
-			        <div class="small-3 columns">
-			          <label for="right-label" class="center inline">开始</label>
-			        </div>
-			        <div class="small-9 columns">
-			          <input id="leaveStarTime" class="datesel" name="leaveStartTime"  type="text" placeholder="请选择" required />
-			          <small class="error">请选择开始时间</small>
-			        </div>
-			    </div>
-				<div class="row">
-			        <div class="small-3 columns">
-			          <label for="right-label" class="center inline">结束</label>
-			        </div>
-			        <div class="small-9 columns">
-			          <input class="datesel" name="leaveEndTime"  type="text" placeholder="请选择"  required data-greatthan="leaveStarTime" data-abide-validator="greatThan" />
-			          <small class="error">结束时间不能小于开始时间</small>
-			        </div>
-			    </div>
-				<div class="row">
-			        <div class="small-3 columns">
-			          <label for="right-label" class="center inline">审批人</label>
-			        </div>
-			        <!--这里需要把获取到的人名 放在 a里显示，也要放到hid input中显示-->
+					<s:hidden name="userid" />
+					<!--表单主体-->
+					<div class="form-group">
+						<div class="row">
+							<div class="small-3 columns">
+								<label class="center inline">请假人</label>
+							</div>
+							<div class="small-9 columns">
+								<label class="inline"><?=$model[0]['name']?></label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="small-3 columns">
+								<label for="right-label" class="center inline">类型</label>
+							</div>
+							<div class="small-9 columns">
+								<select data-invalid aria-invalid="true" required
+									name="leaveType">
+									<option value="">请选择</option>
+									<option value="1">事假</option>
+									<option value="2">病假</option>
+									<option value="3">婚假</option>
+									<option value="4">丧假</option>
+									<option value="5">年假</option>
+									<option value="6">其他</option>
+								</select> <small class="error">请正确选择类型</small>
+							</div>
+						</div>
+						<div class="row">
+							<div class="small-3 columns">
+								<label for="right-label" class="center inline">开始</label>
+							</div>
+							<div class="small-9 columns">
+								<input id="leaveStarTime" class="datesel" name="leaveStartTime"
+									type="text" placeholder="请选择" required /> <small class="error">请选择开始时间</small>
+							</div>
+						</div>
+						<div class="row">
+							<div class="small-3 columns">
+								<label for="right-label" class="center inline">结束</label>
+							</div>
+							<div class="small-9 columns">
+								<input class="datesel" name="leaveEndTime" type="text"
+									placeholder="请选择" required data-greatthan="leaveStarTime"
+									data-abide-validator="greatThan" /> <small class="error">结束时间不能小于开始时间</small>
+							</div>
+						</div>
+						<div class="row">
+							<div class="small-3 columns">
+								<label for="right-label" class="center inline">审批人</label>
+							</div>
+							<!--这里需要把获取到的人名 放在 a里显示，也要放到hid input中显示-->
 
-			        <div class="small-9 columns timeBox">
-			          <a href="javascript:void(0);" class="btn-link" id="approver">请选择您的审批人</a>
-			          <input id="spuser-input" class="hid-input" value="" type="text" name="spuser" required />
-			          <input id="approver-input" class="hid-input" value="" type="text" name="approvalPerson" required />
+							<div class="small-9 columns timeBox">
+								<a href="javascript:void(0);" class="btn-link" id="approver">请选择您的审批人</a>
+								<input id="spuser-input" class="hid-input" value="" type="text"
+									name="spuser" required /> <input id="approver-input"
+									class="hid-input" value="" type="text" name="approvalPerson"
+									required /> <small class="error">请选择审批人</small>
+							</div>
+						</div>
+						<div class="row">
+							<div class="small-3 columns">
+								<label for="right-label" class="center inline">通知人</label>
+							</div>
+							<div class="small-9 columns timeBox">
+								<!--这里需要把获取到的人名 放在 a里显示，也要放到hid input中显示-->
 
-			          <small class="error">请选择审批人</small>
-			        </div>
-			    </div>
-				<div class="row">
-			        <div class="small-3 columns">
-			          <label for="right-label" class="center inline">通知人</label>
-			        </div>
-			        <div class="small-9 columns timeBox">
-			          <!--这里需要把获取到的人名 放在 a里显示，也要放到hid input中显示-->
+								<a href="javascript:void(0);" class="btn-link" id="member">请选择工作相关人员</a>
+								<input id="tzuser-input" class="hid-input" value="" type="text"
+									name="tzuser" required /> <input id="member-input"
+									class="hid-input" value="" type="text" name="tongzhi" required />
 
-			          <a href="javascript:void(0);" class="btn-link" id="member">请选择工作相关人员</a>
-			          <input id="tzuser-input" class="hid-input" value="" type="text" name="tzuser" required />
-			          <input id="member-input" class="hid-input" value=""  type="text" name="tongzhi" required />
+								<small class="error">请选择通知人</small>
+							</div>
 
-			          <small class="error">请选择通知人</small>
-			        </div>
+						</div>
+						<div class="row">
+							<div class="small-3 columns">
+								<label for="right-label" class="center inline">事由</label>
+							</div>
+							<div class="small-9 columns">
 
-			    </div>
-				<div class="row">
-			        <div class="small-3 columns">
-			          <label for="right-label" class="center inline">事由</label>
-			        </div>
-			        <div class="small-9 columns">
+								<textarea
+									onpropertychange="this.style.height=this.scrollHeight + 'px'"
+									oninput="this.style.height=this.scrollHeight + 'px'"
+									placeholder="请输入请假事由" required name="reason"></textarea>
 
-			          <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入请假事由" required name="reason"></textarea>
+								<small class="error">请输入请假事由</small>
+							</div>
+						</div>
+						<div class="row">
+							<div class="small-3 columns">
+								<label for="right-label" class="center inline">交接</label>
+							</div>
+							<!--不是必填-->
+							<div class="small-9 columns">
+								<textarea
+									onpropertychange="this.style.height=this.scrollHeight + 'px'"
+									oninput="this.style.height=this.scrollHeight + 'px'"
+									placeholder="请输入您请假后的工作安排" name="remark"></textarea>
+							</div>
+						</div>
+					</div>
+					<!--end 表单主体-->
 
-			          <small class="error">请输入请假事由</small>
-			        </div>
-			    </div>
-			    <div class="row">
-			        <div class="small-3 columns">
-			          <label for="right-label" class="center inline">交接</label>
-			        </div>
-			        <!--不是必填-->
-			        <div class="small-9 columns">
-			          <textarea onpropertychange="this.style.height=this.scrollHeight + 'px'" oninput="this.style.height=this.scrollHeight + 'px'" placeholder="请输入您请假后的工作安排" name="remark"></textarea>
-			        </div>
-			    </div>
-		    </div>
-		    <!--end 表单主体-->
+					<div class="small-6 columns">
+						<button type="submit" class="button expand">提交</button>
+					</div>
 
-	  		<div class="small-6 columns">
-	  			<button type="submit" class="button expand" >提交</button>
-	  		</div>
+					<div class="small-6 columns">
+						<button type="reset" class="button secondary expand">清空</button>
+					</div>
 
-	  		<div class="small-6 columns">
-	  			<button type="reset" class="button secondary expand">清空</button>
-	  		</div>
-
-		</form>
+				</form>
+			</div>
+			<p class="test"></p>
+		</div>
 	</div>
 
-	</div>
-</div>
-
-<!--这个就是弹出的窗口 可以通过验证来处理隐藏和显示 默认是自动透明度设为0-->
-<!--
+	<!--这个就是弹出的窗口 可以通过验证来处理隐藏和显示 默认是自动透明度设为0-->
+	<!--
 <div class="pageLoading">
 	<p>弹出测试：开始时间必须大于结束时间</p>
 </div>
 -->
 
 
-<script src="../views/js/vendor/jquery.js"></script>
-<script src="../views/js/foundation.min.js"></script>
-<script src="../views/js/htmlset.js"></script>
-<script type="text/javascript">
+	<script src="../views/js/vendor/jquery.js"></script>
+	<script src="../views/js/foundation.min.js"></script>
+	<script src="../views/js/htmlset.js"></script>
+	<script type="text/javascript">
 
 $(document).foundation({
   abide : {
@@ -169,6 +180,28 @@ $(document).foundation({
  *  *
  * */
 API.init();
+
+// var name="";
+// function Test(datas){
+// 	var status = datas.result.status,
+// 	 dataType = datas.request.params.dataType,
+// 	 params = datas.result.params;
+// //	$(.test).text(params);
+// 	alert(params);
+// }
+
+
+// 	var op = {
+// 		 "name":"requestAccountInfo",      //native 的方法名称
+// 		 "callback":"Test",  //可没有
+// 		 "params":{"dataType":"shenpi","maxCount":1}  //dateType 记录当前调用的按钮   maxCount 最多能选多少人
+
+// 		};
+// 	//调用方法 传参数 op
+// 	API.send_tonative(op);
+
+
+
 $('#approver').click(function(){
 
 	var op = {
@@ -187,9 +220,10 @@ $('#member').click(function(){
 	var op = {
 		 "name":"SelectContacts",      //native 的方法名称
 		 "callback":"OnSelectContactsCb",  //可没有
-		 "params":{"dataType":"tongzhi","maxCount":99}  //dateType 记录当前调用的按钮   maxCount 最多能选多少人
+		 "params":{"dataType":"tongzhi","maxCount":999}  //dateType 记录当前调用的按钮   maxCount 最多能选多少人
 
 		};
+
 	//调用方法 传参数 op
 	API.send_tonative(op);
 
@@ -268,12 +302,14 @@ function showPageError(txt){
 
 </script>
 
-<!--时间控件部分-->
+	<!--时间控件部分-->
 
-<link href="../views/js/vendor/mobiscroll.mo.min.css" rel="stylesheet" type="text/css" />
-<script src="../views/js/vendor/mobiscroll.custom.min.js" type="text/javascript"></script>
+	<link href="../views/js/vendor/mobiscroll.mo.min.css" rel="stylesheet"
+		type="text/css" />
+	<script src="../views/js/vendor/mobiscroll.custom.min.js"
+		type="text/javascript"></script>
 
-<script type="text/javascript">
+	<script type="text/javascript">
     $(function(){
      	//初始化时间控件 使用的是 mobiscroll
         $(".datesel").mobiscroll().date();
