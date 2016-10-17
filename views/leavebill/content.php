@@ -66,7 +66,13 @@
 					}?>
 					</p>
 					<p class="date">
-								<?php if($task['deleteReason']=='completed'){ echo date("Y-m-d H:i:s",strtotime($task['endTime']));}else {echo date("Y-m-d H:i:s",strtotime($task['startTime']));}?>
+								<?php 
+								if($task['deleteReason']=='completed'){ 
+									echo date("Y-m-d H:i:s",strtotime($task['endTime']));
+								}else {
+									//echo date("Y-m-d H:i:s",strtotime($task['startTime']));
+									echo "<br/>";
+								}?>
 <!-- 					<s:date name="time" format="YYYY-MM-dd HH:mm"/> -->
 					</p>
 					</li>
@@ -74,7 +80,7 @@
 				<?php }?>
 				<?php } ?>
 			
-				<li>
+				<li class="mcurrent">
 					<span class="note"></span>				
 					<p>创建请假条</p>
 					<p class="date">

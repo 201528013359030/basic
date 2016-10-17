@@ -93,7 +93,7 @@
 							</div>
 							<div class="small-9 columns">
 								<!-- 			          <input class="datesel" name="endTime"  type="text" placeholder="请选择"  required data-greatthan="starTime" data-abide-validator="greatThan" value='<s:property value="#bill.endTime"/>' /> -->
-								<input class="datesel" name="endTime" type="text"
+								<input class="datesel" name="leaveEndTime" type="text"
 									placeholder="请选择" required data-greatthan="leaveEndTime"
 									data-abide-validator="greatThan"
 									value='<?php echo $model['leaveEndTime']?>' /> <small

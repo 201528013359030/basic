@@ -326,11 +326,7 @@ class ActivitiModel extends Model {
 				"Accept" => "application/json;charset=UTF8"
 		);
 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances';
-		// echo $webService;
 		$curl = new CurlModel ();
-		// String $businessKey=$key."."
-		// $variables=json_encode(array("name"=>"myVar",
-		// "value"=>"This is a variable",));
 		$data = json_encode ( [
 				"processDefinitionKey"=>$key,
 // 				"processDefinitionId" => $key,
@@ -341,14 +337,17 @@ class ActivitiModel extends Model {
 		// var_dump($data);
 		$result = json_decode ( $result = $curl->setHeaders ( $head )->post ( $webService, $data ) );
 		return $result;
-		// if($result==null||count($result)<=0){
-		// return "error";
-		// }else {
-		// return "success";
-		// }
-		// echo count($result);
-		// print_r($result);
-		// var_dump($result);
+	}
+	public function deleteProcessInstance($processInstanceId){
+		$head = array (
+				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
+				"Content-Type" => "application/json;charset=UTF8",
+				"Accept" => "application/json;charset=UTF8"
+		);
+		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/'.$processInstanceId;
+		$curl = new CurlModel ();
+		$result = json_decode ( $result = $curl->setHeaders ( $head )->delete ( $webService) );
+		//return $result;
 	}
 	public function actionActivitirest() {
 		// print_r($_SERVER['HTTP_ACCEPT']);

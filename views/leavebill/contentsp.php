@@ -141,7 +141,15 @@
 						?>
 						</p>
 						<p class="date">
-								<?php date_default_timezone_set('PRC');  if($task['deleteReason']=='completed'){ echo date("Y-m-d H:i:s",strtotime($task['endTime']));}else {echo date("Y-m-d H:i:s",strtotime($task['startTime']));}?>
+								<?php 
+								date_default_timezone_set('PRC'); 
+								if($task['deleteReason']=='completed'){ 
+									echo date("Y-m-d H:i:s",strtotime($task['endTime']));
+								}else {
+									echo "<br/>";
+									
+									//echo date("Y-m-d H:i:s",strtotime($task['startTime']));
+								}?>
 <!-- 					<s:date name="time" format="YYYY-MM-dd HH:mm"/> -->
 						</p>
 					</li>
@@ -149,7 +157,7 @@
 				<?php }?>
 				<?php } ?>
 
-				<li><span class="note"></span>
+				<li class="mcurrent"><span class="note"></span>
 						<p>创建请假条</p>
 						<p class="date">
 							<span> <!-- 	  						<s:date name="applyTime" format="YYYY-MM-dd HH:mm"/> -->
