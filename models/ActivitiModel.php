@@ -13,7 +13,7 @@ class ActivitiModel extends Model {
 	// }
 	// public function actionGetUserInfo(){
 	// $client = new SoapClient();
-	
+
 	// }
 	// public function actionGetDeployments(){
 	// $head=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"Content-Type"=>"application/json;charset=UTF8","Accept"=>"application/json;charset=UTF8");
@@ -21,7 +21,7 @@ class ActivitiModel extends Model {
 	// $curl = new CurlModel ();
 	// $result = json_decode($result=$curl->setHeaders($head)->get( $webService));
 	// //获得数据为：$result->data
-	
+
 	// // foreach ($result as $res){
 	// // var_dump($res[0]);
 	// // }
@@ -39,7 +39,7 @@ class ActivitiModel extends Model {
 	// $result = json_decode($result=$curl->setHeaders($head)->get( $webService));
 	// var_dump($result);
 	// }
-	
+
 	// public function actionCreateNewDeployment(){
 	// //@app/views/leavebill/list-empty-error.php
 	// // $filename = "../controllers/resources/leaveBill02.zip";
@@ -169,7 +169,7 @@ class ActivitiModel extends Model {
 	// }
 	// public function actionGetUserInfo(){
 	// $client = new SoapClient();
-	
+
 	// }
 	// public function actionGetDeployments(){
 	// $head=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"Content-Type"=>"application/json;charset=UTF8","Accept"=>"application/json;charset=UTF8");
@@ -177,7 +177,7 @@ class ActivitiModel extends Model {
 	// $curl = new CurlModel ();
 	// $result = json_decode($result=$curl->setHeaders($head)->get( $webService));
 	// //获得数据为：$result->data
-	
+
 	// // foreach ($result as $res){
 	// // var_dump($res[0]);
 	// // }
@@ -195,7 +195,7 @@ class ActivitiModel extends Model {
 	// $result = json_decode($result=$curl->setHeaders($head)->get( $webService));
 	// var_dump($result);
 	// }
-	
+
 	// public function actionCreateNewDeployment(){
 	// //@app/views/leavebill/list-empty-error.php
 	// // $filename = "../controllers/resources/leaveBill02.zip";
@@ -323,7 +323,7 @@ class ActivitiModel extends Model {
 		$head = array (
 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
 				"Content-Type" => "application/json;charset=UTF8",
-				"Accept" => "application/json;charset=UTF8" 
+				"Accept" => "application/json;charset=UTF8"
 		);
 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances';
 		// echo $webService;
@@ -332,11 +332,11 @@ class ActivitiModel extends Model {
 		// $variables=json_encode(array("name"=>"myVar",
 		// "value"=>"This is a variable",));
 		$data = json_encode ( [
-				// "processDefinitionKey"=>$key,
-				"processDefinitionId" => $key,
+				"processDefinitionKey"=>$key,
+// 				"processDefinitionId" => $key,
 				"businessKey" => $businessKey,
 				// "tenantId"=>"tenant1",
-				"variables" => $variables 
+				"variables" => $variables
 		] );
 		// var_dump($data);
 		$result = json_decode ( $result = $curl->setHeaders ( $head )->post ( $webService, $data ) );
@@ -352,13 +352,13 @@ class ActivitiModel extends Model {
 	}
 	public function actionActivitirest() {
 		// print_r($_SERVER['HTTP_ACCEPT']);
-		
+
 		// $GLOBALS['uid']='3@15';
 		// $params='';
 		$head = array (
 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
 				"Content-Type" => "application/json;charset=UTF8",
-				"Accept" => "application/json;charset=UTF8" 
+				"Accept" => "application/json;charset=UTF8"
 		);
 		// $webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/identity/users';
 		// http://host/activiti-rest/service/
@@ -366,23 +366,23 @@ class ActivitiModel extends Model {
 		// $webService = 'http://127.0.0.1:8080/activiti-rest/service/identity/groups';
 		// $webService ='http://demo.kafeitu.me:8080/kft-activiti-demo/rest/management/properties';
 		$curl = new CurlModel ();
-		
+
 		// $curl->setHeaders($head);
 		$result = json_decode ( $result = $curl->setHeaders ( $head )->get ( $webService ) );
 		// $result = json_decode($result=$curl->setHeaders($head)->post( $webService));
 		// $result = json_decode($curl->post ( $webService,$params));
-		
+
 		// echo "<pre>";
 		// echo "参数</br>";
 		// var_dump ( $params );
 		// echo "结果</br>";
 		var_dump ( $result );
 		// print_r($result);
-		
+
 		// 获取form post 参数
 		// $uid = I ( 'uid' );
 		// $uid = '3@3';
-		
+
 		// $params ['id'] = 5; // 轻应用id （企业门户添加轻应用后生成）
 		// $params ['eid'] = explode ( "@", $uid ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
 		// $params ['title'] = 'text' ; // 通知内容
@@ -390,14 +390,14 @@ class ActivitiModel extends Model {
 		// $params ['uids[0]'] = $uid; // 接收者uid (数组)
 		// $params ['auth_token'] = 'auth_token' ; // 用户认证
 		// $params ['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";
-		
+
 		// // 接口地址
 		// $webService = "http://192.168.139.162/elgg/services/api/rest/json/?method=lapp.notice";
 		// $curl = new CurlModel ();
 		// $result = json_decode ( $curl->post ( $webService, $params ), true );
-		
+
 		// $this->display ();
-		
+
 		// return $this->render ( 'view', [
 		// 'model' => $this->findModel ( $id )
 		// ] );
@@ -406,7 +406,7 @@ class ActivitiModel extends Model {
 		$head = array (
 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
 				"Content-Type" => "application/json;charset=UTF8",
-				"Accept" => "application/json;charset=UTF8" 
+				"Accept" => "application/json;charset=UTF8"
 		);
 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/history/historic-process-instances';
 		$curl = new CurlModel ();
@@ -416,7 +416,7 @@ class ActivitiModel extends Model {
 		// print_r($result);
 		// var_dump($result->data);
 	}
-	
+
 	// 获得历史
 	// public function queryHistoricProcessInstances($processDefinitionId,$processBusinessKey){
 	// $head=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"Content-Type"=>"application/json;charset=UTF8","Accept"=>"application/json;charset=UTF8");
@@ -428,7 +428,7 @@ class ActivitiModel extends Model {
 	// var_dump($result);
 	// return $result;
 	// }
-	
+
 	// public function actionQueryTasks(){
 	// $head=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"Content-Type"=>"application/json;charset=UTF8","Accept"=>"application/json;charset=UTF8");
 	// $webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/tasks';
@@ -437,23 +437,23 @@ class ActivitiModel extends Model {
 	// $result = json_decode($result=$curl->setHeaders($head)->post( $webService,$data));
 	// var_dump($result->data);
 	// }
-	
+
 	// 获取Task
 	public function queryTasks($processInstanceId) {
 		$head = array (
 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
 				"Content-Type" => "application/json;charset=UTF8",
-				"Accept" => "application/json;charset=UTF8" 
+				"Accept" => "application/json;charset=UTF8"
 		);
 		// <<<<<<< HEAD
 		// $webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/tasks';
 		// $data=json_encode(['processInstanceId'=>$processInstanceId]);
 		// =======
 		$webService = 'http://localhost:8080/activiti-rest/service/query/tasks';
-		$data = json_encode ( [ 
+		$data = json_encode ( [
 				'processInstanceId' => $processInstanceId,
 				'sort' => 'createTime',
-				'order' => 'asc' 
+				'order' => 'asc'
 		] );
 		// >>>>>>> refs/remotes/basic/master
 		// echo $data;
@@ -472,12 +472,12 @@ class ActivitiModel extends Model {
 		$head = array (
 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
 				"Content-Type" => "application/json;charset=UTF8",
-				"Accept" => "application/json;charset=UTF8" 
+				"Accept" => "application/json;charset=UTF8"
 		);
 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks/' . $taskId . '/comments';
-		$data = json_encode ( [ 
+		$data = json_encode ( [
 				'message' => $comment,
-				'saveProcessInstanceId' => true 
+				'saveProcessInstanceId' => true
 		] );
 		// echo $data;
 		$curl = new CurlModel ();
@@ -490,7 +490,7 @@ class ActivitiModel extends Model {
 		$head = array (
 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
 				"Content-Type" => "application/json;charset=UTF8",
-				"Accept" => "application/json;charset=UTF8" 
+				"Accept" => "application/json;charset=UTF8"
 		);
 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks/' . $taskId . '/comments';
 		// $data=json_encode(['message'=>$comment,'saveProcessInstanceId'=>true]);
@@ -505,12 +505,12 @@ class ActivitiModel extends Model {
 		$head = array (
 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
 				"Content-Type" => "application/json;charset=UTF8",
-				"Accept" => "application/json;charset=UTF8" 
+				"Accept" => "application/json;charset=UTF8"
 		);
 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks/' . $taskId;
-		$data = json_encode ( [ 
+		$data = json_encode ( [
 				'action' => 'complete',
-				'variables' => $variables 
+				'variables' => $variables
 		] );
 		// echo $data;
 		$curl = new CurlModel ();
@@ -523,11 +523,11 @@ class ActivitiModel extends Model {
 		$head = array (
 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
 				"Content-Type" => "application/json;charset=UTF8",
-				"Accept" => "application/json;charset=UTF8" 
+				"Accept" => "application/json;charset=UTF8"
 		);
 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/historic-task-instances';
-		$data = json_encode ( [ 
-				'processInstanceId' => $processInstanceId 
+		$data = json_encode ( [
+				'processInstanceId' => $processInstanceId
 		] );
 		// echo $data;
 		$curl = new CurlModel ();
@@ -545,12 +545,12 @@ class ActivitiModel extends Model {
 		$head = array (
 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
 				"Content-Type" => "application/json;charset=UTF8",
-				"Accept" => "application/json;charset=UTF8" 
+				"Accept" => "application/json;charset=UTF8"
 		);
 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/historic-process-instances';
 		$curl = new CurlModel ();
-		$data = json_encode ( [ 
-				'processBusinessKey' => $processBusinessKey 
+		$data = json_encode ( [
+				'processBusinessKey' => $processBusinessKey
 		] );
 		// $param=['businessKey'=>'LeaveBill.QJDH00000000009'];
 		$result = json_decode ( $result = $curl->setHeaders ( $head )->post ( $webService, $data ) );
@@ -562,7 +562,7 @@ class ActivitiModel extends Model {
 		$head = array (
 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
 				"Content-Type" => "application/json;charset=UTF8",
-				"Accept" => "application/json;charset=UTF8" 
+				"Accept" => "application/json;charset=UTF8"
 		);
 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/history/historic-process-instances/' . $processInstanceId . '/comments';
 		$curl = new CurlModel ();

@@ -26,8 +26,8 @@ class WorkflowModel extends Model {
 		// 'id' => $leaveBillId
 		// ] )->One();
 		$leaveBill->state = 1;
-		$key = "LeaveBill:1:43";
-		// $key = "LeaveBill";
+// 		$key = "LeaveBill:1:43";
+		$key = "LeaveBill";
 		// $key="LeaveBill:1:2694";
 		// >>>>>>> refs/remotes/basic/master
 		// $bussinessKey=$key.".".$leaveBill['id'];
@@ -47,7 +47,8 @@ class WorkflowModel extends Model {
 		$result = $activitiModel->StartProcessInstance ( $key, $bussinessKey, $variables );
 		// var_dump($result);
 		// <<<<<<< HEAD
-		// //return var_dump($result);
+		var_dump($result);
+// 		return ;
 		$processInstanceId = $result->id;
 		// var_dump ( $processInstanceId );
 		$task = $activitiModel->queryTasks ( $processInstanceId );
@@ -183,28 +184,28 @@ class WorkflowModel extends Model {
 	}
 
 	// 审批
-<<<<<<< HEAD
-	public function saveSubmitTaskByLeaveBillId($leaveBill, $outcome, $comment = null) {
-=======
+// <<<<<<< HEAD
+// 	public function saveSubmitTaskByLeaveBillId($leaveBill, $outcome, $comment = null) {
+// =======
 	public function saveSubmitTaskByLeaveBillId($leaveBill, $outcome, $uid, $comment = null) {
 		$session=Yii::$app->session;
 		$name=$session->get('name');
->>>>>>> b2e094b669866dfa80c52f2235d1dc302934629d
+// >>>>>>> b2e094b669866dfa80c52f2235d1dc302934629d
 		$activitiModel = new ActivitiModel ();
 		$leaveBillId = $leaveBill->id;
 		$key = "LeaveBill";
 		$businessKey = $key . '.' . $leaveBillId;
-<<<<<<< HEAD
-		$result = $activitiModel->queryHistoricProcessInstances ( $businessKey )->data;
-// 		$employee = Employee::find ()->where ( [ 
-// 				'username' => $uid 
-// 		] )->asArray ()->all ();
-// 		if ($employee != null && count ( $employee ) > 0) {
-// 			$employee = $employee [0];
-// 		} else {
-// 			return "无此用户";
-// 		}
-=======
+// <<<<<<< HEAD
+// 		$result = $activitiModel->queryHistoricProcessInstances ( $businessKey )->data;
+// // 		$employee = Employee::find ()->where ( [
+// // 				'username' => $uid
+// // 		] )->asArray ()->all ();
+// // 		if ($employee != null && count ( $employee ) > 0) {
+// // 			$employee = $employee [0];
+// // 		} else {
+// // 			return "无此用户";
+// // 		}
+// =======
 		$result = $activitiModel->queryHistoricProcessInstances ( $businessKey );
 		$employee = Employee::find ()->where ( [
 				'username' => $uid
@@ -214,7 +215,7 @@ class WorkflowModel extends Model {
 		} else {
 			return "无此用户";
 		}
->>>>>>> b2e094b669866dfa80c52f2235d1dc302934629d
+// >>>>>>> b2e094b669866dfa80c52f2235d1dc302934629d
 		if ($result != null && count ( $result ) > 0) {
 			$processInstanceId = $result [0]->id;
 			// <<<<<<< HEAD
@@ -239,15 +240,15 @@ class WorkflowModel extends Model {
 			if ("1" == $outcome) {
 				$leaveBill->state = 2;
 				if ($comment != null) {
-<<<<<<< HEAD
-					$message = $session->get('name') . "已同意.  意见:" . $comment;
-				} else {
-					$message =$session->get('name') . "已同意.";
-=======
+// <<<<<<< HEAD
+// 					$message = $session->get('name') . "已同意.  意见:" . $comment;
+// 				} else {
+// 					$message =$session->get('name') . "已同意.";
+// =======
 					$message = $name . "已同意.\t意见:" . $comment;
 				} else {
 					$message = $name . "已同意.";
->>>>>>> b2e094b669866dfa80c52f2235d1dc302934629d
+// >>>>>>> b2e094b669866dfa80c52f2235d1dc302934629d
 				}
 				$activitiModel->createCommentOnTask ( $taskId, $message );
 				$variables = [
@@ -279,14 +280,14 @@ class WorkflowModel extends Model {
 						],
 						[
 								'name' => 'approvalPerson',
-<<<<<<< HEAD
-								//'value' => $uid 
-								'value' => $session->get('uid')
-						] 
-=======
+// <<<<<<< HEAD
+// 								//'value' => $uid
+// 								'value' => $session->get('uid')
+// 						]
+// =======
 								'value' => $uid
 						]
->>>>>>> b2e094b669866dfa80c52f2235d1dc302934629d
+// >>>>>>> b2e094b669866dfa80c52f2235d1dc302934629d
 				];
 				$activitiModel->completeTask ( $taskId, $variables );
 				// 保存leaveBill
