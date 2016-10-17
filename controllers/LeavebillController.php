@@ -358,6 +358,7 @@ class LeavebillController extends Controller {
 			}
 		}
 		if ($tag == 1) {
+<<<<<<< HEAD
 			echo '<script>alert("请假时间段有重复！");</script>';
 			$username = $session->get ( 'department' ) . '_' . $session->get ( 'name' );
 			// echo "请假时间段有重复！";
@@ -407,6 +408,56 @@ class LeavebillController extends Controller {
 							'uid' => $uid 
 					] );
 					// return $this->actionList($uid);
+=======
+
+			echo "请假时间段有重复！请重新输入！";
+			return ;
+// 			return $this->redirect ( [
+// 					'list',
+// 					'uid' => $uid
+// 			] );
+		}
+			$model = new Leavebill ();
+			// print_r($model);
+			$diff = $this->actionTimeDiff ( strtotime ( $request->post ( 'leaveStartTime' ) ), strtotime ( $request->post ( 'leaveEndTime' ) ) );
+
+			$utils = new UtilsModel ();
+			// $model->id = '6';
+			$model->id = $utils->saveGetmaxNum ( 'QJDH', 11 );
+			$model->userid = $request->post ( 'userid', $uid ); // $GLOBALS['uid']
+			$model->leaveType = $request->post ( 'leaveType', '0' );
+			$model->leaveStartTime = $request->post ( 'leaveStartTime', '0' );
+			$model->leaveEndTime = $request->post ( 'leaveEndTime', '0' );
+			$model->reason = $request->post ( 'reason', '0' );
+			$model->approvalPerson = $request->post ( 'approvalPerson', '0' ); // id
+			$model->remark = $request->post ( 'remark', '0' );
+			$model->applyTime = date ( 'Y-m-d H:i:s' );
+			$model->state = $request->post ( 'state', '1' );
+			$model->username = $request->post ( 'username', '0' );
+			$model->days = $diff;
+			$model->dep = $request->post ( 'dep', $session->get('department') );
+			$model->spuser = $request->post ( 'spuser', '0' ); // name
+			$model->tzuser = $request->post ( 'tzuser', '0' ); // name
+			$model->tongzhi = $request->post ( 'tongzhi', '0' ); // id
+			$model->token = $auth_token; // $GLOBALS['auth_token'];
+
+			$workflowMode = new WorkflowModel ();
+			$result = $workflowMode->saveStartProcess ( $model, $model->userid );
+			// return 0;
+			if ($result ['status'] == 'success') {
+				if ($result ['model']->save ()) {
+					if ($request->post ( 'approvalPerson' )) {
+						$this->actionSendnotice ( $uid, $request->post ( 'approvalPerson' ) );
+						return $this->redirect ( [
+								'list',
+								'uid' => $uid
+						] );
+						// return $this->actionList($uid);
+					} else {
+						echo "审批人id为空";
+						$this->actionList ( $uid );
+					}
+>>>>>>> b2e094b669866dfa80c52f2235d1dc302934629d
 				} else {
 					echo "审批人id为空";
 					$this->actionList ( $uid );
