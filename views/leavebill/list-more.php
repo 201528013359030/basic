@@ -204,7 +204,7 @@ function getPanel2Data(page){
 			view+="<p class='info clearfix'>";
 			view+="<span class='fl name'>";
 			view +=data['days'];
-			view +="天</span>";
+			view +="</span>";
 			view +="<span class='fr status'>";
 			if(data['state']==1){
 				view+="<em class='fc_sucess'>审批中</em>";
@@ -268,7 +268,7 @@ function getPanel2Data(page){
 			view +="<p class='info clearfix'>";
 			view +="<span class='fl date'>";
 			view+=data['days'];
-			view+="天</span>";
+			view+="</span>";
 			view+="<span class='fr date'>";
 			view+=data['applyTime'];
 			view+="</span>";

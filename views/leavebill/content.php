@@ -64,7 +64,6 @@
 							echo $comment->message;
 						}
 					}?>
-<!-- 					<s:property value="fullMessage"/> -->
 					</p>
 					<p class="date">
 								<?php if($task['deleteReason']=='completed'){ echo date("Y-m-d H:i:s",strtotime($task['endTime']));}else {echo date("Y-m-d H:i:s",strtotime($task['startTime']));}?>
@@ -92,7 +91,8 @@
 		<?php  if($data['state']==3){?>
 			<div class="row">
 	  		<div class="small-6 columns">	  			
-	  			<button type="button" class="button disabled expand" name="outcome" onclick="window.location.href='index.php?r=leavebill/update&id=<?php echo $data['id'];?>&uid=<?php echo $uid;?>'">再次提交</button>
+	  	<!--<button type="button" class="button disabled expand" name="outcome" onclick="window.location.href='index.php?r=leavebill/update&id=<?php //echo $data['id'];?>&uid=<?php //echo $uid;?>'">再次提交</button>  -->		
+	  			<a class="button expand" name="outcome" href="index.php?r=leavebill/update&id=<?php echo $data['id']?>&uid=<?php echo $uid?>">再次提交</a>
 	  		</div>
 	  		
 	  		<div class="small-6 columns">

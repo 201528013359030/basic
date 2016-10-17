@@ -139,7 +139,6 @@
 							}
 						}
 						?>
-<!-- 					<s:property value="fullMessage"/> -->
 						</p>
 						<p class="date">
 								<?php date_default_timezone_set('PRC');  if($task['deleteReason']=='completed'){ echo date("Y-m-d H:i:s",strtotime($task['endTime']));}else {echo date("Y-m-d H:i:s",strtotime($task['startTime']));}?>

@@ -25,6 +25,8 @@
 						value="<?=Yii::$app->request->getCsrfToken()?>" />
 					<!-- 		<form  data-abide action="leaveBillAction_updateStart.action" method="POST"> -->
 					<!-- 		<input type="hidden"  name="userid" value='<s:property value="#bill.userid"/>'/> -->
+					<input type="hidden" name="id"
+						value='<?php echo $model['id'];?>' />
 					<input type="hidden" name="uid"
 						value='<?php echo $model['userid'];?>' />
 					<!-- 		<input type="hidden"  name="dep" value='<s:property value="#bill.dep"/>'/> -->

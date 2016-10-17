@@ -533,7 +533,8 @@ class ActivitiModel extends Model {
 		$curl = new CurlModel ();
 		$result = json_decode ( $result = $curl->setHeaders ( $head )->post ( $webService, $data ) );
 		// var_dump($result->data);
-		return $result->data;
+		// return $result->data;
+		return $result;
 		// if($result!=null&&count($result)>0)
 		// return $result->data;
 		// else
@@ -554,7 +555,8 @@ class ActivitiModel extends Model {
 		// $param=['businessKey'=>'LeaveBill.QJDH00000000009'];
 		$result = json_decode ( $result = $curl->setHeaders ( $head )->post ( $webService, $data ) );
 		// var_dump($result);
-		return $result->data;
+		// return $result->data;
+		return $result;
 	}
 	public function getAllCommentsAHistoricProcessInstances($processInstanceId) {
 		$head = array (
