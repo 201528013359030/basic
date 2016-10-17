@@ -47,18 +47,21 @@ class WorkflowModel extends Model {
 		$result = $activitiModel->StartProcessInstance ( $key, $bussinessKey, $variables );
 		// var_dump($result);
 		// <<<<<<< HEAD
-		var_dump($result);
-// 		return ;
-		$processInstanceId = $result->id;
-		// var_dump ( $processInstanceId );
-		$task = $activitiModel->queryTasks ( $processInstanceId );
-		// var_dump($task);
-		// =======
+// 		var_dump($result);
+// // 		return ;
+//
+// 		$processInstanceId = $result->id ;
+// 		// var_dump ( $processInstanceId );
+// 		$task = $activitiModel->queryTasks ( $processInstanceId );
+// 		// var_dump($task);
+// 		// =======
 		// 获取流程ID
+		isset($result->id) or die('创建流程失败');
 		$processInstanceId = $result->id;
 		// 获取任务
 		$task = $activitiModel->queryTasks ( $processInstanceId );
 		// >>>>>>> refs/remotes/basic/master
+		isset($task->data) or die('创建任务失败');
 		$taskId = $task->data [0]->id;
 		$variables2 = [
 				[
