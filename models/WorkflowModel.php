@@ -19,16 +19,17 @@ class WorkflowModel extends Model {
 						'name' => 'inputUser',
 						'value' => $uid
 				],
-				[
-						'name' => 'isAbandon',
-						'value' => '1'
-				]
+				//修改 zyr 10.24
+// 				[
+// 						'name' => 'isAbandon',
+// 						'value' => '1'
+// 				]
 		];
 		$activitiModel = new ActivitiModel ();
 		// 开启流程
 		$result = $activitiModel->StartProcessInstance ( $key, $bussinessKey, $variables );
 
-		var_dump ( $result );
+		//var_dump ( $result );
 		if (! isset ( $result->id )) {
 				return $result = [
 						'status' => 'error'
@@ -36,12 +37,12 @@ class WorkflowModel extends Model {
 		}
 
 		// 获取流程ID
-		isset($result->id) or die('创建流程失败');
+		//isset($result->id) or die('创建流程失败');
 		$processInstanceId = $result->id;
 		// 获取任务
 		$task = $activitiModel->queryTasks ( $processInstanceId );
 
-		isset($task->data) or die('创建任务失败');
+		//isset($task->data) or die('创建任务失败');
 
 		$taskId = $task->data [0]->id;
 		$variables2 = [
@@ -108,10 +109,11 @@ class WorkflowModel extends Model {
 			// 完成任务
 			$result2 = $activitiModel->completeTask ( $taskId, $variables2 );
 		} else {
-// 			return $result = [
-// 					'status' => 'error'
-// 			];
-			return "无此请假任务";
+			//修改 zyr 10.24
+			return $result = [
+					'status' => 'error'
+			];
+//			return "无此请假任务";
 		}
 		// echo "<br/>";
 		// 保存请假条
@@ -136,7 +138,11 @@ class WorkflowModel extends Model {
 		if ($result != null && count ( $result ) > 0) {
 			$processInstanceId = $result [0]->id;
 		} else {
-			return null;
+			//return null;
+			//修改 zyr 10.24
+			return $result = [
+					'status' => 'error'
+			];
 		}
 		$utils = new UtilsModel ();
 		$taskList = $activitiModel->queryHistoricTaskInstancesById ( $processInstanceId )->data;

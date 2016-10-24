@@ -390,6 +390,7 @@ class LeavebillController extends Controller {
 		$workflowMode = new WorkflowModel ();
 		$result = $workflowMode->saveStartProcess ( $model, $model->userid );
 		// return 0;
+		echo $result['status'];
 		if ($result ['status'] == 'success') {
 			if ($request->post ( 'approvalPerson' )) {
 				$this->actionSendnotice ( $uid, $request->post ( 'approvalPerson' ),'有新的请假申请' );
@@ -606,6 +607,7 @@ class LeavebillController extends Controller {
 		// 查询当前用户的请假信息-
 		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray ();
 		$leaveBillId = $dataDetail ['id'];
+		//$result=$workflowMode->findCommentByLeaveBillId ( $leaveBillId );
 		$taskList = $workflowMode->findCommentByLeaveBillId ( $leaveBillId );
 		return $this->renderFile ( '@app/views/leavebill/content.php', [
 				'dataDetail' => $dataDetail,
