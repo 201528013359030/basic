@@ -243,7 +243,8 @@ class LeavebillController extends Controller {
 				'approvalPerson' => $uid,
 				'state' => [
 						2,
-						3
+						3,
+						4
 				]
 		] )->limit ( $limit [3] )->orderBy ( [
 				'applyTime' => SORT_DESC
