@@ -23,7 +23,7 @@
 					<input type="hidden" name="_csrf"
 						value="<?=Yii::$app->request->getCsrfToken()?>" />
 						 <input type="hidden" value=<?=$uid?> name="uid" />
-			<!--   <input type="hidden" value=<?php //=$model[0]['name']?> name="username" />-->			
+			<!--   <input type="hidden" value=<?php //=$model[0]['name']?> name="username" />-->
 						 <input type="hidden" value=<?=Html::encode($username) ?> name="username" />
 					<s:hidden name="userid" />
 					<!--表单主体-->
@@ -33,7 +33,7 @@
 								<label class="center inline">请假人</label>
 							</div>
 							<div class="small-9 columns">
-<!-- 					<label class="inline"><?php //=$model[0]['name']?></label> -->			
+<!-- 					<label class="inline"><?php //=$model[0]['name']?></label> -->
 								<label class="inline"><?=Html::encode($username) ?></label>
 							</div>
 						</div>
@@ -220,8 +220,6 @@ $('#member').click(function(){
 		 "name":"SelectContacts",      //native 的方法名称
 		 "callback":"OnSelectContactsCb",  //可没有
 		 "params":{"dataType":"tongzhi","maxCount":999}  //dateType 记录当前调用的按钮   maxCount 最多能选多少人
-
-
 		};
 
 	//调用方法 传参数 op

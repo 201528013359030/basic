@@ -36,8 +36,13 @@
 							break;
 						case '5':
 							echo '创建请假流程失败';
+							break;
 						case '6':
 							echo '无此请假条';
+							break;
+						case '7':
+							echo '创建请假条失败';
+							break;
 						default :
 							echo '出错了.....';
 					}
