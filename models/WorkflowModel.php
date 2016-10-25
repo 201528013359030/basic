@@ -185,14 +185,10 @@ class WorkflowModel extends Model {
 		if (count ( $task->data ) <= 0) {
 			// 修改 zyr 10.24
 // 			 return "无此任务";
-// 		print_r(dirname(_FILE_));
-		echo '$processInstanceId'.'='.$processInstanceId;
-		echo '<br/>';
-		print_r($task);
-		die("无数据");
-// 			return $result = [
-// 					'status' => 'error'
-// 			];
+
+				return $result = [
+						'status' => 'error'
+				];
 		}
 		$task = $task->data [0];
 		$taskId = $task->id;
@@ -265,6 +261,13 @@ class WorkflowModel extends Model {
 						'status' => 'success'
 				];
 			}
+		}else {
+			return $result = [
+					'status' => 'error'
+			];
 		}
+		return $result = [
+				'status' => 'success'
+		];
 	}
 }

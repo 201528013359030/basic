@@ -209,11 +209,11 @@ function getPanel2Data(page){
 			if(data['state']==1){
 				view+="<em class='fc_sucess'>审批中</em>";
 			}else if(data['state']==2){
-				view+="<em class='fc_sucess'>同意</em>";
+				view+="<em class='fc_undo'>同意</em>";
 			}else if(data['state']==3){
 				view+="<em class='fc_error'>拒绝</em>";
 			}else if(data['state']==4){
-				view +="<em class='fc_sucess'>放弃</em>";
+				view +="<em class='fc_undo'>放弃</em>";
 			}
 			view +="</span>";
 			view +="</p>";
@@ -257,11 +257,11 @@ function getPanel2Data(page){
 			if(data['state']==1){
 				view+="<em class='fc_sucess'>审批中</em>";
 			}else if(data['state']==2){
-				view+="<em class='fc_sucess'>同意</em>";
+				view+="<em class='fc_undo'>已同意</em>";
 			}else if(data['state']==3){
-				view+="<em class='fc_error'>拒绝</em>";
+				view+="<em class='fc_error'>已拒绝</em>";
 			}else if(data['state']==4){
-				view +="<em class='fc_sucess'>放弃</em>";
+				view +="<em class='fc_undo'>已放弃</em>";
 			}
 			view +="</span>";
 			view +="</p>";
