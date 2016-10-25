@@ -171,24 +171,23 @@ class WorkflowModel extends Model {
 		$leaveBillId = $leaveBill->id;
 		$key = "LeaveBill";
 		$businessKey = $key . '.' . $leaveBillId;
-		$result = $activitiModel->queryHistoricProcessInstances ( $businessKey )->data;
-		if ($result != null && count ( $result ) > 0) {
-			$processInstanceId = $result [0]->id;
+		$result1 = $activitiModel->queryHistoricProcessInstances ( $businessKey )->data;
+		//var_dump($result1);
+		if ($result1 != null && count ( $result1 ) > 0) {
+			$processInstanceId = $result1 [0]->id;
 		} else {
 			// 修改 zyr 10.24
-			// return "无此流程";
 			return $result = [ 
 					'status' => 'error' 
 			];
 		}
-		$session = Yii::$app->session;
-		$task = $activitiModel->queryTasks ( $processInstanceId );
+		$task = $activitiModel->queryTasks ( $processInstanceId );			
 		if (count ( $task->data ) <= 0) {
 			// 修改 zyr 10.24
-			// return "无此任务";
-			return $result = [ 
-					'status' => 'error' 
-			];
+			 return "无此任务";
+// 			return $result = [ 
+// 					'status' => 'error' 
+// 			];
 		}
 		$task = $task->data [0];
 		$taskId = $task->id;

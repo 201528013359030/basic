@@ -112,7 +112,7 @@ class LeavebillController extends Controller {
 		
 		if ($auth_token == '0' || $uid == '0') {
 			$params = [ 
-					'name' => '18900913313',
+					'name' => '18900913302',
 					'password' => '123456' 
 			];
 			$result = $this->actionGetAuth_Token ( $params );
@@ -242,10 +242,13 @@ class LeavebillController extends Controller {
 				'approvalPerson' => $uid,
 				'state' => [ 
 						2,
-						3 
-				] 
-		] )->limit ( $limit [3] )->orderBy ( [ 
-				'applyTime' => SORT_DESC 
+
+						3,
+						4
+				]
+		] )->limit ( $limit [3] )->orderBy ( [
+				'applyTime' => SORT_DESC
+
 		] )->asArray ()->all ();
 		if (($dataDisagree == null || count ( $dataDisagree ) <= 0) && ($dataAgree == null || count ( $dataAgree ) <= 0) && ($dataDisapproval == null || count ( $dataDisapproval ) <= 0) && ($dataApproval == null || count ( $dataApproval ) <= 0)) {
 			return $this->renderFile ( '@app/views/leavebill/list-empty.php', [ 
@@ -895,7 +898,7 @@ asArray ()->all ();
 						// 'uid' => $uid
 						'result' => '0' 
 				] );
-			} elseif ($result ['status'] == 'success') {
+			} else{
 				return $this->redirect ( [ 
 						'list',
 						'uid' => $uid 
