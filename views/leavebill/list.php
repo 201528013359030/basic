@@ -14,7 +14,6 @@ use yii\helpers\Html;
 ?>
  <?=Html::cssFile("../views/css/leave.css")?>
 
-
 </head>
 <body>
 <?php
@@ -281,13 +280,13 @@ use yii\helpers\Html;
 <!-- 	  						<s:if test="state==1"> --> <em class="fc_sucess">审批中</em>
 							<!-- 	  						</s:if> -->
 							<?php }elseif ($approval['state']==2){?>
-<!-- 	  						<s:elseif test="state==2"> --> <em class="fc_undo">同意</em>
+<!-- 	  						<s:elseif test="state==2"> --> <em class="fc_undo">已同意</em>
 							<!-- 	  						</s:elseif> -->
 						<?php }elseif ($approval['state']==3){?>
-<!-- 	  						<s:elseif test="state==3"> --> <em class="fc_error">拒绝</em>
+<!-- 	  						<s:elseif test="state==3"> --> <em class="fc_error">已拒绝</em>
 							<!-- 	  						</s:elseif> -->
 					<?php }elseif ($approval['state']==4){?>
-<!-- 	  						<s:else> --> <em class="fc_undo">放弃</em> <!-- 	  						</s:else> -->
+<!-- 	  						<s:else> --> <em class="fc_undo">已放弃</em> <!-- 	  						</s:else> -->
 					<?php }?>
 
 

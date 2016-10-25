@@ -184,10 +184,10 @@ class WorkflowModel extends Model {
 		$task = $activitiModel->queryTasks ( $processInstanceId );			
 		if (count ( $task->data ) <= 0) {
 			// 修改 zyr 10.24
-			 return "无此任务";
-// 			return $result = [ 
-// 					'status' => 'error' 
-// 			];
+// 			 return "无此任务";
+				return $result = [
+						'status' => 'error'
+				];
 		}
 		$task = $task->data [0];
 		$taskId = $task->id;
@@ -260,6 +260,13 @@ class WorkflowModel extends Model {
 						'status' => 'success'
 				];
 			}
+		}else {
+			return $result = [
+					'status' => 'error'
+			];
 		}
+		return $result = [
+				'status' => 'success'
+		];
 	}
 }

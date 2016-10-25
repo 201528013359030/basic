@@ -242,14 +242,14 @@ class LeavebillController extends Controller {
 				'approvalPerson' => $uid,
 				'state' => [ 
 						2,
-
+						
 						3,
-						4
-				]
-		] )->limit ( $limit [3] )->orderBy ( [
-				'applyTime' => SORT_DESC
-
-		] )->asArray ()->all ();
+						4 
+				] 
+		] )->limit ( $limit [3] )->orderBy ( [ 
+				'applyTime' => SORT_DESC 
+		]
+		 )->asArray ()->all ();
 		if (($dataDisagree == null || count ( $dataDisagree ) <= 0) && ($dataAgree == null || count ( $dataAgree ) <= 0) && ($dataDisapproval == null || count ( $dataDisapproval ) <= 0) && ($dataApproval == null || count ( $dataApproval ) <= 0)) {
 			return $this->renderFile ( '@app/views/leavebill/list-empty.php', [ 
 					'uid' => $uid 
@@ -889,19 +889,27 @@ asArray ()->all ();
 			] );
 		}
 		$leaveBillId = $request->get ( "id" );
+		$time = $request->get ( "time" );
 		// $uid=$request->get("uid");
 		$outcome = $request->get ( "outcome" );
 		if (($model = Leavebill::findOne ( $leaveBillId )) !== null) {
-			$result = $workflowModel->saveSubmitTaskByLeaveBillId ( $model, $outcome );
-			if ($result ['status'] == 'error') {
-				return $this->renderFile ( '@app/views/leavebill/error.php', [
-						// 'uid' => $uid
-						'result' => '0' 
-				] );
-			} else{
-				return $this->redirect ( [ 
+			if ($time == $session ['time']) {
+				$result = $workflowModel->saveSubmitTaskByLeaveBillId ( $model, $outcome );
+				unset ( $session ['time'] );
+				if ($result ['status'] == 'error') {
+					return $this->renderFile ( '@app/views/leavebill/error.php', [
+							'result' => '0' 
+					] );
+				} else {
+					return $this->redirect ( [ 
+							'list',
+							'uid' => $uid 
+					] );
+				}
+			}else{
+				return $this->redirect ( [
 						'list',
-						'uid' => $uid 
+						'uid' => $uid
 				] );
 			}
 		} else {
