@@ -14,66 +14,67 @@ class WorkflowModel extends Model {
 		$leaveBill->state = 1;
 		$key = "LeaveBill";
 		$bussinessKey = "LeaveBill" . "." . $leaveBill ['id'];
-		$variables = [
-				[
+		$variables = [ 
+				[ 
 						'name' => 'inputUser',
-						'value' => $uid
-				],
-				//修改 zyr 10.24
-// 				[
-// 						'name' => 'isAbandon',
-// 						'value' => '1'
-// 				]
-		];
+						'value' => $uid 
+				] 
+		]
+		// 修改 zyr 10.24
+		// [
+		// 'name' => 'isAbandon',
+		// 'value' => '1'
+		// ]
+		;
 		$activitiModel = new ActivitiModel ();
 		// 开启流程
 		$result = $activitiModel->StartProcessInstance ( $key, $bussinessKey, $variables );
-
-		//var_dump ( $result );
+		
+		// var_dump ( $result );
 		if (! isset ( $result->id )) {
-				return $result = [
-						'status' => 'error'
-				];
+			return $result = [ 
+					'status' => 'error' 
+			];
 		}
-
+		
 		// 获取流程ID
-		//isset($result->id) or die('创建流程失败');
+		// isset($result->id) or die('创建流程失败');
 		$processInstanceId = $result->id;
 		// 获取任务
 		$task = $activitiModel->queryTasks ( $processInstanceId );
-
-		//isset($task->data) or die('创建任务失败');
-
+		
+		// isset($task->data) or die('创建任务失败');
+		
 		$taskId = $task->data [0]->id;
-		$variables2 = [
-				[
+		$variables2 = [ 
+				[ 
 						'name' => 'approvalPerson',
-						'value' => $leaveBill ['approvalPerson']
+						'value' => $leaveBill ['approvalPerson'] 
 				],
-				[
+				[ 
 						'name' => 'isAbandon',
-						'value' => '1'
-				]
+						'value' => '1' 
+				] 
 		];
 		// 完成任务
 		$result2 = $activitiModel->completeTask ( $taskId, $variables2 );
 		if ($result2 == null) {
 			if ($leaveBill->save ()) {
-				return $result = [
+				return $result = [ 
 						'status' => 'success',
-						'model' => $leaveBill
+						'model' => $leaveBill 
 				];
 			} else {
 				$activitiModel->deleteProcessInstance ( $processInstanceId );
-				return $result = [
-						'status' => 'error'
+				return $result = [ 
+						'status' => 'error' 
 				];
 			}
 		} else {
 			// echo "创建请假流程失败"
 			$activitiModel->deleteProcessInstance ( $processInstanceId );
-			return $result = [
-					'status' => 'error'
+			return $result = [ 
+					'status' => 'error' 
 			];
 		}
 	}
@@ -88,44 +89,44 @@ class WorkflowModel extends Model {
 		if ($result != null && count ( $result ) > 0) {
 			$processInstanceId = $result [0]->id;
 		} else {
-			return $result = [
-					'status' => 'error'
+			return $result = [ 
+					'status' => 'error' 
 			];
 		}
 		// 查询此任务
 		$task = $activitiModel->queryTasks ( $processInstanceId )->data;
 		if (count ( $task ) > 0) {
 			$taskId = $task [0]->id;
-			$variables2 = [
-					[
+			$variables2 = [ 
+					[ 
 							'name' => 'approvalPerson',
-							'value' => $leaveBill ['approvalPerson']
+							'value' => $leaveBill ['approvalPerson'] 
 					],
-					[
+					[ 
 							'name' => 'isAbandon',
-							'value' => '1'
-					]
+							'value' => '1' 
+					] 
 			];
 			// 完成任务
 			$result2 = $activitiModel->completeTask ( $taskId, $variables2 );
 		} else {
-			//修改 zyr 10.24
-			return $result = [
-					'status' => 'error'
+			// 修改 zyr 10.24
+			return $result = [ 
+					'status' => 'error' 
 			];
-//			return "无此请假任务";
+			// return "无此请假任务";
 		}
 		// echo "<br/>";
 		// 保存请假条
 		if ($leaveBill->save ()) {
-			return $result = [
-					'status' => 'success'
+			return $result = [ 
+					'status' => 'success' 
 			];
 		} else {
-			//此处处理未解决（将当前完成的任务由完成状态改为进行中）
-			//var_dump ( $leaveBill->getErrors () );
-			return $result = [
-					'status' => 'error'
+			// 此处处理未解决（将当前完成的任务由完成状态改为进行中）
+			// var_dump ( $leaveBill->getErrors () );
+			return $result = [ 
+					'status' => 'error' 
 			];
 		}
 	}
@@ -138,24 +139,30 @@ class WorkflowModel extends Model {
 		if ($result != null && count ( $result ) > 0) {
 			$processInstanceId = $result [0]->id;
 		} else {
-			//return null;
-			//修改 zyr 10.24
-			return $result = [
-					'status' => 'error'
+			// return null;
+			// 修改 zyr 10.24
+			return $result = [ 
+					'status' => 'error' 
 			];
 		}
 		$utils = new UtilsModel ();
 		$taskList = $activitiModel->queryHistoricTaskInstancesById ( $processInstanceId )->data;
-		$result = array ();
+		$resultList = array ();
 		foreach ( $taskList as $task ) {
 			$comments = $activitiModel->getCommentOnTask ( $task->id );
 			$task = $utils->object2array ( $task );
 			$task ['comments'] = $comments;
-			array_push ( $result, $task );
+			array_push ( $resultList, $task );
 		}
-		return $result;
+		// var_dump($resultList);
+		// 修改 zyr 10.24
+		return $result = [ 
+				'status' => 'success',
+				'taskList' => $resultList 
+		];
+		// return $result;
 	}
-
+	
 	// 审批
 	public function saveSubmitTaskByLeaveBillId($leaveBill, $outcome, $comment = null) {
 		$session = Yii::$app->session;
@@ -168,12 +175,20 @@ class WorkflowModel extends Model {
 		if ($result != null && count ( $result ) > 0) {
 			$processInstanceId = $result [0]->id;
 		} else {
-			return "无此流程";
+			// 修改 zyr 10.24
+			// return "无此流程";
+			return $result = [ 
+					'status' => 'error' 
+			];
 		}
 		$session = Yii::$app->session;
 		$task = $activitiModel->queryTasks ( $processInstanceId );
 		if (count ( $task->data ) <= 0) {
-			return "无此任务";
+			// 修改 zyr 10.24
+			// return "无此任务";
+			return $result = [ 
+					'status' => 'error' 
+			];
 		}
 		$task = $task->data [0];
 		$taskId = $task->id;
@@ -186,15 +201,19 @@ class WorkflowModel extends Model {
 					$message = $session->get ( 'name' ) . "已同意.";
 				}
 				$activitiModel->createCommentOnTask ( $taskId, $message );
-				$variables = [
-						[
+				$variables = [ 
+						[ 
 								'name' => 'outcome',
-								'value' => $outcome
-						]
+								'value' => $outcome 
+						] 
 				];
 				$activitiModel->completeTask ( $taskId, $variables );
 				// //保存leaveBill
 				$leaveBill->save ();
+				//修改 zyr 10.24
+				return $result = [
+						'status' => 'success'
+				];
 			} elseif ("0" == $outcome) {
 				$leaveBill->state = 3;
 				if ($comment != null) {
@@ -203,19 +222,23 @@ class WorkflowModel extends Model {
 					$message = $session->get ( 'name' ) . "已拒绝.";
 				}
 				$activitiModel->createCommentOnTask ( $taskId, $message );
-				$variables = [
-						[
+				$variables = [ 
+						[ 
 								'name' => 'outcome',
-								'value' => $outcome
+								'value' => $outcome 
 						],
-						[
+						[ 
 								'name' => 'approvalPerson',
-								'value' => $session->get ( 'uid' )
-						]
+								'value' => $session->get ( 'uid' ) 
+						] 
 				];
 				$activitiModel->completeTask ( $taskId, $variables );
 				// 保存leaveBill
 				$leaveBill->save ();
+				//修改 zyr 10.24
+				return $result = [
+						'status' => 'success'
+				];
 			} elseif ("3" == $outcome) {
 				$leaveBill->state = 4;
 				if ($comment != null) {
@@ -224,15 +247,19 @@ class WorkflowModel extends Model {
 					$message = $session->get ( 'name' ) . "已放弃.";
 				}
 				$activitiModel->createCommentOnTask ( $taskId, $message );
-				$variables = [
-						[
+				$variables = [ 
+						[ 
 								'name' => 'isAbandon',
-								'value' => '0'
-						]
+								'value' => '0' 
+						] 
 				];
 				$activitiModel->completeTask ( $taskId, $variables );
 				// 保存leaveBill
 				$leaveBill->save ();
+				//修改 zyr 10.24
+				return $result = [
+						'status' => 'success'
+				];
 			}
 		}
 	}
