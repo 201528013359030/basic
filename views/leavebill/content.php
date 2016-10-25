@@ -67,6 +67,7 @@
 					</p>
 					<p class="date">
 								<?php 
+								date_default_timezone_set('PRC'); 
 								if($task['deleteReason']=='completed'){ 
 									echo date("Y-m-d H:i:s",strtotime($task['endTime']));
 								}else {
@@ -102,7 +103,8 @@
 	  		</div>
 	  		
 	  		<div class="small-6 columns">
-	  			<button type="button" class="button secondary expand" name="outcome"  onclick="window.location.href='index.php?r=leavebill/giveup&id=<?php echo $data['id']?>&uid=<?php echo $uid?>&outcome=3'">放弃</button>
+	  			  <a class="button secondary expand" name="outcome" href="index.php?r=leavebill/giveup&id=<?php echo $data['id']?>&uid=<?php echo $uid?>&outcome=3"> 放弃</a>
+	  		<!-- 	<button type="button" class="button secondary expand" name="outcome"  onclick="window.location.href='index.php?r=leavebill/giveup&id=<?php //echo $data['id']?>&uid=<?php //echo $uid?>&outcome=3'">放弃</button> -->
 	  		</div>
 	  	</div>
 	  	<?php }?>

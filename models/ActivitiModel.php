@@ -448,7 +448,8 @@ class ActivitiModel extends Model {
 		// $webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/tasks';
 		// $data=json_encode(['processInstanceId'=>$processInstanceId]);
 		// =======
-		$webService = 'http://localhost:8080/activiti-rest/service/query/tasks';
+		//修改 zyr 10.24
+		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/tasks';
 		$data = json_encode ( [
 				'processInstanceId' => $processInstanceId,
 				'sort' => 'createTime',
@@ -526,7 +527,10 @@ class ActivitiModel extends Model {
 		);
 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/historic-task-instances';
 		$data = json_encode ( [
-				'processInstanceId' => $processInstanceId
+				'processInstanceId' => $processInstanceId ,
+				//修改 zyr  10.24
+				'sort' => 'startTime',
+				'order' => 'asc'
 		] );
 		// echo $data;
 		$curl = new CurlModel ();

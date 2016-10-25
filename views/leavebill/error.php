@@ -43,6 +43,9 @@
 						case '7':
 							echo '创建请假条失败';
 							break;
+						case '8':
+							echo '获取请假条信息失败';
+							break;
 						default :
 							echo '出错了.....';
 					}

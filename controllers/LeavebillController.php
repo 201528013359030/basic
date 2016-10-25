@@ -21,24 +21,23 @@ use app\models\UtilsModel;
 class LeavebillController extends Controller {
 	public $enableCsrfValidation = false;
 	public $layout = 'false';
-
-
+	
 	/**
 	 * @inheritdoc
 	 */
 	public function behaviors() {
-		return [
-				'verbs' => [
+		return [ 
+				'verbs' => [ 
 						'class' => VerbFilter::className (),
-						'actions' => [
-								'delete' => [
-										'POST'
-								]
-						]
-				]
+						'actions' => [ 
+								'delete' => [ 
+										'POST' 
+								] 
+						] 
+				] 
 		];
 	}
-
+	
 	/**
 	 * auth.gettoken 获取用户认证信息
 	 *
@@ -48,22 +47,22 @@ class LeavebillController extends Controller {
 	 * @author fyq
 	 */
 	public function actionGetAuth_Token($params) {
-
+		
 		// auth_token认证
 		$api_key = "36116967d1ab95321b89df8223929b14207b72b1";
-		$params = [
+		$params = [ 
 				'name' => $params ['name'],
 				'password' => $params ['password'],
-				'api_key' => $api_key
+				'api_key' => $api_key 
 		];
 		$webService = "http://192.168.139.160/elgg/services/api/rest/json/?method=auth.gettoken";
 		$curl = new CurlModel ();
 		$result = $curl->post ( $webService, $params );
-
+		
 		$result = json_decode ( $result );
 		return $result;
 	}
-
+	
 	/**
 	 * CheckAuth_Token athh_token验证
 	 *
@@ -73,22 +72,22 @@ class LeavebillController extends Controller {
 	 * @author fyq
 	 */
 	public function actionCheckAuth_Token($params) {
-
+		
 		// auth_token认证
 		$api_key = "36116967d1ab95321b89df8223929b14207b72b1";
-		$params = [
+		$params = [ 
 				'uid' => $params ['uid'],
 				'auth_token' => $params ['auth_token'],
-				'api_key' => $api_key
+				'api_key' => $api_key 
 		];
 		$webService = "http://192.168.139.160/elgg/services/api/rest/json/?method=check.user.token";
 		$curl = new CurlModel ();
 		$result = $curl->post ( $webService, $params );
-
+		
 		$result = json_decode ( $result );
 		return $result;
 	}
-
+	
 	/**
 	 * index
 	 *
@@ -106,37 +105,37 @@ class LeavebillController extends Controller {
 		$gid = $request->get ( 'gid', '0' );
 		$nid = $request->get ( 'nid', '0' );
 		$provider = $request->get ( 'provider', '0' );
-
+		
 		/**
 		 * ************************ 临时获取token测试用 begin**********************************
 		 */
-
-		if ($auth_token == '0'||$uid=='0') {
-			$params = [
-					'name' => '18900913313',
-					'password' => '123456'
+		
+		if ($auth_token == '0' || $uid == '0') {
+			$params = [ 
+					'name' => '18900913302',
+					'password' => '123456' 
 			];
 			$result = $this->actionGetAuth_Token ( $params );
-
+			
 			var_dump ( $result );
 			// echo $result->result->auth_token;
-// 			return;
-
+			// return;
+			
 			$uid = $result->result->uid;
 			$auth_token = $result->result->auth_token;
 			$eguid = $result->result->eguid;
 		}
-
+		
 		/**
 		 * ************************ 临时获取token测试用 end**********************************
 		 */
 		// token验证
-		$params = [
+		$params = [ 
 				'uid' => $uid,
-				'auth_token' => $auth_token
+				'auth_token' => $auth_token 
 		];
 		$result = $this->actionCheckAuth_Token ( $params );
-
+		
 		// var_dump ( $result );
 		// return ;
 		/**
@@ -149,16 +148,16 @@ class LeavebillController extends Controller {
 		 * ****************** zyr **********************
 		 */
 		if ('0' != $result->status) {
-
+			
 			return '认证返回失败!';
 		}
 		if ('1' != $result->result->success) {
 			return '认证失败!';
 		}
-
+		
 		$session = Yii::$app->session;
 		if (! $session->isActive) {
-
+			
 			$session->open ();
 		}
 		$session->set ( 'uid', $uid );
@@ -168,16 +167,16 @@ class LeavebillController extends Controller {
 		$session->set ( 'gid', $gid );
 		$session->set ( 'nid', $nid );
 		$session->set ( 'provider', $provider );
-
+		
 		$result = $this->actionGetUserInfo ();
 		$session->set ( 'name', $result->result->membername [0] );
 		$session->set ( 'department', $result->result->department [0] );
-		return $this->redirect ( [
+		return $this->redirect ( [ 
 				'list',
-				'uid' => $uid
+				'uid' => $uid 
 		] );
 	}
-
+	
 	/**
 	 * Lists all Leavebill models.
 	 *
@@ -192,78 +191,80 @@ class LeavebillController extends Controller {
 			// echo "用户不存在";
 			return $this->renderFile ( '@app/views/leavebill/error.php', [
 					// 'uid' => $uid
-					'result' => '1'
+					'result' => '1' 
 			] );
 		}
 		// 获取session中的变量值，以下用法是相同的：
 		// $uid = $session->get ( 'uid' );
-
+		
 		$searchModel = new LeavebillSearch ();
 		// $dataProvider = $searchModel->search ( $request->queryParams )->asArray();
-
+		
 		$limit = array ();
 		$limit [0] = 3;
 		$limit [1] = 3;
 		$limit [2] = 5;
 		$limit [3] = 3;
-
+		
 		// 查询当前用户的请假信息---进行中
 		$dataDisagree = LeavebillSearch::find ()->where ( [
 				// 'username'=> '3@15'
 				'userid' => $uid,
-				'state' => [
+				'state' => [ 
 						'1',
-						'3'
-				]
-		] )->limit ( $limit [0] )->orderBy ( [
-				'applyTime' => SORT_DESC
+						'3' 
+				] 
+		] )->limit ( $limit [0] )->orderBy ( [ 
+				'applyTime' => SORT_DESC 
 		] )->asArray ()->all ();
-
+		
 		// 查询当前用户的请假信息---已同意
 		$dataAgree = LeavebillSearch::find ()->where ( [
 				// 'username'=> '3@15'
 				'userid' => $uid,
-				'state' => '2'
-		] )->limit ( $limit [1] )->orderBy ( [
-				'applyTime' => SORT_DESC
+				'state' => '2' 
+		] )->limit ( $limit [1] )->orderBy ( [ 
+				'applyTime' => SORT_DESC 
 		] )->asArray ()->all ();
-
+		
 		// 查询需要当前用户审批的请假信息--待审批
 		$dataDisapproval = LeavebillSearch::find ()->where ( [
 				// 'username'=> '3@15'
 				'approvalPerson' => $uid,
-				'state' => '1'
-		] )->orderBy ( [
-				'applyTime' => SORT_DESC
+				'state' => '1' 
+		] )->orderBy ( [ 
+				'applyTime' => SORT_DESC 
 		] )->asArray ()->all ();
-
+		
 		// 查询需要当前用户审批的请假信息--已审批
 		$dataApproval = LeavebillSearch::find ()->where ( [
 				// 'username'=> '3@15'
 				'approvalPerson' => $uid,
-				'state' => [
+				'state' => [ 
 						2,
+
 						3,
 						4
 				]
 		] )->limit ( $limit [3] )->orderBy ( [
 				'applyTime' => SORT_DESC
+
 		] )->asArray ()->all ();
 		if (($dataDisagree == null || count ( $dataDisagree ) <= 0) && ($dataAgree == null || count ( $dataAgree ) <= 0) && ($dataDisapproval == null || count ( $dataDisapproval ) <= 0) && ($dataApproval == null || count ( $dataApproval ) <= 0)) {
-			return $this->renderFile ( '@app/views/leavebill/list-empty.php', [
-					'uid' => $uid
+			return $this->renderFile ( '@app/views/leavebill/list-empty.php', [ 
+					'uid' => $uid 
 			] );
 		} else {
-			return $this->renderFile ( '@app/views/leavebill/list.php', [
+			return $this->renderFile ( '@app/views/leavebill/list.php', [ 
 					'dataDisagree' => $dataDisagree,
 					'dataAgree' => $dataAgree,
 					'dataDisapproval' => $dataDisapproval,
 					'dataApproval' => $dataApproval,
-					'uid' => $uid
+					'uid' => $uid 
 			] );
 		}
 	}
-
+	
 	/**
 	 * Creates a new Leavebill model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
@@ -279,39 +280,38 @@ class LeavebillController extends Controller {
 		} else {
 			return $this->renderFile ( '@app/views/leavebill/error.php', [
 					// 'uid' => $uid
-					'result' => '1'
+					'result' => '1' 
 			] );
 		}
 		$username = $session->get ( 'department' ) . '_' . $session->get ( 'name' );
-		return $this->renderFile ( '@app/views/leavebill/create.php', [
+		return $this->renderFile ( '@app/views/leavebill/create.php', [ 
 				'username' => $username,
-				'uid' => $uid
+				'uid' => $uid 
 		] );
 	}
 	public function actionWhere() {
 		$posts = Yii::$app->db->createCommand ( 'SELECT * FROM leavebill where userid = :uid and id > :id and applyTime < :applyTime' )->bindValue ( ':uid', '8@15' )->bindValue ( ':id', 502 )->bindValue ( ':applyTime', date ( 'Y-m-d H:i:s' ) )->queryAll ();
 		print_r ( $posts );
 	}
-
-
+	
 	/**
 	 * Deletes an existing Employee model.
 	 * If deletion is successful, the browser will be redirected to the 'index' page.
-	 * @param string $id
+	 *
+	 * @param string $id        	
 	 * @return mixed
 	 */
-	public function actionDeletebill()
-	{
-// 		$this->findModel($id)->delete();
-				$model1 = Leavebill::find ()->where ( [
-				'state' => '2'
-		] )->all()->delete();
-
-
-		return $this->redirect(['index']);
+	public function actionDeletebill() {
+		// $this->findModel($id)->delete();
+		$model1 = Leavebill::find ()->where ( [ 
+				'state' => '2' 
+		] )->all ()->delete ();
+		
+		return $this->redirect ( [ 
+				'index' 
+		] );
 	}
-
-
+	
 	// }
 	/**
 	 *
@@ -329,31 +329,31 @@ class LeavebillController extends Controller {
 		if ($session->has ( "uid" ) && $session->get ( "uid" ) != '0') {
 			$uid = $session->get ( 'uid' );
 		} else {
-			return $this->renderFile ( '@app/views/leavebill/error.php', [
-					'result' => '1'
+			return $this->renderFile ( '@app/views/leavebill/error.php', [ 
+					'result' => '1' 
 			] );
 		}
 		$applyTime = date ( 'Y-m-d H:i:s' );
-		$date = date('Y-m-d H:i:s',strtotime('-30 day'));
+		$date = date ( 'Y-m-d H:i:s', strtotime ( '-30 day' ) );
 		$auth_token = $session->get ( 'auth_token' );
-		$model1 = Leavebill::find ()->where ( [
+		$model1 = Leavebill::find ()->where ( [ 
 				'userid' => $uid,
-				'state' => [
+				'state' => [ 
 						1,
 						2,
-						3
-				]
-		] )->andWhere ( [
+						3 
+				] 
+		] )->andWhere ( [ 
 				'>',
 				'leaveEndTime',
-				$date
-		]
+				$date 
+		] )->
 		// date ( 'Y-m-d H:i:s' )
-		 )->asArray ()->all ();
-
-		 // 判断是否与已有的请假记录重复
+		asArray ()->all ();
+		
+		// 判断是否与已有的请假记录重复
 		$tag = 0;
-
+		
 		for($i = 0; $i < count ( $model1 ); $i ++) {
 			if (! ($model1 [$i] ['leaveEndTime'] < $request->post ( 'leaveStartTime' ) || $model1 [$i] ['leaveStartTime'] > $request->post ( 'leaveEndTime' ))) {
 				$tag = 1;
@@ -364,11 +364,11 @@ class LeavebillController extends Controller {
 			return;
 		}
 		$model = new Leavebill ();
-		$utils=new UtilsModel();
+		$utils = new UtilsModel ();
 		$diff = $utils->timeDiff ( strtotime ( $request->post ( 'leaveStartTime' ) ), strtotime ( $request->post ( 'leaveEndTime' ) ) );
-		//$diff = $this->actionTimeDiff ( strtotime ( $request->post ( 'leaveStartTime' ) ), strtotime ( $request->post ( 'leaveEndTime' ) ) );
-
-// 		$utils = new UtilsModel ();
+		// $diff = $this->actionTimeDiff ( strtotime ( $request->post ( 'leaveStartTime' ) ), strtotime ( $request->post ( 'leaveEndTime' ) ) );
+		
+		// $utils = new UtilsModel ();
 		$model->id = $utils->saveGetmaxNum ( 'QJDH', 11 );
 		$model->userid = $request->post ( 'userid', $uid ); // $GLOBALS['uid']
 		$model->leaveType = $request->post ( 'leaveType', '0' );
@@ -387,24 +387,25 @@ class LeavebillController extends Controller {
 		$model->tzuser = $request->post ( 'tzuser', '0' ); // name
 		$model->tongzhi = $request->post ( 'tongzhi', '0' ); // id
 		$model->token = $auth_token; // $GLOBALS['auth_token'];
-
+		
 		$workflowMode = new WorkflowModel ();
 		$result = $workflowMode->saveStartProcess ( $model, $model->userid );
 		// return 0;
+		// echo $result['status'];
 		if ($result ['status'] == 'success') {
 			if ($request->post ( 'approvalPerson' )) {
-				$this->actionSendnotice ( $uid, $request->post ( 'approvalPerson' ),'有新的请假申请' );
-				return $this->redirect ( [
+				$this->actionSendnotice ( $uid, $request->post ( 'approvalPerson' ), '有新的请假申请' );
+				return $this->redirect ( [ 
 						'list',
-						'uid' => $uid
+						'uid' => $uid 
 				] );
 			} else {
 				echo "审批人id为空";
 				$this->actionList ( $uid );
 			}
 		} else {
-			return $this->renderFile ( '@app/views/leavebill/error.php', [
-					'result' => '7'
+			return $this->renderFile ( '@app/views/leavebill/error.php', [ 
+					'result' => '7' 
 			] );
 			// return "创建请假流程失败!";
 		}
@@ -412,52 +413,52 @@ class LeavebillController extends Controller {
 	// 功能：计算两个时间戳之间相差的日时分秒
 	// $begin_time 开始时间戳
 	// $end_time 结束时间戳
-// 	public function actionTimeDiff($begin_time, $end_time) {
-// 		if ($begin_time < $end_time) {
-// 			$starttime = $begin_time;
-// 			$endtime = $end_time;
-// 		} else {
-// 			$starttime = $end_time;
-// 			$endtime = $begin_time;
-// 		}
-
-// 		// 计算天数
-// 		$timediff = $endtime - $starttime;
-// 		$days = intval ( $timediff / 86400 );
-// 		// 计算小时数
-// 		$remain = $timediff % 86400;
-// 		$hours = intval ( $remain / 3600 );
-// 		// 计算分钟数
-// 		$remain = $remain % 3600;
-// 		$mins = intval ( $remain / 60 );
-// 		// 计算秒数
-// 		$secs = $remain % 60;
-// 		$res = array (
-// 				"day" => $days,
-// 				"hour" => $hours,
-// 				"min" => $mins,
-// 				"sec" => $secs
-// 		);
-
-// 		if ($res ['day'] > 0) {
-// 			$days = $res ['day'] . '天';
-// 		} elseif ($res ['hour'] > 0) {
-// 			$days = $res ['hour'] . '小时';
-// 		} elseif ($res ['min'] > 0) {
-// 			$days = $res ['min'] . '分钟';
-// 		} elseif ($res ['sec'] > 0) {
-// 			$days = $res ['sec'] . '秒';
-// 		} else {
-// 			$days = '0';
-// 		}
-// 		return $days;
-// 	}
-
+	// public function actionTimeDiff($begin_time, $end_time) {
+	// if ($begin_time < $end_time) {
+	// $starttime = $begin_time;
+	// $endtime = $end_time;
+	// } else {
+	// $starttime = $end_time;
+	// $endtime = $begin_time;
+	// }
+	
+	// // 计算天数
+	// $timediff = $endtime - $starttime;
+	// $days = intval ( $timediff / 86400 );
+	// // 计算小时数
+	// $remain = $timediff % 86400;
+	// $hours = intval ( $remain / 3600 );
+	// // 计算分钟数
+	// $remain = $remain % 3600;
+	// $mins = intval ( $remain / 60 );
+	// // 计算秒数
+	// $secs = $remain % 60;
+	// $res = array (
+	// "day" => $days,
+	// "hour" => $hours,
+	// "min" => $mins,
+	// "sec" => $secs
+	// );
+	
+	// if ($res ['day'] > 0) {
+	// $days = $res ['day'] . '天';
+	// } elseif ($res ['hour'] > 0) {
+	// $days = $res ['hour'] . '小时';
+	// } elseif ($res ['min'] > 0) {
+	// $days = $res ['min'] . '分钟';
+	// } elseif ($res ['sec'] > 0) {
+	// $days = $res ['sec'] . '秒';
+	// } else {
+	// $days = '0';
+	// }
+	// return $days;
+	// }
+	
 	/**
 	 * Updates an existing Leavebill model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 *
-	 * @param string $id
+	 * @param string $id        	
 	 * @return mixed
 	 */
 	public function actionUpdate() {
@@ -468,8 +469,8 @@ class LeavebillController extends Controller {
 		if ($session->has ( "uid" ) && $session->get ( "uid" ) != '0') {
 			$uid = $session->get ( 'uid' );
 		} else {
-			return $this->renderFile ( '@app/views/leavebill/error.php', [
-					'result' => '1'
+			return $this->renderFile ( '@app/views/leavebill/error.php', [ 
+					'result' => '1' 
 			] );
 		}
 		if ($session->has ( "department" ) && $session->has ( "name" )) {
@@ -477,26 +478,25 @@ class LeavebillController extends Controller {
 		}
 		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray ();
 		if ($dataDetail != null && count ( $dataDetail ) > 0) {
-			return $this->renderFile ( '@app/views/leavebill/update.php', [
+			return $this->renderFile ( '@app/views/leavebill/update.php', [ 
 					'model' => $dataDetail,
 					'uid' => $uid,
 					'id' => $id,
-					'username' => $username
+					'username' => $username 
 			] );
 		} else {
 			// 返回错误页面
-			return $this->renderFile ( '@app/views/leavebill/update.php', [
-					'result' => '6'
+			return $this->renderFile ( '@app/views/leavebill/update.php', [ 
+					'result' => '6' 
 			] );
 		}
 	}
-
 	public function actionUpdatestart() {
 		$session = Yii::$app->session;
 		$request = Yii::$app->request;
 		date_default_timezone_set ( 'PRC' );
-		$applyTime=date ( 'Y-m-d H:i:s' ) ;
-		$date = date('Y-m-d H:i:s',strtotime('-30 day'));
+		$applyTime = date ( 'Y-m-d H:i:s' );
+		$date = date ( 'Y-m-d H:i:s', strtotime ( '-30 day' ) );
 		// 获取session中的变量值，以下用法是相同的：
 		$auth_token = $session->get ( 'auth_token' );
 		$uid = $request->post ( 'uid', '0' );
@@ -506,28 +506,29 @@ class LeavebillController extends Controller {
 			// echo "用户不存在";
 			return $this->renderFile ( '@app/views/leavebill/error.php', [
 					// 'uid' => $uid
-					'result' => '1'
+					'result' => '1' 
 			] );
 		}
-
+		
 		$db = Yii::$app->db;
-		$model1 = Leavebill::find ()->where ( [
+		$model1 = Leavebill::find ()->where ( [ 
 				'userid' => $uid,
-				'state' => [
+				'state' => [ 
 						1,
 						2,
-						3
-				]
-		] )->andWhere ( [
+						3 
+				] 
+		] )->andWhere ( [ 
 				'>',
 				'leaveEndTime',
-				$date
-				//date ( 'Y-m-d H:i:s' )
-		] )->asArray ()->all ();
+				$date 
+		] )->
+		// date ( 'Y-m-d H:i:s' )
+		asArray ()->all ();
 		$tag = 0;
 		// 判断是否与已有的请假记录重复 ----------除去当前记录
 		for($i = 0; $i < count ( $model1 ); $i ++) {
-
+			
 			if (($model1 [$i] ['id'] != $request->post ( 'id' )) && ! ($model1 [$i] ['leaveEndTime'] < $request->post ( 'leaveStartTime' ) || $model1 [$i] ['leaveStartTime'] > $request->post ( 'leaveEndTime' ))) {
 				$tag = 1;
 			}
@@ -536,14 +537,14 @@ class LeavebillController extends Controller {
 			echo "请假时间有重复记录";
 			return;
 			// echo '<script>alert("请假时间段有重复！");</script>';
-			//$username = $session->get ( 'department' ) . '_' . $session->get ( 'name' );
+			// $username = $session->get ( 'department' ) . '_' . $session->get ( 'name' );
 		}
-
+		
 		$model = Leavebill::findOne ( $request->post ( 'id' ) );
 		// 请假天数
-		$utils = new UtilsModel();
+		$utils = new UtilsModel ();
 		$diff = $utils->timeDiff ( strtotime ( $request->post ( 'leaveStartTime' ) ), strtotime ( $request->post ( 'leaveEndTime' ) ) );
-// 		$diff = $this->actionTimeDiff ( strtotime ( $request->post ( 'leaveStartTime' ) ), strtotime ( $request->post ( 'leaveEndTime' ) ) );
+		// $diff = $this->actionTimeDiff ( strtotime ( $request->post ( 'leaveStartTime' ) ), strtotime ( $request->post ( 'leaveEndTime' ) ) );
 		$model->userid = $request->post ( 'userid', $uid ); // $GLOBALS['uid']
 		$model->leaveType = $request->post ( 'leaveType', '0' );
 		$model->leaveStartTime = $request->post ( 'leaveStartTime', '0' );
@@ -552,7 +553,7 @@ class LeavebillController extends Controller {
 		$model->approvalPerson = $request->post ( 'approvalPerson', '0' ); // id
 		$model->remark = $request->post ( 'remark', '0' );
 		$model->applyTime = $applyTime;
-// 		$model->applyTime = date ( 'Y-m-d H:i:s' );
+		// $model->applyTime = date ( 'Y-m-d H:i:s' );
 		$model->state = $request->post ( 'state', '1' );
 		$model->username = $request->post ( 'username', '0' );
 		$model->days = $diff;
@@ -561,23 +562,23 @@ class LeavebillController extends Controller {
 		$model->tzuser = $request->post ( 'tzuser', '0' ); // name
 		$model->tongzhi = $request->post ( 'tongzhi', '0' ); // id
 		$model->token = $auth_token; // $GLOBALS['auth_token'];
-
+		
 		$workflowMode = new WorkflowModel ();
 		$result = $workflowMode->updateStartLeaveBill ( $model );
-		if ($result['status'] == 'success') {
-			$this->actionSendnotice ( $uid, $request->post ( 'approvalPerson' ),'有新的请假申请' );
-			return $this->redirect ( [
+		if ($result ['status'] == 'success') {
+			$this->actionSendnotice ( $uid, $request->post ( 'approvalPerson' ), '有新的请假申请' );
+			return $this->redirect ( [ 
 					'list',
-					'uid' => $model->userid
+					'uid' => $model->userid 
 			] );
-		}else{
+		} else {
 			return $this->renderFile ( '@app/views/leavebill/error.php', [
 					// 'uid' => $uid
-					'result' => '7'
+					'result' => '7' 
 			] );
 		}
 	}
-
+	
 	/**
 	 * Displays detail infomation about leavebill.
 	 * 详细
@@ -599,7 +600,7 @@ class LeavebillController extends Controller {
 			// return;
 			return $this->renderFile ( '@app/views/leavebill/error.php', [
 					// 'uid' => $uid
-					'result' => '1'
+					'result' => '1' 
 			] );
 		}
 		$searchModel = new LeavebillSearch ();
@@ -607,15 +608,24 @@ class LeavebillController extends Controller {
 		// 查询当前用户的请假信息-
 		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray ();
 		$leaveBillId = $dataDetail ['id'];
-		$taskList = $workflowMode->findCommentByLeaveBillId ( $leaveBillId );
-		return $this->renderFile ( '@app/views/leavebill/content.php', [
-				'dataDetail' => $dataDetail,
-				'taskList' => $taskList,
-				// 'uid' => $request->get ( 'uid' )
-				'uid' => $uid
-		] );
+		// 修改 zyr 10.24
+		$result = $workflowMode->findCommentByLeaveBillId ( $leaveBillId );
+		if ($result ['status'] == 'error') {
+			return $this->renderFile ( '@app/views/leavebill/error.php', [ 
+					'result' => '8' 
+			] );
+		} elseif ($result ['status'] == 'success') {
+			$taskList = $result ['taskList'];
+			// var_dump($taskList);
+			// $taskList = $workflowMode->findCommentByLeaveBillId ( $leaveBillId );
+			return $this->renderFile ( '@app/views/leavebill/content.php', [ 
+					'dataDetail' => $dataDetail,
+					'taskList' => $taskList,
+					// 'uid' => $request->get ( 'uid' )
+					'uid' => $uid 
+			] );
+		}
 	}
-
 	/**
 	 * Displays detail infomation about leavebill.
 	 * 我的审批详细
@@ -637,38 +647,46 @@ class LeavebillController extends Controller {
 			// return;
 			return $this->renderFile ( '@app/views/leavebill/error.php', [
 					// 'uid' => $uid
-					'result' => '1'
+					'result' => '1' 
 			] );
 		}
 		$searchModel = new LeavebillSearch ();
 		$workflowMode = new WorkflowModel ();
-
+		
 		// 查询当前用户的请假信息-
-
+		
 		$dataDetail = LeavebillSearch::findOne ( $request->get ( 'id' ) )->toArray ();
 		$leaveBillId = $dataDetail ['id'];
-		$taskList = $workflowMode->findCommentByLeaveBillId ( $leaveBillId );
-		// var_dump($taskList);
-		return $this->renderFile ( '@app/views/leavebill/contentsp.php', [
-				'dataDetail' => $dataDetail,
-				'taskList' => $taskList,
-				// 'uid' => $request->get ( 'uid' )
-				'uid' => $uid
-		] );
+		// $taskList = $workflowMode->findCommentByLeaveBillId ( $leaveBillId );
+		$result = $workflowMode->findCommentByLeaveBillId ( $leaveBillId );
+		if ($result ['status'] == 'error') {
+			return $this->renderFile ( '@app/views/leavebill/error.php', [ 
+					'result' => '8' 
+			] );
+		} elseif ($result ['status'] == 'success') {
+			// var_dump($taskList);
+			$taskList = $result ['taskList'];
+			return $this->renderFile ( '@app/views/leavebill/contentsp.php', [ 
+					'dataDetail' => $dataDetail,
+					'taskList' => $taskList,
+					// 'uid' => $request->get ( 'uid' )
+					'uid' => $uid 
+			] );
+		}
 	}
-
+	
 	// 获取用户信息
 	public function actionGetUserInfo() {
 		$session = Yii::$app->session;
-
+		
 		// print_r($_SERVER['HTTP_ACCEPT']);
-
+		
 		// $GLOBALS['uid']='3@15';
 		// $params ['id'] = '46'; // 和轻应用有关
 		// $params ['eid'] = 15; // explode ( "@",$uid ) [1] ;// explode ( "@", $GLOBALS['uid'] ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
 		// // $params ['eid'] = '3';
 		// $params ['title'] = '有新的请假通知';
-
+		
 		// $params ['url'] = 'http://' . $_SERVER ['HTTP_HOST'] . '/basic/web/index.php?r=leavebill/index&uid=&eguid=&auth_token=';
 		$params ['user_id'] = $session->get ( 'uid' );
 		$params ['query_id'] = $session->get ( 'uid' );
@@ -678,27 +696,27 @@ class LeavebillController extends Controller {
 		$curl = new CurlModel ();
 		$result = $curl->post ( $webService, $params );
 		$result = json_decode ( $result );
-
+		
 		return $result;
 	}
-
+	
 	/**
 	 * Sendnotice.
 	 *
-	 * @param string $id
+	 * @param string $id        	
 	 * @return mixed
 	 */
-	public function actionSendnotice($uid, $to_uid,$title) {
-
+	public function actionSendnotice($uid, $to_uid, $title) {
+		
 		// print_r($_SERVER['HTTP_ACCEPT']);
-
+		
 		// $GLOBALS['uid']='3@15';
 		$params ['id'] = '46'; // 和轻应用有关
 		$params ['eid'] = 15; // explode ( "@",$uid ) [1] ;// explode ( "@", $GLOBALS['uid'] ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
-		// $params ['eid'] = '3';
-		$params ['title'] =$title;
-		//$params ['title'] = '有新的请假通知';
-
+		                      // $params ['eid'] = '3';
+		$params ['title'] = $title;
+		// $params ['title'] = '有新的请假通知';
+		
 		$params ['url'] = 'http://' . $_SERVER ['HTTP_HOST'] . '/basic/web/index.php?r=leavebill/index&uid=&eguid=&auth_token=';
 		$params ['uids[0]'] = $to_uid;
 		$params ['auth_token'] = Yii::$app->session->get ( 'auth_token' ); // $GLOBALS['auth_token']
@@ -706,17 +724,17 @@ class LeavebillController extends Controller {
 		$webService = "http://192.168.139.160/elgg/services/api/rest/json/?method=lapp.notice";
 		$curl = new CurlModel ();
 		$result = $curl->post ( $webService, $params );
-
+		
 		// echo "<pre>";
 		// echo "参数</br>";
 		// var_dump ( $params );
 		// echo "结果</br>";
 		// var_dump ( $result );
-
+		
 		// 获取form post 参数
 		// $uid = I ( 'uid' );
 		// $uid = '3@3';
-
+		
 		// $params ['id'] = 5; // 轻应用id （企业门户添加轻应用后生成）
 		// $params ['eid'] = explode ( "@", $uid ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
 		// $params ['title'] = 'text' ; // 通知内容
@@ -724,19 +742,19 @@ class LeavebillController extends Controller {
 		// $params ['uids[0]'] = $uid; // 接收者uid (数组)
 		// $params ['auth_token'] = 'auth_token' ; // 用户认证
 		// $params ['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";
-
+		
 		// // 接口地址
 		// $webService = "http://192.168.139.162/elgg/services/api/rest/json/?method=lapp.notice";
 		// $curl = new CurlModel ();
 		// $result = json_decode ( $curl->post ( $webService, $params ), true );
-
+		
 		// $this->display ();
-
+		
 		// return $this->render ( 'view', [
 		// 'model' => $this->findModel ( $id )
 		// ] );
 	}
-
+	
 	/**
 	 * Sendmessage.
 	 *
@@ -757,7 +775,7 @@ class LeavebillController extends Controller {
 		// $webService = "http://192.168.139.160/elgg/services/api/rest/json/?method=lapp.notice";
 		// $curl = new CurlModel ();
 		// $result = $curl->post ( $webService, $params );
-
+		
 		// $model=$this->findModel ( $id );
 		// $model1=Leavebill::find()->all();
 		// print_r($model1);
@@ -765,26 +783,26 @@ class LeavebillController extends Controller {
 		// $model = $this->findModel ( $id );
 		// print_r($model);
 		if ($model ['state'] == 2) {
-
+			
 			$to_uids = explode ( ",", $model ['tongzhi'] );
-
+			
 			// 请假天数
 			// $diff = date_diff ( date_create ( $model ['leaveStartTime'] ), date_create ( $model ['leaveEndTime'] ) )->format ( "%R%a days" ) + 0;
 			// print_r ( $diff );
 			$diff = $model ['days'];
-
+			
 			// 请假起止时间
 			$startdate = date ( "Y-m-d", strtotime ( $model ['leaveStartTime'] ) );
 			$enddate = date ( "Y-m-d", strtotime ( $model ['leaveEndTime'] ) );
-
+			
 			for($i = 0; $i < count ( $to_uids ); $i ++) {
-
+				
 				$params ['to_uids[' . $i . ']'] = $to_uids [$i];
 			}
-
+			
 			$params ['from_uid'] = $model->userid;
-			                               // $params['to_uids[0]'] = '8@15';
-			                               // $params['to_uids[0]'] ="8@15";
+			// $params['to_uids[0]'] = '8@15';
+			// $params['to_uids[0]'] ="8@15";
 			$params ['text'] = '[请假通知]	本人需请假' . $diff . '。时间:' . $startdate . '到' . $enddate . '。	望周知。';
 			$params ['type'] = '0';
 			$params ['auth_token'] = Yii::$app->session->get ( 'auth_token' ); // $model ->token;
@@ -792,7 +810,7 @@ class LeavebillController extends Controller {
 			$webService = "http://192.168.139.160/elgg/services/api/rest/json/?method=send.im.to.users";
 			$curl = new CurlModel ();
 			$result = $curl->post ( $webService, $params );
-
+			
 			echo "<pre>";
 			echo "参数</br>";
 			var_dump ( $params );
@@ -801,29 +819,29 @@ class LeavebillController extends Controller {
 		} else {
 			echo "此请假条未审批!";
 		}
-
+		
 		// return $this->render ( 'view', [
 		// 'model' => $this->findModel ( $id )
 		// ] );
 	}
-
+	
 	/**
 	 * Displays a single Leavebill model.
 	 *
-	 * @param string $id
+	 * @param string $id        	
 	 * @return mixed
 	 */
 	public function actionView($id) {
-		return $this->render ( 'view', [
-				'model' => $this->findModel ( $id )
+		return $this->render ( 'view', [ 
+				'model' => $this->findModel ( $id ) 
 		] );
 	}
-
+	
 	/**
 	 * Finds the Leavebill model based on its primary key value.
 	 * If the model is not found, a 404 HTTP exception will be thrown.
 	 *
-	 * @param string $id
+	 * @param string $id        	
 	 * @return Leavebill the loaded model
 	 * @throws NotFoundHttpException if the model cannot be found
 	 */
@@ -839,19 +857,19 @@ class LeavebillController extends Controller {
 		$page = $request->get ( 'page' );
 		$applyTime = $request->get ( 'applyTime' );
 		$pageSize = $request->get ( 'pageSize' );
-		$dataApproval = LeavebillSearch::find ()->where ( [
-				'userid' => $request->get ( 'uid' )
-		] )->andwhere ( [
+		$dataApproval = LeavebillSearch::find ()->where ( [ 
+				'userid' => $request->get ( 'uid' ) 
+		] )->andwhere ( [ 
 				'<',
 				'applyTime',
-				$applyTime
-		] )->orderBy ( [
-				'applyTime' => SORT_DESC
+				$applyTime 
+		] )->orderBy ( [ 
+				'applyTime' => SORT_DESC 
 		] )->offset ( $page * $pageSize )-> // 从第$page * $pageSize行开始返回数据
 limit ( $pageSize )-> // 一次返回$pageSize行数据
 asArray ()->all ();
-		echo json_encode ( [
-				'dataApproval' => $dataApproval
+		echo json_encode ( [ 
+				'dataApproval' => $dataApproval 
 		] );
 	}
 	public function actionGiveup() {
@@ -867,18 +885,25 @@ asArray ()->all ();
 			// return;
 			return $this->renderFile ( '@app/views/leavebill/error.php', [
 					// 'uid' => $uid
-					'result' => '1'
+					'result' => '1' 
 			] );
 		}
 		$leaveBillId = $request->get ( "id" );
 		// $uid=$request->get("uid");
 		$outcome = $request->get ( "outcome" );
 		if (($model = Leavebill::findOne ( $leaveBillId )) !== null) {
-			$workflowModel->saveSubmitTaskByLeaveBillId ( $model, $outcome );
-			return $this->redirect ( [
-					'list',
-					'uid' => $uid
-			] );
+			$result = $workflowModel->saveSubmitTaskByLeaveBillId ( $model, $outcome );
+			if ($result ['status'] == 'error') {
+				return $this->renderFile ( '@app/views/leavebill/error.php', [
+						// 'uid' => $uid
+						'result' => '0' 
+				] );
+			} else{
+				return $this->redirect ( [ 
+						'list',
+						'uid' => $uid 
+				] );
+			}
 		} else {
 			throw new NotFoundHttpException ( 'The requested page does not exist.' );
 		}
@@ -896,24 +921,31 @@ asArray ()->all ();
 			// return;
 			return $this->renderFile ( '@app/views/leavebill/error.php', [
 					// 'uid' => $uid
-					'result' => '1'
+					'result' => '1' 
 			] );
 		}
 		$leaveBillId = $request->post ( 'id' );
 		$outcome = $request->post ( 'outcome' );
 		$comment = $request->post ( 'comment' );
 		if (($model = Leavebill::findOne ( $leaveBillId )) !== null) {
-			$workflowModel->saveSubmitTaskByLeaveBillId ( $model, $outcome, $comment );
-			if ($outcome == '1') {
-				$this->actionSendnotice($uid,$model->userid,'有请假申请通过');
-				$this->actionSendmessage ( $model );
-			}else{
-				$this->actionSendnotice($uid,$model->userid,'有请假申请被拒绝');
+			$result = $workflowModel->saveSubmitTaskByLeaveBillId ( $model, $outcome, $comment );
+			if ($result ['status'] == 'error') {
+				return $this->renderFile ( '@app/views/leavebill/error.php', [
+						// 'uid' => $uid
+						'result' => '0' 
+				] );
+			} elseif ($result ['status'] == 'success') {
+				if ($outcome == '1') {
+					$this->actionSendnotice ( $uid, $model->userid, '有请假申请通过' );
+					$this->actionSendmessage ( $model );
+				} else {
+					$this->actionSendnotice ( $uid, $model->userid, '有请假申请被拒绝' );
+				}
+				return $this->redirect ( [ 
+						'list',
+						'uid' => $uid 
+				] );
 			}
-			return $this->redirect ( [
-					'list',
-					'uid' => $uid
-			] );
 		} else {
 			throw new NotFoundHttpException ( 'The requested page does not exist.' );
 		}
@@ -923,17 +955,17 @@ asArray ()->all ();
 		$page = $request->get ( 'page' );
 		$applyTime = $request->get ( 'applyTime' );
 		$pageSize = $request->get ( 'pageSize' );
-		$dataApproval = LeavebillSearch::find ()->where ( [
-				'approvalPerson' => $request->get ( 'uid' )
-		] )->andwhere ( [
+		$dataApproval = LeavebillSearch::find ()->where ( [ 
+				'approvalPerson' => $request->get ( 'uid' ) 
+		] )->andwhere ( [ 
 				'<',
 				'applyTime',
-				$applyTime
-		] )->orderBy ( [
-				'applyTime' => SORT_DESC
+				$applyTime 
+		] )->orderBy ( [ 
+				'applyTime' => SORT_DESC 
 		] )->offset ( $page * $pageSize )->limit ( $pageSize )->asArray ()->all ();
-		echo json_encode ( [
-				'dataApproval' => $dataApproval
+		echo json_encode ( [ 
+				'dataApproval' => $dataApproval 
 		] );
 	}
 	public function actionMore() {
@@ -941,47 +973,47 @@ asArray ()->all ();
 		date_default_timezone_set ( 'PRC' );
 		$pageSize = 8;
 		$curTime = date ( 'Y-m-d H:i:s' );
-
+		
 		$searchModel = new LeavebillSearch ();
-		$panel1Total = LeavebillSearch::find ()->where ( [
-				'userid' => $request->get ( 'uid' )
-		] )->andwhere ( [
+		$panel1Total = LeavebillSearch::find ()->where ( [ 
+				'userid' => $request->get ( 'uid' ) 
+		] )->andwhere ( [ 
 				'<',
 				'applyTime',
-				$curTime
+				$curTime 
 		] )->count ();
 		$panel1TotalPage = ceil ( $panel1Total / $pageSize );
-		$panel2Total = LeavebillSearch::find ()->where ( [
-				'approvalPerson' => $request->get ( 'uid' )
-		] )->andwhere ( [
+		$panel2Total = LeavebillSearch::find ()->where ( [ 
+				'approvalPerson' => $request->get ( 'uid' ) 
+		] )->andwhere ( [ 
 				'<',
 				'applyTime',
-				$curTime
+				$curTime 
 		] )->count ();
-
+		
 		$panel2TotalPage = ceil ( $panel2Total / $pageSize );
-		$dataBill = LeavebillSearch::find ()->where ( [
-				'userid' => $request->get ( 'uid' )
-		] )->andwhere ( [
+		$dataBill = LeavebillSearch::find ()->where ( [ 
+				'userid' => $request->get ( 'uid' ) 
+		] )->andwhere ( [ 
 				'<',
 				'applyTime',
-				$curTime
-		] )->orderBy ( [
-				'applyTime' => SORT_DESC
+				$curTime 
+		] )->orderBy ( [ 
+				'applyTime' => SORT_DESC 
 		] )->offset ( 0 )->limit ( $pageSize )->asArray ()->all ();
-		$dataApproval = LeavebillSearch::find ()->where ( [
-				'approvalPerson' => $request->get ( 'uid' )
-		] )->andwhere ( [
+		$dataApproval = LeavebillSearch::find ()->where ( [ 
+				'approvalPerson' => $request->get ( 'uid' ) 
+		] )->andwhere ( [ 
 				'<',
 				'applyTime',
-				$curTime
-		] )->orderBy ( [
-				'applyTime' => SORT_DESC
+				$curTime 
+		] )->orderBy ( [ 
+				'applyTime' => SORT_DESC 
 		] )->offset ( 0 )->limit ( $pageSize )->asArray ()->all ();
 		// echo "你好".$request->get( 'uid' );
-
+		
 		if ($request->get ( 'uid' )) {
-			return $this->renderFile ( '@app/views/leavebill/list-more.php', [
+			return $this->renderFile ( '@app/views/leavebill/list-more.php', [ 
 					'pageSize' => $pageSize,
 					'panel1Total' => $panel1Total,
 					'panel1TotalPage' => $panel1TotalPage,
@@ -990,7 +1022,7 @@ asArray ()->all ();
 					'curTime' => "'" . $curTime . "'",
 					'dataBill' => json_encode ( $dataBill ),
 					'dataApproval' => json_encode ( $dataApproval ),
-					'uid' => $request->get ( 'uid' )
+					'uid' => $request->get ( 'uid' ) 
 			] );
 		} else {
 			return $this->renderFile ( '@app/views/leavebill/list-empty-error.php', [ ] );
@@ -999,11 +1031,11 @@ asArray ()->all ();
 	public function actionDeployments() {
 		return $this->renderFile ( '@app/views/leavebill/deployments.php' );
 	}
-
+	
 	/**
 	 * Sendnotice.
 	 *
-	 * @param string $id
+	 * @param string $id        	
 	 * @return mixed
 	 */
 	public function actionFileform() {
@@ -1015,9 +1047,9 @@ asArray ()->all ();
 	public function actionUpload() {
 		$employee = Employee::getDb ();
 		var_dump ( $employee );
-
+		
 		// $model = new UploadForm();
-
+		
 		// if (Yii::$app->request->isPost) {
 		// $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
 		// print_r($model);
@@ -1029,12 +1061,12 @@ asArray ()->all ();
 		// echo "文件上传失败";
 		// }
 		// }
-
+		
 		// return $this->renderPartial('upload', ['model' => $model]);
-
+		
 		// print_r(readfile("d:/leavebill.bpmn20.xml")) ;
 	}
-
+	
 	/**
 	 * php 发送流文件
 	 *
@@ -1046,18 +1078,18 @@ asArray ()->all ();
 	 */
 	public function actionSendStreamFile($url, $file) {
 		if (file_exists ( $file )) {
-
+			
 			$opts = array (
 					'http' => array (
 							'method' => 'POST',
-							'header' => [
+							'header' => [ 
 									'content-type:multipart/form-data',
-									'Authorization:Basic ' . base64_encode ( "kermit:kermit" )
+									'Authorization:Basic ' . base64_encode ( "kermit:kermit" ) 
 							],
-							'content' => file_get_contents ( $file )
-					)
+							'content' => file_get_contents ( $file ) 
+					) 
 			);
-
+			
 			$context = stream_context_create ( $opts );
 			$response = file_get_contents ( $url, false, $context );
 			$ret = json_decode ( $response, true );
@@ -1066,87 +1098,87 @@ asArray ()->all ();
 			return false;
 		}
 	}
-
+	
 	/**
 	 * Sendnotice.
 	 *
-	 * @param string $id
+	 * @param string $id        	
 	 * @return mixed
 	 */
 	public function actionActivitirest() {
-
+		
 		// Yii::$app->request->post();
 		// var_dump( Yii::$app->request->bodyParams);
 		$curl = new CurlModel ();
 		$params = '';
-
+		
 		$Authorization = array (
-				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" )
+				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ) 
 		);
 		$curl->setHeaders ( $Authorization );
-
+		
 		// $webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/identity/groups';
-
+		
 		/**
 		 * **************************** 部署 ***********************************************
 		 */
-
+		
 		// 部署列表
 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/deployments';
 		// $webService ='http://192.168.139.75:8080/activiti-rest/service/repository/deployments';
 		$result = $curl->get ( $webService );
-
+		
 		// 获得一个部署
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/deployments/20';
 		// $result=$curl->get($webService);
-
+		
 		// 删除一个部署
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/deployments/54';
 		// $webService ='http://192.168.139.75:8080/activiti-rest/service/repository/deployments/40';
 		// $result=$curl->delete($webService);
-
+		
 		// 列出部署内的资源
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/deployments/50/resources';
 		// $result=$curl->get($webService);
-
+		
 		// 获取部署内的资源
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/deployments/46/resources/leaveBill02.png';
 		// $result=$curl->get($webService);
-
+		
 		// 获取部署内的资源内容
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/deployments/50/resourcedata/leaveBill02.bpmn20.xml';
 		// $result=$curl->get($webService);
-
+		
 		/**
 		 * **************************** 流程定义 ***********************************************
 		 */
-
+		
 		// 流程定义列表
 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions';
 		$result = $curl->get ( $webService );
-
+		
 		// 获得一个流程定义
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:49';
 		// $result=$curl->get($webService);
-
+		
 		//  更新流程定义的分类
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:49';
 		// $result=$curl->put($webService);
-
+		
 		// 获得一个流程定义的资源内容
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:49/resourcedata';
 		// $result=$curl->get($webService);
-
+		
 		//  获得流程定义的BPMN模型
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:49/model';
 		// $result=$curl->get($webService);
-
+		
 		// 暂停流程定义
 		// $params=array('action'=>'suspend','includeProcessInstances'=>'false');
 		// $params=json_encode($params);
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:2504';
 		// $result=$curl->put($webService,$params);
-
+		
 		// 激活流程定义
 		// $Authorization=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json");
 		// $curl->setHeaders($Authorization);
@@ -1154,11 +1186,11 @@ asArray ()->all ();
 		// $params=json_encode($params);
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:43';
 		// $result=$curl->put($webService,$params);
-
+		
 		// 获得流程定义的所有候选启动者
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:2504/identitylinks';
 		// $result=$curl->get($webService);
-
+		
 		// 为流程定义添加一个候选启动者
 		// $header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
 		// $curl->setHeaders($header);
@@ -1166,47 +1198,47 @@ asArray ()->all ();
 		// $params=['user'=>'kermit'];
 		// $params=json_encode($params);
 		// $result=$curl->post($webService,$params);
-
+		
 		//  删除流程定义的候选启动者
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:2504/identitylinks/users/kermit';
 		// $result=$curl->delete($webService);
-
+		
 		//  获得流程定义的一个候选启动者
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/process-definitions/LeaveBill:1:2504/identitylinks/users/kermit';
 		// $result=$curl->get($webService);
-
+		
 		/**
 		 * **************************** 模型 ***********************************************
 		 */
-
+		
 		//  获得模型列表
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/models';
 		// $result=$curl->get($webService);
-
+		
 		//  获得一个模型
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/models/37';
 		// $result=$curl->get($webService);
-
+		
 		//  获得模型的可编译源码
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/models/37/source';
 		// $result=$curl->get($webService);
-
+		
 		//  获得模型的附加可编辑源码
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/models/37/source-extra';
 		// $result=$curl->get($webService);
-
+		
 		//  获得模型列表
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/models';
 		// $result=$curl->get($webService);
-
+		
 		//  获得模型列表
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/repository/models';
 		// $result=$curl->get($webService);
-
+		
 		/**
 		 * **************************** 流程实例 ***********************************************
 		 */
-
+		
 		//  启动流程实例
 		// $header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json");
 		// $curl->setHeaders($header);
@@ -1220,34 +1252,34 @@ asArray ()->all ();
 		// $params=json_encode($params);
 		// print_r($params);
 		// $webService ='http://127.0.0.1:8080/activiti-rest/service/runtime/process-instances';
-
+		
 		// // $webService ='http://192.168.139.75:8080/activiti-rest/service/runtime/process-instances';
 		// $result=$curl->post($webService,$params);
-
+		
 		//  显示流程实例列表
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances';
-
+		
 		// $params=['businessKey'=>'myBusinessKey'];
 		// // $params=json_decode($params);
 		// // $webService ='http://192.168.139.75:8080/activiti-rest/service/runtime/process-instances';
 		// $result=$curl->get($webService);
-
+		
 		//  显示历时流程实例列表
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/history/historic-process-instances';
-
+		
 		// $params=['businessKey'=>'myBusinessKey'];
 		// // $params=json_decode($params);
 		// // $webService ='http://192.168.139.75:8080/activiti-rest/service/runtime/process-instances';
 		// $result=$curl->get($webService);
-
+		
 		//  获得历史流程实例
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/ history/historic-process-instances/2661';
 		// $result=$curl->get($webService);
-
+		
 		//  获得流程实例
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2525';
 		// $result=$curl->get($webService);
-
+		
 		//  删除流程实例
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/112';
 		// $result = json_decode($result);
@@ -1255,7 +1287,7 @@ asArray ()->all ();
 		// $webService ='http://192.168.139.75:8080/activiti-rest/service/runtime/process-instances/'.$result->data[$i1]->id;
 		// $curl->delete($webService);
 		// }
-
+		
 		//  激活或挂起流程实例
 		// $header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
 		// $curl->setHeaders($header);
@@ -1263,36 +1295,36 @@ asArray ()->all ();
 		// $params=json_encode($params);
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553';
 		// $result=$curl->put($webService);
-
+		
 		//  查询流程实例
 		// $header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json");
 		// $curl->setHeaders($header);
 		// $params=[
 		// 'processDefinitionKey'=>'LeaveBill',
 		// // 'id'=>'2568',
-
+		
 		// // 'variables'=>[[
 		// // 'name'=>'inputUser',
 		// // 'value'=>'8@15',
 		// // 'operation' => 'equals'
-
+		
 		// // ]
 		// // ]
 		// ];
 		// $params=json_encode($params);
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/process-instances';
-
+		
 		// // $webService ='http://192.168.139.75:8080/activiti-rest/service/query/process-instances';
 		// $result=$curl->post($webService,$params);
-
+		
 		//   获得流程实例的流程图
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2586';
 		// $result=$curl->get($webService);
-
+		
 		//  获得流程实例的参与者
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/identitylinks';
 		// $result=$curl->get($webService);
-
+		
 		// .......  为流程实例添加一个参与者
 		// $header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
 		// $curl->setHeaders($header);
@@ -1302,15 +1334,15 @@ asArray ()->all ();
 		// $params=json_encode($params);
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/identitylinks';
 		// $result=$curl->post($webService,$params);
-
+		
 		//  列出流程实例的变量
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/variables';
 		// $result=$curl->get($webService);
-
+		
 		// 获得流程实例的一个变量
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/variables/inputUser';
 		// $result=$curl->get($webService);
-
+		
 		// 创建（或更新）流程实例变量 post
 		// $header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
 		// $curl->setHeaders($header);
@@ -1321,7 +1353,7 @@ asArray ()->all ();
 		// $params=json_encode($params);
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/variables';
 		// $result=$curl->post($webService,$params);
-
+		
 		// 创建（或更新）流程实例变量 put
 		// $header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
 		// $curl->setHeaders($header);
@@ -1332,7 +1364,7 @@ asArray ()->all ();
 		// $params=json_encode($params);
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/variables';
 		// $result=$curl->put($webService,$params);
-
+		
 		//  更新一个流程实例变量
 		// $header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
 		// $curl->setHeaders($header);
@@ -1343,24 +1375,24 @@ asArray ()->all ();
 		// $params=json_encode($params);
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/2553/variables/intProcVar';
 		// $result=$curl->put($webService,$params);
-
+		
 		/**
 		 * ******************************* 任务 ************************************************
 		 */
-
+		
 		// 任务列表
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks';
 		// // $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/tasks';
 		// $result=$curl->get($webService);
-
+		
 		// 获取任务
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks/2567';
 		// $result=$curl->get($webService);
-
+		
 		// 获取任务
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/history/historic-task-instances';
 		// $result=$curl->get($webService);
-
+		
 		// 查询任务-请假申请状态
 		// $header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json;charset=UTF8");
 		// $curl->setHeaders($header);
@@ -1374,7 +1406,7 @@ asArray ()->all ();
 		// $params=json_encode($params);
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/tasks';
 		// $result=$curl->post($webService,$params);
-
+		
 		// 查询任务-审批状态
 		// $header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
 		// $curl->setHeaders($header);
@@ -1386,7 +1418,7 @@ asArray ()->all ();
 		// $params=json_encode($params);
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/tasks';
 		// $result=$curl->post($webService,$params);
-
+		
 		// 操作任务-完成任务-请假申请
 		// $header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
 		// $curl->setHeaders($header);
@@ -1404,7 +1436,7 @@ asArray ()->all ();
 		// $params=json_encode($params);
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks/2591';
 		// $result=$curl->post($webService,$params);
-
+		
 		// 操作任务-完成任务-审批
 		// $header=array("Authorization"=>"Basic ".base64_encode("kermit:kermit"),"content-type"=>"application/json,charset=utf-8");
 		// $curl->setHeaders($header);
@@ -1413,18 +1445,18 @@ asArray ()->all ();
 		// 'name'=>'outcome',
 		// 'type'=>'string',
 		// 'value'=>'1']]
-
+		
 		// ];
 		// $params=json_encode($params);
 		// $webService ='http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks/2582';
 		// $result=$curl->post($webService,$params);
-
+		
 		$result = json_decode ( $result );
-
+		
 		// echo $result->data[0]->id;
-
+		
 		// echo $result->id;
-
+		
 		echo "<pre>";
 		echo "参数</br>";
 		var_dump ( $params );
@@ -1432,11 +1464,11 @@ asArray ()->all ();
 		var_dump ( $result );
 		print_r ( $result );
 		// echo ($result);
-
+		
 		// 获取form post 参数
 		// $uid = I ( 'uid' );
 		// $uid = '3@3';
-
+		
 		// $params ['id'] = 5; // 轻应用id （企业门户添加轻应用后生成）
 		// $params ['eid'] = explode ( "@", $uid ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
 		// $params ['title'] = 'text' ; // 通知内容
@@ -1444,136 +1476,133 @@ asArray ()->all ();
 		// $params ['uids[0]'] = $uid; // 接收者uid (数组)
 		// $params ['auth_token'] = 'auth_token' ; // 用户认证
 		// $params ['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";
-
+		
 		// // 接口地址
 		// $webService = "http://192.168.139.162/elgg/services/api/rest/json/?method=lapp.notice";
 		// $curl = new CurlModel ();
 		// $result = json_decode ( $curl->post ( $webService, $params ), true );
-
+		
 		// $this->display ();
-
+		
 		// return $this->render ( 'view', [
 		// 'model' => $this->findModel ( $id )
 		// ] );
 	}
-
-
-
-// 	// 开启流程
-// 	public function actionStartProcessInstances($businessKey, $uid) {
-
-// 		//  启动流程实例
-// 		$header = array (
-// 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
-// 				"content-type" => "application/json,charset=utf-8"
-// 		);
-// 		$curl->setHeaders ( $header );
-// 		$params = [
-// 				'processDefinitionId' => 'LeaveBill:1:2504',
-// 				'businessKey' => $businessKey,
-// 				'variables' => [
-// 						[
-// 								'name' => 'inputUser',
-// 								'value' => $uid
-// 						]
-// 				]
-// 		];
-// 		$params = json_encode ( $params );
-// 		print_r ( $params );
-// 		$webService = 'http: // ' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances';
-// 		$result = $curl->post ( $webService, $params );
-// 		$result = json_decode ( $result );
-// 		return $result;
-// 	}
-// 	public function actionQueryTask($params) {
-
-// 		// 查询任务-请假申请状态
-// 		$header = array (
-// 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
-// 				"content-type" => "application/json,charset=utf-8"
-// 		);
-// 		$curl->setHeaders ( $header );
-
-// 		$params = json_encode ( $params );
-// 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/tasks';
-// 		$result = $curl->post ( $webService, $params );
-// 		$result = json_decode ( $result );
-// 		return $result;
-// 	}
-
-// 	/**
-// 	 * Deletes an existing Leavebill model.
-// 	 * If deletion is successful, the browser will be redirected to the 'index' page.
-// 	 *
-// 	 * @param string $id
-// 	 * @return mixed
-// 	 */
-// 	public function actionDelete($id) {
-// 		$this->findModel ( $id )->delete ();
-
-// 		return $this->redirect ( [
-// 				'index'
-// 		] );
-// 	}
-// 	public function actionCompleteTask($params, $taskId) {
-
-// 		// 操作任务-完成任务-请假申请
-// 		$header = array (
-// 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
-// 				"content-type" => "application/json,charset=utf-8"
-// 		);
-// 		$curl->setHeaders ( $header );
-
-// 		$params = json_encode ( $params );
-// 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks/' . $taskId;
-// 		$result = $curl->post ( $webService, $params );
-// 		$result = json_decode ( $result );
-// 		return $result;
-// 	}
-// 	public function actionQueryProcessInstance() {
-
-// 		//  查询流程实例
-// 		$header = array (
-// 				"Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
-// 				"content-type" => "application/json,charset=utf-8"
-// 		);
-// 		$curl->setHeaders ( $header );
-// 		$params = [
-// 				'processDefinitionId' => 'LeaveBill:1:2504',
-
-// 				'variables' => [
-// 						[
-// 								'name' => 'inputUser',
-// 								'value' => '8@15',
-// 								'operation' => 'equals'
-// 						]
-// 				]
-// 		];
-// 		$params = json_encode ( $params );
-// 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/process-instances';
-// 		$result = $curl->post ( $webService, $params );
-// 		$result = json_decode ( $result );
-// 		return $result;
-// 	}
-// 	public function actionShowProcessInstance($params) {
-
-// 		//  显示流程实例列表
-// 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances';
-
-// 		// $params=['businessKey'=>'myBusinessKey'];
-// 		// $params=json_decode($params);
-// 		// $webService ='http://192.168.139.75:8080/activiti-rest/service/runtime/process-instances';
-// 		$result = $curl->get ( $webService, $params );
-// 		$result = json_decode ( $result );
-// 		return $result;
-// 	}
-// 	public function actionAcquireProcessInstance($processInstanceId) {
-
-// 		// 获得流程实例
-// 		$webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/' . $processInstanceId;
-// 		$result = $curl->get ( $webService );
-// 		$result = json_decode ( $result );
-// 		return $result;
-// 	}
-
+	
+	// // 开启流程
+	// public function actionStartProcessInstances($businessKey, $uid) {
+	
+	// //  启动流程实例
+	// $header = array (
+	// "Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
+	// "content-type" => "application/json,charset=utf-8"
+	// );
+	// $curl->setHeaders ( $header );
+	// $params = [
+	// 'processDefinitionId' => 'LeaveBill:1:2504',
+	// 'businessKey' => $businessKey,
+	// 'variables' => [
+	// [
+	// 'name' => 'inputUser',
+	// 'value' => $uid
+	// ]
+	// ]
+	// ];
+	// $params = json_encode ( $params );
+	// print_r ( $params );
+	// $webService = 'http: // ' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances';
+	// $result = $curl->post ( $webService, $params );
+	// $result = json_decode ( $result );
+	// return $result;
+	// }
+	// public function actionQueryTask($params) {
+	
+	// // 查询任务-请假申请状态
+	// $header = array (
+	// "Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
+	// "content-type" => "application/json,charset=utf-8"
+	// );
+	// $curl->setHeaders ( $header );
+	
+	// $params = json_encode ( $params );
+	// $webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/tasks';
+	// $result = $curl->post ( $webService, $params );
+	// $result = json_decode ( $result );
+	// return $result;
+	// }
+	
+	// /**
+	// * Deletes an existing Leavebill model.
+	// * If deletion is successful, the browser will be redirected to the 'index' page.
+	// *
+	// * @param string $id
+	// * @return mixed
+	// */
+	// public function actionDelete($id) {
+	// $this->findModel ( $id )->delete ();
+	
+	// return $this->redirect ( [
+	// 'index'
+	// ] );
+	// }
+	// public function actionCompleteTask($params, $taskId) {
+	
+	// // 操作任务-完成任务-请假申请
+	// $header = array (
+	// "Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
+	// "content-type" => "application/json,charset=utf-8"
+	// );
+	// $curl->setHeaders ( $header );
+	
+	// $params = json_encode ( $params );
+	// $webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/tasks/' . $taskId;
+	// $result = $curl->post ( $webService, $params );
+	// $result = json_decode ( $result );
+	// return $result;
+	// }
+	// public function actionQueryProcessInstance() {
+	
+	// //  查询流程实例
+	// $header = array (
+	// "Authorization" => "Basic " . base64_encode ( "kermit:kermit" ),
+	// "content-type" => "application/json,charset=utf-8"
+	// );
+	// $curl->setHeaders ( $header );
+	// $params = [
+	// 'processDefinitionId' => 'LeaveBill:1:2504',
+	
+	// 'variables' => [
+	// [
+	// 'name' => 'inputUser',
+	// 'value' => '8@15',
+	// 'operation' => 'equals'
+	// ]
+	// ]
+	// ];
+	// $params = json_encode ( $params );
+	// $webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/query/process-instances';
+	// $result = $curl->post ( $webService, $params );
+	// $result = json_decode ( $result );
+	// return $result;
+	// }
+	// public function actionShowProcessInstance($params) {
+	
+	// //  显示流程实例列表
+	// $webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances';
+	
+	// // $params=['businessKey'=>'myBusinessKey'];
+	// // $params=json_decode($params);
+	// // $webService ='http://192.168.139.75:8080/activiti-rest/service/runtime/process-instances';
+	// $result = $curl->get ( $webService, $params );
+	// $result = json_decode ( $result );
+	// return $result;
+	// }
+	// public function actionAcquireProcessInstance($processInstanceId) {
+	
+	// // 获得流程实例
+	// $webService = 'http://' . $_SERVER ['HTTP_HOST'] . ':8080/activiti-rest/service/runtime/process-instances/' . $processInstanceId;
+	// $result = $curl->get ( $webService );
+	// $result = json_decode ( $result );
+	// return $result;
+	// }
 }
