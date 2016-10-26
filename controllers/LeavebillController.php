@@ -112,7 +112,7 @@ class LeavebillController extends Controller {
 
 		if ($auth_token == '0' || $uid == '0') {
 			$params = [
-					'name' => '18900913302',
+					'name' => '18900913303',
 					'password' => '123456'
 			];
 			$result = $this->actionGetAuth_Token ( $params );
@@ -680,16 +680,6 @@ class LeavebillController extends Controller {
 	// 获取用户信息
 	public function actionGetUserInfo() {
 		$session = Yii::$app->session;
-
-		// print_r($_SERVER['HTTP_ACCEPT']);
-
-		// $GLOBALS['uid']='3@15';
-		// $params ['id'] = '46'; // 和轻应用有关
-		// $params ['eid'] = 15; // explode ( "@",$uid ) [1] ;// explode ( "@", $GLOBALS['uid'] ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
-		// // $params ['eid'] = '3';
-		// $params ['title'] = '有新的请假通知';
-
-		// $params ['url'] = 'http://' . $_SERVER ['HTTP_HOST'] . '/basic/web/index.php?r=leavebill/index&uid=&eguid=&auth_token=';
 		$params ['user_id'] = $session->get ( 'uid' );
 		$params ['query_id'] = $session->get ( 'uid' );
 		$params ['auth_token'] = $session->get ( 'auth_token' ); // $GLOBALS['auth_token']
@@ -709,15 +699,11 @@ class LeavebillController extends Controller {
 	 * @return mixed
 	 */
 	public function actionSendnotice($uid, $to_uid, $title) {
-
-		// print_r($_SERVER['HTTP_ACCEPT']);
-
-		// $GLOBALS['uid']='3@15';
 		$params ['id'] = '46'; // 和轻应用有关
 		$params ['eid'] = 15; // explode ( "@",$uid ) [1] ;// explode ( "@", $GLOBALS['uid'] ) [1]; // 企业id可在uid中解析到，@ 符后面数字为eid。
-		                      // $params ['eid'] = '3';
+
 		$params ['title'] = $title;
-		// $params ['title'] = '有新的请假通知';
+
 
 		$params ['url'] = 'http://' . $_SERVER ['HTTP_HOST'] . '/basic/web/index.php?r=leavebill/index&uid=&eguid=&auth_token=';
 		$params ['uids[0]'] = $to_uid;
@@ -767,30 +753,12 @@ class LeavebillController extends Controller {
 	 * @return mixed
 	 */
 	public function actionSendmessage($model) {
-		// $params ['id'] = '80';
-		// $params ['eid'] = '15';
-		// $params ['title'] = '新版上线了，请下载更新。';
-		// $params ['url'] = 'http://uc.sipsys.com/lanou/html/lanou_down.html';
-		// $params ['uids[0]'] = '8@15';
-		// $params ['auth_token'] = '239d48513662381f07243c238145ed9d';
-		// $params ['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";
-		// $webService = "http://192.168.139.160/elgg/services/api/rest/json/?method=lapp.notice";
-		// $curl = new CurlModel ();
-		// $result = $curl->post ( $webService, $params );
 
-		// $model=$this->findModel ( $id );
-		// $model1=Leavebill::find()->all();
-		// print_r($model1);
-		// $id = 'QJDH00000000000'; // 函数参数--测试
-		// $model = $this->findModel ( $id );
-		// print_r($model);
 		if ($model ['state'] == 2) {
 
 			$to_uids = explode ( ",", $model ['tongzhi'] );
 
-			// 请假天数
-			// $diff = date_diff ( date_create ( $model ['leaveStartTime'] ), date_create ( $model ['leaveEndTime'] ) )->format ( "%R%a days" ) + 0;
-			// print_r ( $diff );
+// 			请假天数
 			$diff = $model ['days'];
 
 			// 请假起止时间
@@ -803,8 +771,6 @@ class LeavebillController extends Controller {
 			}
 
 			$params ['from_uid'] = $model->userid;
-			// $params['to_uids[0]'] = '8@15';
-			// $params['to_uids[0]'] ="8@15";
 			$params ['text'] = '[请假通知]	本人需请假' . $diff . '。时间:' . $startdate . '到' . $enddate . '。	望周知。';
 			$params ['type'] = '0';
 			$params ['auth_token'] = Yii::$app->session->get ( 'auth_token' ); // $model ->token;
