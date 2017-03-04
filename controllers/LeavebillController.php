@@ -705,7 +705,7 @@ class LeavebillController extends Controller {
 		$params ['title'] = $title;
 
 
-		$params ['url'] = 'http://' . $_SERVER ['HTTP_HOST'] . '/basic/web/index.php?r=leavebill/index&uid=&eguid=&auth_token=';
+		$params ['url'] = 'http://' . $_SERVER ['HTTP_HOST'] . '/leavebill/web/index.php?r=leavebill/index&uid=&eguid=&auth_token=';
 		$params ['uids[0]'] = $to_uid;
 		$params ['auth_token'] = Yii::$app->session->get ( 'auth_token' ); // $GLOBALS['auth_token']
 		$params ['api_key'] = "36116967d1ab95321b89df8223929b14207b72b1";

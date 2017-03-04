@@ -3,6 +3,6 @@ return [
 		'class' => 'yii\db\Connection',
 		'dsn' => 'mysql:host=localhost;dbname=activiti',
 		'username' => 'root',
-		'password' => '123456',
+		'password' => 'psw.db7898',
 		'charset' => 'utf8'
 ];
